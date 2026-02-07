@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>English Mastery | Central Hub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --emerald-deep: #051a14;
+            --emerald-dark: #0a2f23;
+            --emerald-primary: #14523d;
+            --gold-accent: #c5a059;
+            --gold-glow: #e6c888;
+            --text-main: #fdfcf8;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Lato', sans-serif;
+            background-color: var(--emerald-deep);
+            color: var(--text-main);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* --- BACKGROUND EFFECTS --- */
+        .bg-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at center, #14523d 0%, #051a14 100%);
+            z-index: -1;
+        }
+
+        header {
+            text-align: center;
+            padding: 3rem 1rem;
+            z-index: 10;
+        }
+
+        .logo-badge {
+            border: 1px solid var(--gold-accent);
+            padding: 5px 15px;
+            font-size: 0.8rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--gold-accent);
+            margin-bottom: 1rem;
+            display: inline-block;
+        }
+
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 3rem;
+            background: linear-gradient(to bottom, #fff, var(--gold-accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+        }
+
+        /* --- SELECTION TILES --- */
+        .hub-container {
+            display: flex;
+            flex: 1;
+            justify-content: center;
+            align-items: center;
+            gap: 40px;
+            padding: 0 2rem 4rem;
+        }
+
+        .choice-card {
+            flex: 1;
+            max-width: 450px;
+            height: 400px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(197, 160, 89, 0.2);
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-decoration: none;
+            color: var(--text-main);
+            transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+        }
+
+        .choice-card:hover {
+            transform: translateY(-15px);
+            border-color: var(--gold-accent);
+            background: rgba(20, 82, 61, 0.4);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5), 0 0 30px rgba(197, 160, 89, 0.1);
+        }
+
+        .icon-circle {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: var(--emerald-dark);
+            border: 1px solid var(--gold-accent);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 3rem;
+            margin-bottom: 2rem;
+            transition: 0.5s;
+        }
+
+        .choice-card:hover .icon-circle {
+            background: var(--gold-accent);
+            transform: rotateY(360deg);
+            box-shadow: 0 0 20px var(--gold-accent);
+        }
+
+        .choice-card h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            letter-spacing: 1px;
+        }
+
+        .choice-card p {
+            font-weight: 300;
+            color: #ccc;
+            text-align: center;
+            padding: 0 2rem;
+            line-height: 1.6;
+        }
+
+        .btn-action {
+            margin-top: 2rem;
+            padding: 10px 30px;
+            border: 1px solid var(--gold-accent);
+            border-radius: 50px;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            transition: 0.3s;
+        }
+
+        .choice-card:hover .btn-action {
+            background: var(--gold-accent);
+            color: var(--emerald-deep);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hub-container { flex-direction: column; overflow-y: auto; padding-top: 2rem; }
+            .choice-card { min-height: 300px; width: 100%; }
+            body { overflow-y: auto; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-overlay"></div>
+
+    <header>
+        <div class="logo-badge">COLLABORATING FOR CHANGE, EMPOWERING FOR IMPACT </div>
+        <h1>English Check</h1>
+        <p style="opacity: 0.7;">Select to continue</p>
+    </header>
+
+    <div class="hub-container">
+        <a href="Modul Check.html" class="choice-card" onmouseenter="playHover()" onclick="playClick()">
+            <div class="icon-circle">📜</div>
+            <h2>Modul Check</h2>
+            <p>Master the structure of language through POS, Phrases, Tenses, and Clauses.</p>
+            <div class="btn-action">Enter Academy</div>
+        </a>
+
+        <a href="Vocab Check.html" class="choice-card" onmouseenter="playHover()" onclick="playClick()">
+            <div class="icon-circle">💎</div>
+            <h2>Vocab Check</h2>
+            <p>Expand your lexicon from beginner essentials to elite GRE mastery.</p>
+            <div class="btn-action">Identify Level</div>
+        </a>
+    </div>
+
+    <script>
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        function playSound(freq, type, duration, volume) {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            
+            osc.type = type;
+            osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(freq/2, audioCtx.currentTime + duration);
+            
+            gain.gain.setValueAtTime(volume, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
+            
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            
+            osc.start();
+            osc.stop(audioCtx.currentTime + duration);
+        }
+
+        function playHover() {
+            // Soft deep chime
+            playSound(300, 'sine', 0.2, 0.1);
+        }
+
+        function playClick() {
+            // Elegant mechanical click
+            playSound(600, 'triangle', 0.1, 0.2);
+            setTimeout(() => playSound(800, 'sine', 0.05, 0.1), 50);
+        }
+    </script>
+</body>
+</html>

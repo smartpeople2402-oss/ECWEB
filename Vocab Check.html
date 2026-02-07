@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>English Mastery Hub</title>
+    <style>
+        :root { 
+            --bg: #050b18; 
+            --card: #111a2e; 
+            --primary: #38bdf8; 
+            --accent: #818cf8;
+            --text: #f8fafc; 
+        }
+
+        body { 
+            font-family: 'Segoe UI', system-ui, sans-serif; 
+            background: var(--bg); 
+            background-image: radial-gradient(circle at 50% 50%, #1e293b 0%, #050b18 100%);
+            color: var(--text); 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            min-height: 100vh; 
+            margin: 0;
+            overflow: hidden;
+        }
+
+        /* --- NEW WELCOME SCREEN STYLES --- */
+        #welcome-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(5, 11, 24, 0.95);
+            backdrop-filter: blur(15px);
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.8s ease, visibility 0.8s;
+        }
+
+        .input-group {
+            text-align: center;
+            transform: translateY(0);
+            transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .name-input {
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid var(--primary);
+            color: var(--text);
+            font-size: 2rem;
+            text-align: center;
+            padding: 10px;
+            outline: none;
+            width: 300px;
+            margin-bottom: 30px;
+            font-family: inherit;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            transition: border-color 0.3s, width 0.3s;
+        }
+
+        .name-input:focus {
+            border-bottom-color: var(--accent);
+            width: 350px;
+        }
+
+        .start-btn {
+            background: linear-gradient(45deg, var(--primary), var(--accent));
+            border: none;
+            padding: 15px 40px;
+            color: white;
+            font-size: 1.2rem;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            box-shadow: 0 0 20px rgba(56, 189, 248, 0.4);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .start-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 40px rgba(56, 189, 248, 0.6);
+        }
+
+        .welcome-title {
+            font-size: 1.5rem; color: var(--primary); margin-bottom: 20px; letter-spacing: 3px;
+        }
+
+        /* --- MAIN CONTENT STYLES --- */
+        .container { 
+            text-align: center; 
+            width: 90%; 
+            max-width: 1000px; 
+            z-index: 1; 
+            opacity: 0; /* Hidden initially */
+            transform: scale(0.9);
+            transition: opacity 1s ease, transform 1s ease;
+        }
+
+        h1 { 
+            font-size: 3.5rem; 
+            margin-bottom: 10px; 
+            text-transform: uppercase; 
+            letter-spacing: 4px;
+            background: linear-gradient(to right, #38bdf8, #818cf8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 10px rgba(56, 189, 248, 0.3));
+        }
+
+        p { color: #94a3b8; font-size: 1.1rem; margin-bottom: 50px; }
+
+        .grid { 
+            display: grid; 
+            grid-template-columns: repeat(3, 1fr); 
+            gap: 25px; 
+        }
+
+        .card { 
+            background: var(--card); 
+            padding: 40px 20px; 
+            border-radius: 24px; 
+            border: 1px solid rgba(255, 255, 255, 0.1); 
+            cursor: pointer; 
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+            text-decoration: none; 
+            color: inherit; 
+            display: block;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card:hover { 
+            transform: translateY(-15px) scale(1.05); 
+            border-color: var(--primary);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 20px rgba(56, 189, 248, 0.2);
+            background: rgba(56, 189, 248, 0.05);
+        }
+
+        .icon { 
+            font-size: 4rem; 
+            margin-bottom: 20px; 
+            display: block;
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover .icon { transform: rotate(10deg) scale(1.2); }
+
+        .title { font-size: 1.8rem; font-weight: 800; margin-bottom: 12px; display: block; }
+        
+        .desc { font-size: 0.95rem; color: #64748b; line-height: 1.5; }
+
+        /* Animation for the background */
+        .bg-glow {
+            position: absolute; width: 300px; height: 300px;
+            background: var(--primary); filter: blur(150px);
+            opacity: 0.1; border-radius: 50%; z-index: -1;
+            top: 10%; left: 10%; animation: float 10s infinite alternate;
+        }
+
+        @keyframes float { 
+            from { transform: translate(0, 0); } 
+            to { transform: translate(200px, 100px); } 
+        }
+
+        @media (max-width: 768px) { .grid { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+    <div class="bg-glow"></div>
+
+    <div id="welcome-overlay">
+        <div class="input-group">
+            <div class="welcome-title">IDENTIFY YOURSELF</div>
+            <input type="text" id="username" class="name-input" placeholder="ENTER NAME" autocomplete="off" onkeypress="handleEnter(event)">
+            <br>
+            <button class="start-btn" onclick="enterSite()">INITIALIZE</button>
+        </div>
+    </div>
+
+    <div class="container" id="main-content">
+        <h1 id="dynamic-title">YOUR ENGLISH LEVEL</h1>
+        <p>Forge your path to linguistic mastery</p>
+        
+        <div class="grid">
+            <a href="begineee.html" class="card" onmouseenter="playHover()" onclick="playClick()">
+                <span class="icon">🔰</span>
+                <span class="title">Beginner</span>
+                <span class="desc">Lay the foundation. Essential words for daily life.</span>
+            </a>
+            
+            <a href="intermediate.html" class="card" onmouseenter="playHover()" onclick="playClick()">
+                <span class="icon">⚡</span>
+                <span class="title">Intermediate</span>
+                <span class="desc">Bridge the gap. Professional fluency starts here.</span>
+            </a>
+            
+            <a href="game vocab.html" class="card" onmouseenter="playHover()" onclick="playClick()">
+                <span class="icon">💎</span>
+                <span class="title">GRE Elite</span>
+                <span class="desc">High-tier vocabulary for GMAT and research papers.</span>
+            </a>
+        </div>
+    </div>
+
+    <script>
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        function playSound(freq, type, duration) {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = type;
+            osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+            gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + duration);
+        }
+
+        function playHover() {
+            playSound(400, 'sine', 0.1); 
+        }
+
+        function playClick() {
+            playSound(800, 'square', 0.05); 
+        }
+
+        // --- NEW LOGIC FOR NAME INPUT ---
+
+        function handleEnter(e) {
+            if (e.key === 'Enter') enterSite();
+        }
+
+        function enterSite() {
+            const nameInput = document.getElementById('username');
+            const name = nameInput.value.trim();
+
+            if (name === "") {
+                // Shake animation if empty
+                nameInput.style.borderColor = "#f87171";
+                nameInput.placeholder = "REQUIRED";
+                setTimeout(() => {
+                    nameInput.style.borderColor = "#38bdf8";
+                    nameInput.placeholder = "ENTER NAME";
+                }, 1000);
+                return;
+            }
+
+            // Play a futuristic success sound
+            playSound(600, 'triangle', 0.1);
+            setTimeout(() => playSound(1200, 'sine', 0.3), 100);
+
+            // Save name for other pages to use (Optional usage)
+            localStorage.setItem('user_name', name);
+
+            // Update the main Title
+            const mainTitle = document.getElementById('dynamic-title');
+            mainTitle.innerText = `${name.toUpperCase()}'S LEVEL`;
+
+            // Fade out overlay
+            const overlay = document.getElementById('welcome-overlay');
+            overlay.style.opacity = '0';
+            overlay.style.visibility = 'hidden';
+
+            // Reveal main content
+            const content = document.getElementById('main-content');
+            content.style.opacity = '1';
+            content.style.transform = 'scale(1)';
+        }
+    </script>
+</body>
+</html>
