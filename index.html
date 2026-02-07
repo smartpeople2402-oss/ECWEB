@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>English Mastery | Central Hub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --emerald-deep: #051a14;
+            --emerald-dark: #0a2f23;
+            --emerald-primary: #14523d;
+            --gold-accent: #c5a059;
+            --gold-glow: #e6c888;
+            --text-main: #fdfcf8;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Lato', sans-serif;
+            background-color: var(--emerald-deep);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        .bg-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at center, #14523d 0%, #051a14 100%);
+            z-index: -1;
+        }
+
+        header {
+            text-align: center;
+            padding: 3rem 1rem 1rem;
+            z-index: 10;
+        }
+
+        .logo-badge {
+            border: 1px solid var(--gold-accent);
+            padding: 5px 15px;
+            font-size: 0.8rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--gold-accent);
+            margin-bottom: 1rem;
+            display: inline-block;
+        }
+
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 3rem;
+            background: linear-gradient(to bottom, #fff, var(--gold-accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+        }
+
+        .hub-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            padding: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .choice-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(197, 160, 89, 0.2);
+            border-radius: 20px;
+            height: 350px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-decoration: none;
+            color: var(--text-main);
+            transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+            backdrop-filter: blur(10px);
+            text-align: center;
+        }
+
+        .choice-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--gold-accent);
+            background: rgba(20, 82, 61, 0.4);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        }
+
+        .icon-circle {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: var(--emerald-dark);
+            border: 1px solid var(--gold-accent);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            transition: 0.5s;
+        }
+
+        .choice-card:hover .icon-circle {
+            background: var(--gold-accent);
+            transform: rotateY(360deg);
+        }
+
+        .choice-card h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .choice-card p {
+            font-weight: 300;
+            color: #ccc;
+            padding: 0 2rem;
+            line-height: 1.5;
+            font-size: 0.9rem;
+        }
+
+        .btn-action {
+            margin-top: 1.5rem;
+            padding: 8px 25px;
+            border: 1px solid var(--gold-accent);
+            border-radius: 50px;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            transition: 0.3s;
+        }
+
+        .choice-card:hover .btn-action {
+            background: var(--gold-accent);
+            color: var(--emerald-deep);
+        }
+
+        @media (max-width: 600px) {
+            h1 { font-size: 2rem; }
+            .hub-container { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <audio id="hoverSound" src="https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3" preload="auto"></audio>
+    <audio id="clickSound" src="https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3" preload="auto"></audio>
+
+    <div class="bg-overlay"></div>
+
+    <header>
+        <div class="logo-badge">COLLABORATING FOR CHANGE, EMPOWERING FOR IMPACT </div>
+        <h1>English Check</h1>
+        <p style="opacity: 0.7;">Select your path to mastery</p>
+    </header>
+
+    <div class="hub-container">
+        <a href="Modul Check.html" class="choice-card" onmouseenter="playHover()" onclick="playClick(event)">
+            <div class="icon-circle">📜</div>
+            <h2>Modul Check</h2>
+            <p>Master language structure through Tenses, Phrases, and Clauses.</p>
+            <div class="btn-action">Enter Academy</div>
+        </a>
+
+        <a href="structure.html" class="choice-card" onmouseenter="playHover()" onclick="playClick(event)">
+            <div class="icon-circle">⚖️</div>
+            <h2>Toefl Check</h2>
+            <p>Practice TOEFL-style grammar challenges with detailed explanations.</p>
+            <div class="btn-action">Start Practice</div>
+        </a>
+
+        <a href="all.html" class="choice-card" onmouseenter="playHover()" onclick="playClick(event)">
+            <div class="icon-circle">⚔️</div>
+            <h2>Multi Player for PC</h2>
+            <p>Conquer three levels of vocabulary from Beginner to GRE Master.</p>
+            <div class="btn-action">Enter Arena</div>
+        </a>
+
+        <a href="Vocab Check.html" class="choice-card" onmouseenter="playHover()" onclick="playClick(event)">
+            <div class="icon-circle">💎</div>
+            <h2>Vocab Check</h2>
+            <p>Identify your current lexicon level and unlock new challenges.</p>
+            <div class="btn-action">Identify Level</div>
+        </a>
+
+        <a href="Absensi.html" class="choice-card" onmouseenter="playHover()" onclick="playClick(event)">
+            <div class="icon-circle">✍️</div>
+            <h2>Attendance</h2>
+            <p>Record your lesson progress and submit session proof.</p>
+            <div class="btn-action">Submit Portal</div>
+        </a>
+    </div>
+
+    <script>
+        const hoverSfx = document.getElementById('hoverSound');
+        const clickSfx = document.getElementById('clickSound');
+
+        hoverSfx.volume = 0.15;
+        clickSfx.volume = 0.4;
+
+        function playHover() {
+            hoverSfx.currentTime = 0;
+            hoverSfx.play().catch(e => {});
+        }
+
+        function playClick(event) {
+            event.preventDefault();
+            const targetUrl = event.currentTarget.href;
+            clickSfx.currentTime = 0;
+            clickSfx.play();
+            setTimeout(() => {
+                window.location.href = targetUrl;
+            }, 150);
+        }
+    </script>
+</body>
+</html>
