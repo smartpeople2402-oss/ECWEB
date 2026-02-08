@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TENSES</title>
+    <style>
+        :root {
+            --bg-dark: #05140c;
+            --bg-card: rgba(20, 46, 32, 0.7);
+            --accent: #4ade80; /* Hijau Terang Elegan */
+            --accent-dim: #15803d;
+            --text-main: #ecfdf5;
+            --text-muted: #86efac;
+            --border: #14532d;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-dark);
+            background-image: radial-gradient(circle at 50% 0%, #1a4231 0%, var(--bg-dark) 60%);
+            color: var(--text-main);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-x: hidden;
+        }
+
+        /* Overlay untuk Mengaktifkan Suara */
+        #start-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: #020805;
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            transition: opacity 0.8s ease;
+        }
+
+        .enter-btn {
+            padding: 15px 50px;
+            font-size: 1.5rem;
+            color: var(--accent);
+            background: transparent;
+            border: 2px solid var(--accent);
+            border-radius: 50px;
+            cursor: pointer;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            transition: all 0.3s;
+            box-shadow: 0 0 15px rgba(74, 222, 128, 0.3);
+        }
+
+        .enter-btn:hover {
+            background: var(--accent);
+            color: var(--bg-dark);
+            box-shadow: 0 0 40px rgba(74, 222, 128, 0.6);
+            transform: scale(1.05);
+        }
+
+        /* Header */
+        header {
+            text-align: center;
+            margin: 40px 0;
+            animation: fadeInDown 1s ease-out;
+        }
+
+        h1 {
+            font-size: 3rem;
+            font-weight: 300;
+            margin: 0;
+            letter-spacing: 2px;
+            text-shadow: 0 0 20px rgba(74, 222, 128, 0.4);
+        }
+
+        p.subtitle {
+            color: var(--text-muted);
+            margin-top: 10px;
+            font-size: 1.1rem;
+        }
+
+        /* Container Utama */
+        .main-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 30px;
+            width: 95%;
+            max-width: 1400px;
+            margin-bottom: 50px;
+        }
+
+        /* Kolom Kategori */
+        .category-column {
+            flex: 1;
+            min-width: 300px;
+            max-width: 400px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 25px;
+            backdrop-filter: blur(10px);
+            animation: fadeInUp 0.8s ease-out forwards;
+            opacity: 0;
+        }
+
+        /* Delay animasi per kolom */
+        .category-column:nth-child(1) { animation-delay: 0.2s; } /* Past */
+        .category-column:nth-child(2) { animation-delay: 0.4s; } /* Present */
+        .category-column:nth-child(3) { animation-delay: 0.6s; } /* Future */
+
+        .category-title {
+            text-align: center;
+            font-size: 1.8rem;
+            color: var(--accent);
+            margin-bottom: 25px;
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        /* Kartu/Link File */
+        .tense-link {
+            display: block;
+            background: var(--bg-card);
+            margin-bottom: 15px;
+            padding: 20px;
+            border-radius: 12px;
+            text-decoration: none;
+            color: var(--text-main);
+            border-left: 4px solid transparent;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tense-link:hover {
+            transform: translateX(10px);
+            background: linear-gradient(90deg, rgba(20, 46, 32, 0.9), rgba(74, 222, 128, 0.1));
+            border-left: 4px solid var(--accent);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .tense-link h3 {
+            margin: 0;
+            font-size: 1.2rem;
+            font-weight: 500;
+        }
+
+        .tense-link span {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            display: block;
+            margin-top: 5px;
+            font-style: italic;
+        }
+
+        /* Indikator Animasi */
+        .tense-link::after {
+            content: '➜';
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            opacity: 0;
+            transition: 0.3s;
+            color: var(--accent);
+        }
+
+        .tense-link:hover::after {
+            opacity: 1;
+            right: 15px;
+        }
+
+        /* Animasi Keyframes */
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Responsif */
+        @media (max-width: 768px) {
+            .main-container {
+                flex-direction: column;
+                align-items: center;
+            }
+            .category-column {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="start-overlay">
+        <h1 style="font-size: 2rem; margin-bottom: 2rem; color: var(--text-main);">TENSES CHECK</h1>
+        <button class="enter-btn" onclick="initializeSite()">Mulai Latihan</button>
+    </div>
+
+    <header>
+        <h1>TENSES CHECK</h1>
+        <p class="subtitle">Pilih tenses yang ingin Anda Kerjakan</p>
+    </header>
+
+    <div class="main-container">
+
+        <div class="category-column">
+            <div class="category-title">Past Tenses</div>
+            
+            <a href="simple past.html" class="tense-link" onmouseenter="playHoverSound()" onclick="playClickSound()">
+                <h3>Simple Past</h3>
+                <span>Kejadian masa lampau yang selesai.</span>
+            </a>
+
+            <a href="past continuous.html" class="tense-link" onmouseenter="playHoverSound()" onclick="playClickSound()">
+                <h3>Past Continuous</h3>
+                <span>Kejadian yang sedang berlangsung di masa lalu.</span>
+            </a>
+
+            <a href="past perfect.html" class="tense-link" onmouseenter="playHoverSound()" onclick="playClickSound()">
+                <h3>Past Perfect</h3>
+                <span>Kejadian sebelum kejadian lain di masa lalu.</span>
+            </a>
+
+            <a href="past perfect contimuous.html" class="tense-link" onmouseenter="playHoverSound()" onclick="playClickSound()">
+                <h3>Past Perfect Continuous</h3>
+                <span>Durasi kejadian di masa lampau.</span>
+            </a>
+        </div>
+
+        <div class="category-column">
+            <div class="category-title">Present Tenses</div>
+
+            <a href="simple present tense.html" class="tense-link" onmouseenter="playHoverSound()" onclick="playClickSound()">
+                <h3>Simple Present</h3>
+                <span>Fakta, kebiasaan, dan kebenaran umum.</span>
+            </a>
+
+            <a href="simple present continuous.html" class="tense-link" onmouseenter="playHoverSound()" onclick="playClickSound()">
+                <h3>Present Continuous</h3>
+                <span>Sedang berlangsung saat ini (Sekarang).</span>
+            </a>
+
+            <a href="present perfect tense.html" class="tense-link" onmouseenter="playHoverSound()" onclick="playClickSound()">
+                <h3>Present Perfect</h3>
+                <span>Kejadian masa lalu dengan hasil saat ini.</span>
+            </a>
+
+            <a href="present perfect continuous.html" class="tense-link" onmouseenter="playHoverSound()" onclick="playClickSound()">
+                <h3>Present Perfect Continuous</h3>
+                <span>Dimulai masa lalu, berlanjut sekarang.</span>
+            </a>
+        </div>
+
+        <div class="category-column">
+            <div class="category-title">Future Tenses</div>
+
+            <a href="simple future.html" class="tense-link" onmouseenter="playHoverSound()" onclick="playClickSound()">
+                <h3>Simple Future</h3>
+                <span>Rencana atau prediksi masa depan.</span>
+            </a>
+
+            <a href="future continuous.html" class="tense-link" onmouseenter="playHoverSound()" onclick="playClickSound()">
+                <h3>Future Continuous</h3>
+                <span>Sedang berlangsung di masa depan.</span>
+            </a>
+
+            <a href="future perfect.html" class="tense-link" onmouseenter="playHoverSound()" onclick="playClickSound()">
+                <h3>Future Perfect</h3>
+                <span>Akan selesai pada waktu tertentu nanti.</span>
+            </a>
+
+            <a href="future perfect continuous.html" class="tense-link" onmouseenter="playHoverSound()" onclick="playClickSound()">
+                <h3>Future Perfect Continuous</h3>
+                <span>Durasi kejadian hingga masa depan.</span>
+            </a>
+        </div>
+
+    </div>
+
+    <script>
+        // --- SISTEM AUDIO (Web Audio API) ---
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        const audioCtx = new AudioContext();
+
+        function initializeSite() {
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+
+            const overlay = document.getElementById('start-overlay');
+            overlay.style.opacity = '0';
+            
+            playPowerOnSound();
+
+            setTimeout(() => {
+                overlay.style.display = 'none';
+            }, 800);
+        }
+
+        function playHoverSound() {
+            if (audioCtx.state === 'suspended') return;
+            
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(1200, audioCtx.currentTime + 0.05);
+            
+            gain.gain.setValueAtTime(0.02, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.05);
+            
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.05);
+        }
+
+        function playClickSound() {
+            if (audioCtx.state === 'suspended') return;
+
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(300, audioCtx.currentTime);
+            osc.frequency.linearRampToValueAtTime(500, audioCtx.currentTime + 0.1);
+            
+            gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.2);
+            
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.2);
+        }
+
+        function playPowerOnSound() {
+            const freqs = [196.00, 246.94, 293.66, 392.00]; 
+            
+            freqs.forEach((f, i) => {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                
+                osc.type = 'sine';
+                osc.frequency.value = f;
+                
+                const now = audioCtx.currentTime + (i * 0.1);
+                
+                gain.gain.setValueAtTime(0, now);
+                gain.gain.linearRampToValueAtTime(0.05, now + 0.1); 
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 1.5); 
+                
+                osc.start(now);
+                osc.stop(now + 1.5);
+            });
+        }
+    </script>
+
+</body>
+</html>
