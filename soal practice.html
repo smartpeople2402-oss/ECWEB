@@ -26,7 +26,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            overflow-x: hidden; /* Mencegah scroll horizontal */
+            overflow-x: hidden;
         }
 
         /* Overlay Awal */
@@ -56,13 +56,6 @@
             box-shadow: 0 0 15px rgba(74, 222, 128, 0.3);
         }
 
-        .enter-btn:hover {
-            background: var(--accent);
-            color: var(--bg-dark);
-            box-shadow: 0 0 40px rgba(74, 222, 128, 0.6);
-            transform: scale(1.05);
-        }
-
         /* Header */
         header {
             text-align: center;
@@ -85,11 +78,11 @@
             font-size: 1.1rem;
         }
 
-        /* --- MOBILE TABS (Hanya muncul di HP) --- */
+        /* --- MOBILE TABS (Hidden on Laptop) --- */
         .mobile-tabs {
-            display: none; /* Default hidden di laptop */
-            gap: 10px;
-            margin-bottom: 20px;
+            display: none; 
+            gap: 8px;
+            margin-bottom: 15px;
             z-index: 50;
         }
 
@@ -97,9 +90,9 @@
             background: rgba(20, 46, 32, 0.5);
             border: 1px solid var(--border);
             color: var(--text-muted);
-            padding: 10px 20px;
+            padding: 8px 16px;
             border-radius: 20px;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             cursor: pointer;
             transition: 0.3s;
         }
@@ -108,7 +101,7 @@
             background: var(--accent);
             color: var(--bg-dark);
             font-weight: bold;
-            box-shadow: 0 0 15px var(--accent-dim);
+            box-shadow: 0 0 10px var(--accent-dim);
         }
 
         /* Container Utama */
@@ -120,10 +113,10 @@
             width: 95%;
             max-width: 1400px;
             margin-bottom: 50px;
-            flex-grow: 1; /* Mengisi ruang sisa */
+            flex-grow: 1; 
         }
 
-        /* Kolom Kategori */
+        /* Kolom Kategori (Laptop) */
         .category-column {
             flex: 1;
             min-width: 300px;
@@ -171,7 +164,6 @@
             transform: translateX(10px);
             background: linear-gradient(90deg, rgba(20, 46, 32, 0.9), rgba(74, 222, 128, 0.1));
             border-left: 4px solid var(--accent);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
         }
 
         .tense-link h3 { margin: 0; font-size: 1.2rem; font-weight: 500; }
@@ -192,29 +184,36 @@
            ========================================= */
         @media (max-width: 768px) {
             body {
-                height: 100vh;      /* Kunci tinggi layar */
-                overflow: hidden;   /* Matikan scroll */
-                justify-content: flex-start;
-                padding-top: 20px;
+                height: 100vh;
+                overflow: hidden;
+                padding-top: 15px;
+                padding-bottom: 15px; /* Beri jarak bawah */
+                box-sizing: border-box;
             }
 
-            header { margin: 0 0 15px 0; }
-            h1 { font-size: 2rem; }
-            p.subtitle { display: none; } /* Sembunyikan subtitle agar hemat tempat */
+            header { 
+                margin: 0 0 10px 0; 
+                flex-shrink: 0; /* Header jangan mengecil */
+            }
 
-            /* Tampilkan Tombol Tab */
-            .mobile-tabs { display: flex; }
+            h1 { font-size: 1.8rem; margin-bottom: 2px;}
+            p.subtitle { display: none; } 
+
+            .mobile-tabs { display: flex; flex-shrink: 0; }
 
             .main-container {
                 width: 100%;
                 padding: 0 15px;
-                gap: 0;
                 margin-bottom: 0;
-                align-items: stretch; /* Agar kartu memenuhi lebar */
+                /* KUNCI: Gunakan flex column agar mengisi sisa ruang */
+                flex-direction: column;
+                flex-grow: 1; 
+                height: 100%; /* Pastikan container ambil sisa tinggi */
+                overflow: hidden;
             }
 
             .category-column {
-                display: none; /* Sembunyikan semua kolom dulu */
+                display: none;
                 width: 100%;
                 max-width: none;
                 background: transparent;
@@ -222,32 +221,42 @@
                 padding: 0;
                 animation: none;
                 opacity: 1;
+                height: 100%; /* Ambil tinggi penuh container */
             }
 
-            /* Kolom yang punya class 'active' akan muncul */
             .category-column.active {
                 display: flex;
                 flex-direction: column;
-                gap: 10px;
-                animation: fadeIn 0.3s ease-out;
+                /* Jarak antar kartu lebih rapat */
+                gap: 8px; 
             }
 
-            .category-title { display: none; } /* Judul disembunyikan karena sudah ada di tombol tab */
+            .category-title { display: none; }
 
             .tense-link {
-                margin-bottom: 0;
-                padding: 15px;
-                /* Agar muat 4 biji vertikal, kita mainkan flex */
+                /* KUNCI: flex: 1 akan membagi tinggi rata untuk 4 kartu */
                 flex: 1; 
+                margin-bottom: 0;
+                padding: 0 20px; /* Padding atas bawah 0, horizontal 20px */
                 display: flex;
                 flex-direction: column;
-                justify-content: center;
+                justify-content: center; /* Teks di tengah vertikal */
+                min-height: 0; /* Mencegah overflow flex */
+                border-radius: 10px;
             }
 
-            .tense-link h3 { font-size: 1rem; }
+            .tense-link h3 { 
+                font-size: 0.95rem; /* Font agak kecil agar aman */
+            }
             
-            /* Sembunyikan deskripsi panjang di HP agar muat */
             .tense-link span { display: none; }
+            
+            /* Panah kecil di HP */
+            .tense-link::after {
+                opacity: 0.5;
+                font-size: 0.8rem;
+                right: 15px;
+            }
         }
 
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
@@ -276,22 +285,22 @@
         <div id="past" class="category-column active">
             <div class="category-title">Past Tenses</div>
             
-            <a href="simple past.html" class="tense-link" onmouseenter="playHoverSound()" onclick="playClickSound()">
+            <a href="simple past.html" class="tense-link" onclick="playClickSound()">
                 <h3>Simple Past</h3>
                 <span>Kejadian masa lampau yang selesai.</span>
             </a>
 
-            <a href="past continuous.html" class="tense-link" onmouseenter="playHoverSound()" onclick="playClickSound()">
+            <a href="past continuous.html" class="tense-link" onclick="playClickSound()">
                 <h3>Past Continuous</h3>
                 <span>Kejadian yang sedang berlangsung di masa lalu.</span>
             </a>
 
-            <a href="past perfect.html" class="tense-link" onmouseenter="playHoverSound()" onclick="playClickSound()">
+            <a href="past perfect.html" class="tense-link" onclick="playClickSound()">
                 <h3>Past Perfect</h3>
                 <span>Kejadian sebelum kejadian lain di masa lalu.</span>
             </a>
 
-            <a href="past perfect contimuous.html" class="tense-link" onmouseenter="playHoverSound()" onclick="playClickSound()">
+            <a href="past perfect contimuous.html" class="tense-link" onclick="playClickSound()">
                 <h3>Past Perfect Continuous</h3>
                 <span>Durasi kejadian di masa lampau.</span>
             </a>
@@ -300,22 +309,22 @@
         <div id="present" class="category-column">
             <div class="category-title">Present Tenses</div>
 
-            <a href="simple present tense.html" class="tense-link" onmouseenter="playHoverSound()" onclick="playClickSound()">
+            <a href="simple present tense.html" class="tense-link" onclick="playClickSound()">
                 <h3>Simple Present</h3>
                 <span>Fakta, kebiasaan, dan kebenaran umum.</span>
             </a>
 
-            <a href="simple present continuous.html" class="tense-link" onmouseenter="playHoverSound()" onclick="playClickSound()">
+            <a href="simple present continuous.html" class="tense-link" onclick="playClickSound()">
                 <h3>Present Continuous</h3>
                 <span>Sedang berlangsung saat ini.</span>
             </a>
 
-            <a href="present perfect tense.html" class="tense-link" onmouseenter="playHoverSound()" onclick="playClickSound()">
+            <a href="present perfect tense.html" class="tense-link" onclick="playClickSound()">
                 <h3>Present Perfect</h3>
                 <span>Kejadian masa lalu dengan hasil saat ini.</span>
             </a>
 
-            <a href="present perfect continuous.html" class="tense-link" onmouseenter="playHoverSound()" onclick="playClickSound()">
+            <a href="present perfect continuous.html" class="tense-link" onclick="playClickSound()">
                 <h3>Present Perfect Continuous</h3>
                 <span>Dimulai masa lalu, berlanjut sekarang.</span>
             </a>
@@ -324,22 +333,22 @@
         <div id="future" class="category-column">
             <div class="category-title">Future Tenses</div>
 
-            <a href="simple future.html" class="tense-link" onmouseenter="playHoverSound()" onclick="playClickSound()">
+            <a href="simple future.html" class="tense-link" onclick="playClickSound()">
                 <h3>Simple Future</h3>
                 <span>Rencana atau prediksi masa depan.</span>
             </a>
 
-            <a href="future continuous.html" class="tense-link" onmouseenter="playHoverSound()" onclick="playClickSound()">
+            <a href="future continuous.html" class="tense-link" onclick="playClickSound()">
                 <h3>Future Continuous</h3>
                 <span>Sedang berlangsung di masa depan.</span>
             </a>
 
-            <a href="future perfect.html" class="tense-link" onmouseenter="playHoverSound()" onclick="playClickSound()">
+            <a href="future perfect.html" class="tense-link" onclick="playClickSound()">
                 <h3>Future Perfect</h3>
                 <span>Akan selesai pada waktu tertentu nanti.</span>
             </a>
 
-            <a href="future perfect continuous.html" class="tense-link" onmouseenter="playHoverSound()" onclick="playClickSound()">
+            <a href="future perfect continuous.html" class="tense-link" onclick="playClickSound()">
                 <h3>Future Perfect Continuous</h3>
                 <span>Durasi kejadian hingga masa depan.</span>
             </a>
@@ -348,118 +357,64 @@
     </div>
 
     <script>
-        // --- LOGIKA TAB UNTUK HP ---
         function switchTab(tabName) {
-            // Mainkan suara klik saat ganti tab
             playClickSound();
-
-            // 1. Matikan semua tombol
             const buttons = document.querySelectorAll('.tab-btn');
             buttons.forEach(btn => btn.classList.remove('active'));
-
-            // 2. Nyalakan tombol yang diklik (cari berdasarkan teks onclick)
-            // Cara sederhana: loop dan cek atribut onclick
             buttons.forEach(btn => {
                 if(btn.getAttribute('onclick').includes(tabName)) {
                     btn.classList.add('active');
                 }
             });
 
-            // 3. Sembunyikan semua kolom
             const columns = document.querySelectorAll('.category-column');
             columns.forEach(col => col.classList.remove('active'));
-
-            // 4. Munculkan kolom target
             document.getElementById(tabName).classList.add('active');
         }
 
-        // --- SISTEM AUDIO (Web Audio API) ---
         const AudioContext = window.AudioContext || window.webkitAudioContext;
         const audioCtx = new AudioContext();
 
         function initializeSite() {
-            if (audioCtx.state === 'suspended') {
-                audioCtx.resume();
-            }
-
+            if (audioCtx.state === 'suspended') audioCtx.resume();
             const overlay = document.getElementById('start-overlay');
             overlay.style.opacity = '0';
-            
             playPowerOnSound();
-
-            setTimeout(() => {
-                overlay.style.display = 'none';
-            }, 800);
-        }
-
-        function playHoverSound() {
-            // Cek jika ini HP (touch device), jangan mainkan hover
-            // Agar tidak berisik saat scroll/tap
-            if (window.matchMedia("(max-width: 768px)").matches) return;
-
-            if (audioCtx.state === 'suspended') return;
-            
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            
-            osc.connect(gain);
-            gain.connect(audioCtx.destination);
-            
-            osc.type = 'sine';
-            osc.frequency.setValueAtTime(800, audioCtx.currentTime);
-            osc.frequency.exponentialRampToValueAtTime(1200, audioCtx.currentTime + 0.05);
-            
-            gain.gain.setValueAtTime(0.02, audioCtx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.05);
-            
-            osc.start();
-            osc.stop(audioCtx.currentTime + 0.05);
+            setTimeout(() => { overlay.style.display = 'none'; }, 800);
         }
 
         function playClickSound() {
             if (audioCtx.state === 'suspended') audioCtx.resume();
-
             const osc = audioCtx.createOscillator();
             const gain = audioCtx.createGain();
-            
             osc.connect(gain);
             gain.connect(audioCtx.destination);
-            
             osc.type = 'triangle';
             osc.frequency.setValueAtTime(300, audioCtx.currentTime);
             osc.frequency.linearRampToValueAtTime(500, audioCtx.currentTime + 0.1);
-            
             gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
             gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.2);
-            
             osc.start();
             osc.stop(audioCtx.currentTime + 0.2);
         }
 
         function playPowerOnSound() {
             const freqs = [196.00, 246.94, 293.66, 392.00]; 
-            
             freqs.forEach((f, i) => {
                 const osc = audioCtx.createOscillator();
                 const gain = audioCtx.createGain();
-                
                 osc.connect(gain);
                 gain.connect(audioCtx.destination);
-                
                 osc.type = 'sine';
                 osc.frequency.value = f;
-                
                 const now = audioCtx.currentTime + (i * 0.1);
-                
                 gain.gain.setValueAtTime(0, now);
                 gain.gain.linearRampToValueAtTime(0.05, now + 0.1); 
                 gain.gain.exponentialRampToValueAtTime(0.001, now + 1.5); 
-                
                 osc.start(now);
                 osc.stop(now + 1.5);
             });
         }
     </script>
-
 </body>
 </html>
