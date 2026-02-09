@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>English Mastery Hub</title>
+    <style>
+        :root {
+            --bg-deep: #020804;
+            --bg-gradient: radial-gradient(circle at 50% 10%, #0f3521 0%, #020804 80%);
+            --glass-bg: rgba(20, 50, 35, 0.4);
+            --glass-border: rgba(74, 222, 128, 0.2);
+            --accent: #4ade80;
+            --accent-glow: rgba(74, 222, 128, 0.6);
+            --text-main: #f0fdf4;
+            --text-muted: #86efac;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-deep);
+            background-image: var(--bg-gradient);
+            color: var(--text-main);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* --- Main Content --- */
+        .hub-container {
+            text-align: center;
+            z-index: 10;
+            animation: fadeIn 1s ease-out;
+            width: 100%;
+            max-width: 1200px; /* Increased slightly to fit 3 cards comfortably */
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .hub-title {
+            font-size: 3.5rem;
+            font-weight: 200;
+            letter-spacing: 5px;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            background: linear-gradient(to bottom, #fff, var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 20px rgba(74, 222, 128, 0.3);
+        }
+
+        .hub-subtitle {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            margin-bottom: 60px;
+            letter-spacing: 1px;
+        }
+
+        .cards-wrapper {
+            display: flex;
+            gap: 30px;
+            justify-content: center;
+            flex-wrap: wrap;
+            padding: 0 20px;
+        }
+
+        /* --- The Cards --- */
+        .choice-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            width: 280px; /* Slightly adjusted width to fit 3 side-by-side */
+            padding: 40px 25px;
+            border-radius: 20px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Hover Effects */
+        .choice-card:hover {
+            transform: translateY(-15px);
+            border-color: var(--accent);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.4), 0 0 20px var(--glass-border);
+            background: rgba(20, 50, 35, 0.6);
+        }
+
+        .choice-card h2 {
+            color: var(--text-main);
+            font-size: 1.6rem;
+            margin: 20px 0 10px 0;
+            font-weight: 500;
+        }
+
+        .choice-card p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            line-height: 1.5;
+            margin: 0;
+        }
+
+        /* SVG Icons */
+        .card-icon {
+            width: 80px;
+            height: 80px;
+            fill: var(--accent);
+            transition: transform 0.5s ease;
+            filter: drop-shadow(0 0 10px rgba(74,222,128,0.4));
+        }
+
+        .choice-card:hover .card-icon {
+            transform: scale(1.1) rotate(5deg);
+            filter: drop-shadow(0 0 20px var(--accent-glow));
+        }
+
+        /* Shine Effect on Hover */
+        .choice-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            transition: 0.5s;
+        }
+        .choice-card:hover::before {
+            left: 100%;
+        }
+
+        /* Background Animation */
+        .particles {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 0;
+            pointer-events: none;
+            background-image: 
+                radial-gradient(var(--glass-border) 1px, transparent 1px),
+                radial-gradient(var(--glass-border) 1px, transparent 1px);
+            background-size: 40px 40px;
+            background-position: 0 0, 20px 20px;
+            opacity: 0.2;
+            animation: moveBackground 60s linear infinite;
+        }
+
+        @keyframes moveBackground {
+            from { transform: translateY(0); }
+            to { transform: translateY(-100px); }
+        }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .cards-wrapper { flex-direction: column; align-items: center; }
+            .hub-title { font-size: 2.5rem; }
+            .choice-card { width: 300px; }
+            body { height: auto; padding: 50px 0; overflow-y: auto; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="particles"></div>
+
+    <div class="hub-container">
+        <h1 class="hub-title">PRACTICE</h1>
+        <p class="hub-subtitle">Select your training module to begin.</p>
+
+        <div class="cards-wrapper">
+            
+            <a href="soal all tenses.html" class="choice-card" onmouseenter="initAudio(); playHover()" onclick="delayNav(event, 'soal all tenses.html')">
+                <svg class="card-icon" viewBox="0 0 24 24">
+                    <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
+                </svg>
+                <h2>TENSES CHECK</h2>
+                <p>Learn Past, Present, and Future tenses. Understand time structures and grammar rules.</p>
+            </a>
+
+            <a href="soal toefl.html" class="choice-card" onmouseenter="initAudio(); playHover()" onclick="delayNav(event, 'soal toefl.html')">
+                <svg class="card-icon" viewBox="0 0 24 24">
+                    <path d="M5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82zM12 3L1 9l11 6 9-4.91V17h2V9L12 3z"/>
+                </svg>
+                <h2>TOEFL CHECK</h2>
+                <p>Challenge yourself with Structure and Written Expression questions. Beginner to Expert.</p>
+            </a>
+
+            <a href="if conditional.html" class="choice-card" onmouseenter="initAudio(); playHover()" onclick="delayNav(event, 'if conditional.html')">
+                <svg class="card-icon" viewBox="0 0 24 24">
+                    <path d="M10.59 9.17L5.41 4 4 5.41l5.17 5.17 1.42-1.41zM14.5 4l2.04 2.04L4 18.59 5.41 20 17.96 7.46 20 9.5V4h-5.5zm.33 9.41l-1.41 1.41 3.13 3.13L14.5 20H20v-5.5l-2.04 2.04-3.13-3.13z"/>
+                </svg>
+                <h2>CONDITIONALS</h2>
+                <p>Master Zero, 1st, 2nd, and 3rd conditionals. Navigate hypothetical situations.</p>
+            </a>
+
+        </div>
+    </div>
+
+    <script>
+        // --- AUDIO SYSTEM ---
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        let audioCtx;
+
+        // Initialize Audio Context Lazily (on first hover/click)
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new AudioContext();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+        }
+
+        // 1. Futuristic Hover Sound (High pitch blip)
+        function playHover() {
+            if (!audioCtx) return;
+            
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(600, audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(800, audioCtx.currentTime + 0.1);
+            
+            gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+            gain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.1);
+            
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.1);
+        }
+
+        // 2. Navigation Click Sound & Delay
+        function delayNav(e, url) {
+            e.preventDefault(); // Stop immediate navigation
+            initAudio(); // Ensure audio is ready
+            
+            if (audioCtx) {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                
+                // Low Confirm Sound
+                osc.type = 'square';
+                osc.frequency.setValueAtTime(200, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(50, audioCtx.currentTime + 0.3);
+                
+                gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.3);
+                
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.3);
+            }
+
+            // Wait 400ms for sound/animation then go
+            setTimeout(() => {
+                window.location.href = url;
+            }, 400);
+        }
+    </script>
+</body>
+</html>
