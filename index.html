@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>English Check</title>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --emerald-deep: #051a14;
+            --emerald-dark: #0a2f23;
+            --emerald-primary: #14523d;
+            --gold-accent: #c5a059;
+            --gold-glow: #e6c888;
+            --text-main: #fdfcf8;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Lato', sans-serif;
+            background-color: var(--emerald-deep);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        .bg-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at center, #14523d 0%, #051a14 100%);
+            z-index: -1;
+        }
+
+        header {
+            text-align: center;
+            padding: 3rem 1rem 1rem;
+            z-index: 10;
+        }
+
+        .logo-badge {
+            border: 1px solid var(--gold-accent);
+            padding: 5px 15px;
+            font-size: 0.8rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--gold-accent);
+            margin-bottom: 1rem;
+            display: inline-block;
+        }
+
+        h1 {
+            font-family: 'Playfair Display', serif;
+            /* Menggunakan clamp agar font membesar/mengecil otomatis antara 2rem sampai 3rem */
+            font-size: clamp(2rem, 5vw, 3rem); 
+            background: linear-gradient(to bottom, #fff, var(--gold-accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+            line-height: 1.2;
+        }
+
+        .hub-container {
+            display: grid;
+            /* Grid otomatis: Mengisi ruang yang ada. Jika sempit (HP) jadi 1 kolom, jika lebar (Laptop) jadi banyak kolom */
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            padding: 2rem;
+            max-width: 1200px; /* Sedikit dikecilkan agar lebih fokus di layar lebar */
+            margin: 0 auto;
+            width: 100%;
+            z-index: 1;
+        }
+
+        .choice-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(197, 160, 89, 0.2);
+            border-radius: 20px;
+            padding: 2rem 1.5rem; /* Padding internal agar isi tidak mepet */
+            min-height: 320px; /* Gunakan min-height agar fleksibel */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-decoration: none;
+            color: var(--text-main);
+            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+            backdrop-filter: blur(10px);
+            text-align: center;
+            cursor: pointer;
+            position: relative;
+        }
+
+        /* Hover Effect (Khusus Laptop/Mouse) */
+        @media (hover: hover) {
+            .choice-card:hover {
+                transform: translateY(-10px);
+                border-color: var(--gold-accent);
+                background: rgba(20, 82, 61, 0.4);
+                box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            }
+            .choice-card:hover .icon-circle {
+                background: var(--gold-accent);
+                transform: rotateY(360deg);
+                color: var(--emerald-deep); /* Icon berubah warna agar kontras */
+            }
+            .choice-card:hover .btn-action {
+                background: var(--gold-accent);
+                color: var(--emerald-deep);
+            }
+        }
+
+        /* Active Effect (Khusus HP/Touch saat ditekan) */
+        .choice-card:active {
+            transform: scale(0.98);
+            border-color: var(--gold-accent);
+            background: rgba(20, 82, 61, 0.6);
+        }
+
+        .icon-circle {
+            width: 70px; /* Sedikit dikecilkan agar proporsional di HP */
+            height: 70px;
+            border-radius: 50%;
+            background: var(--emerald-dark);
+            border: 1px solid var(--gold-accent);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2rem;
+            margin-bottom: 1.2rem;
+            transition: 0.5s;
+        }
+
+        .choice-card h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            margin-bottom: 0.8rem;
+            line-height: 1.3;
+        }
+
+        .choice-card p {
+            font-weight: 300;
+            color: #ccc;
+            line-height: 1.5;
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem; /* Memberi jarak ke tombol */
+            flex-grow: 1; /* Agar tombol selalu sejajar di bawah */
+        }
+
+        .btn-action {
+            margin-top: auto; /* Mendorong tombol ke bawah kartu */
+            padding: 10px 30px; /* Tombol lebih besar untuk jari */
+            border: 1px solid var(--gold-accent);
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            transition: 0.3s;
+        }
+
+        /* --- MODAL STYLES (Popup) --- */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(5, 26, 20, 0.95);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            padding: 20px; /* Padding agar modal tidak mepet layar HP */
+        }
+
+        .modal-overlay.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .modal-content {
+            background: rgba(20, 82, 61, 0.9);
+            padding: 2rem;
+            border-radius: 25px;
+            border: 2px solid var(--gold-accent);
+            text-align: center;
+            position: relative;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 0 50px rgba(197, 160, 89, 0.2);
+            width: 100%;
+            max-width: 400px; /* Batas lebar modal */
+            transform: scale(0.9);
+            transition: transform 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        .modal-overlay.active .modal-content {
+            transform: scale(1);
+        }
+
+        .modal-content h2 {
+            font-family: 'Playfair Display', serif;
+            color: var(--gold-accent);
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+
+        .qr-image {
+            width: 100%;
+            max-width: 250px; /* Responsif image */
+            height: auto;
+            aspect-ratio: 1/1;
+            object-fit: cover;
+            border-radius: 15px;
+            border: 3px solid var(--gold-accent);
+            margin: 1rem auto;
+            display: block;
+            background: #fff;
+        }
+
+        .close-modal-btn {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 2rem;
+            color: var(--gold-accent);
+            cursor: pointer;
+            line-height: 1;
+            padding: 10px; /* Memperluas area tekan untuk jari */
+        }
+
+        /* --- MOBILE SPECIFIC TWEAKS --- */
+        @media (max-width: 600px) {
+            header {
+                padding: 2rem 1rem 0.5rem;
+            }
+            
+            .logo-badge {
+                font-size: 0.65rem;
+                padding: 4px 10px;
+            }
+
+            .hub-container {
+                gap: 15px; /* Jarak antar kartu lebih rapat di HP */
+                padding: 1rem;
+            }
+
+            .choice-card {
+                min-height: auto; /* Tinggi kartu menyesuaikan isi */
+                padding: 1.5rem;
+            }
+            
+            /* Memastikan text tidak terlalu lebar di HP */
+            .choice-card p {
+                padding: 0; 
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <audio id="hoverSound" src="https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3" preload="auto"></audio>
+    <audio id="clickSound" src="https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3" preload="auto"></audio>
+
+    <div class="bg-overlay"></div>
+
+    <header>
+        <div class="logo-badge">COLLABORATING FOR CHANGE</div>
+        <h1>English Check</h1>
+        <p style="opacity: 0.7;">Select your path to mastery</p>
+    </header>
+
+    <div class="hub-container">
+        <a href="Modul Check.html" class="choice-card" onmouseenter="playHover()" onclick="playClick(event)">
+            <div class="icon-circle">📜</div>
+            <h2>Modul Check</h2>
+            <p>Master language structure through Tenses, Phrases, and Clauses.</p>
+            <div class="btn-action">Enter Academy</div>
+        </a>
+
+        <a href="structure.html" class="choice-card" onmouseenter="playHover()" onclick="playClick(event)">
+            <div class="icon-circle">⚖️</div>
+            <h2>Practice Check</h2>
+            <p>Practice with detailed explanations.</p>
+            <div class="btn-action">Start Practice</div>
+        </a>
+
+        <a href="all.html" class="choice-card" onmouseenter="playHover()" onclick="playClick(event)">
+            <div class="icon-circle">⚔️</div>
+            <h2>Multiplayer Game</h2>
+            <p>Conquer three levels of vocabulary from Beginner to Master.</p>
+            <div class="btn-action">Enter Arena</div>
+        </a>
+
+        <a href="Vocab Check.html" class="choice-card" onmouseenter="playHover()" onclick="playClick(event)">
+            <div class="icon-circle">💎</div>
+            <h2>Vocab Games</h2>
+            <p>Identify your current lexicon level and unlock new challenges.</p>
+            <div class="btn-action">Identify Level</div>
+        </a>
+
+        <a href="Absensi.html" class="choice-card" onmouseenter="playHover()" onclick="playClick(event)">
+            <div class="icon-circle">✍️</div>
+            <h2>Attendance</h2>
+            <p>Record your lesson progress and submit session proof.</p>
+            <div class="btn-action">Submit Portal</div>
+        </a>
+
+        <a href="#" class="choice-card" onmouseenter="playHover()" onclick="openDonationModal(event)">
+            <div class="icon-circle">💝</div>
+            <h2>Donation</h2>
+            <p>Support our mission voluntarily by scanning the QR code.</p>
+            <div class="btn-action">Scan Code</div>
+        </a>
+    </div>
+
+    <div id="donationModal" class="modal-overlay" onclick="closeDonationModal()">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <span class="close-modal-btn" onclick="closeDonationModal()">&times;</span>
+            <h2>Voluntary Contribution</h2>
+            <p>Scan the QR code below to support us voluntarily.</p>
+            
+            <img src="qris.jpeg" alt="QR Code Donasi" class="qr-image">
+            
+            <p style="font-size: 0.9rem; opacity: 0.8; margin-top: 10px;">Thank you for your generous support!</p>
+        </div>
+    </div>
+
+    <script>
+        const hoverSfx = document.getElementById('hoverSound');
+        const clickSfx = document.getElementById('clickSound');
+
+        // Volume control
+        hoverSfx.volume = 0.15;
+        clickSfx.volume = 0.4;
+
+        function playHover() {
+            // Hanya mainkan suara hover jika di perangkat non-touch (Laptop)
+            // Ini mencegah suara berisik saat scrolling di HP
+            if (window.matchMedia("(hover: hover)").matches) {
+                hoverSfx.currentTime = 0;
+                hoverSfx.play().catch(e => {});
+            }
+        }
+
+        function playClick(event) {
+            // Jika ada href '#' (untuk modal), jangan pindah halaman
+            const targetUrl = event.currentTarget.getAttribute('href');
+            if(targetUrl && targetUrl !== '#') {
+                event.preventDefault();
+            }
+
+            clickSfx.currentTime = 0;
+            clickSfx.play();
+            
+            if(targetUrl && targetUrl !== '#') {
+                setTimeout(() => {
+                    window.location.href = targetUrl;
+                }, 150);
+            }
+        }
+
+        // === Modal Functions ===
+        function openDonationModal(event) {
+            event.preventDefault(); // Mencegah link lompat ke atas
+            clickSfx.currentTime = 0;
+            clickSfx.play();
+            
+            setTimeout(() => {
+                 document.getElementById('donationModal').classList.add('active');
+            }, 150);
+        }
+
+        function closeDonationModal() {
+            document.getElementById('donationModal').classList.remove('active');
+        }
+    </script>
+</body>
+</html>
