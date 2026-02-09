@@ -2,13 +2,13 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>TENSES</title>
     <style>
         :root {
             --bg-dark: #05140c;
             --bg-card: rgba(20, 46, 32, 0.7);
-            --accent: #4ade80; /* Hijau Terang Elegan */
+            --accent: #4ade80; 
             --accent-dim: #15803d;
             --text-main: #ecfdf5;
             --text-muted: #86efac;
@@ -26,10 +26,10 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            overflow-x: hidden;
+            overflow-x: hidden; /* Mencegah scroll horizontal */
         }
 
-        /* Overlay untuk Mengaktifkan Suara */
+        /* Overlay Awal */
         #start-overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -68,6 +68,7 @@
             text-align: center;
             margin: 40px 0;
             animation: fadeInDown 1s ease-out;
+            flex-shrink: 0;
         }
 
         h1 {
@@ -84,6 +85,32 @@
             font-size: 1.1rem;
         }
 
+        /* --- MOBILE TABS (Hanya muncul di HP) --- */
+        .mobile-tabs {
+            display: none; /* Default hidden di laptop */
+            gap: 10px;
+            margin-bottom: 20px;
+            z-index: 50;
+        }
+
+        .tab-btn {
+            background: rgba(20, 46, 32, 0.5);
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .tab-btn.active {
+            background: var(--accent);
+            color: var(--bg-dark);
+            font-weight: bold;
+            box-shadow: 0 0 15px var(--accent-dim);
+        }
+
         /* Container Utama */
         .main-container {
             display: flex;
@@ -93,6 +120,7 @@
             width: 95%;
             max-width: 1400px;
             margin-bottom: 50px;
+            flex-grow: 1; /* Mengisi ruang sisa */
         }
 
         /* Kolom Kategori */
@@ -109,10 +137,9 @@
             opacity: 0;
         }
 
-        /* Delay animasi per kolom */
-        .category-column:nth-child(1) { animation-delay: 0.2s; } /* Past */
-        .category-column:nth-child(2) { animation-delay: 0.4s; } /* Present */
-        .category-column:nth-child(3) { animation-delay: 0.6s; } /* Future */
+        .category-column:nth-child(1) { animation-delay: 0.2s; }
+        .category-column:nth-child(2) { animation-delay: 0.4s; }
+        .category-column:nth-child(3) { animation-delay: 0.6s; }
 
         .category-title {
             text-align: center;
@@ -125,7 +152,7 @@
             letter-spacing: 2px;
         }
 
-        /* Kartu/Link File */
+        /* Kartu Link */
         .tense-link {
             display: block;
             background: var(--bg-card);
@@ -147,57 +174,83 @@
             box-shadow: 0 5px 15px rgba(0,0,0,0.3);
         }
 
-        .tense-link h3 {
-            margin: 0;
-            font-size: 1.2rem;
-            font-weight: 500;
-        }
+        .tense-link h3 { margin: 0; font-size: 1.2rem; font-weight: 500; }
+        .tense-link span { font-size: 0.85rem; color: var(--text-muted); display: block; margin-top: 5px; font-style: italic; }
 
-        .tense-link span {
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            display: block;
-            margin-top: 5px;
-            font-style: italic;
-        }
-
-        /* Indikator Animasi */
         .tense-link::after {
             content: '➜';
-            position: absolute;
-            right: 20px;
-            top: 50%;
-            transform: translateY(-50%);
-            opacity: 0;
-            transition: 0.3s;
-            color: var(--accent);
+            position: absolute; right: 20px; top: 50%;
+            transform: translateY(-50%); opacity: 0; transition: 0.3s; color: var(--accent);
         }
+        .tense-link:hover::after { opacity: 1; right: 15px; }
 
-        .tense-link:hover::after {
-            opacity: 1;
-            right: 15px;
-        }
+        @keyframes fadeInDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Animasi Keyframes */
-        @keyframes fadeInDown {
-            from { opacity: 0; transform: translateY(-20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* Responsif */
+        /* =========================================
+           KHUSUS TAMPILAN HP (MOBILE OPTIMIZED)
+           ========================================= */
         @media (max-width: 768px) {
+            body {
+                height: 100vh;      /* Kunci tinggi layar */
+                overflow: hidden;   /* Matikan scroll */
+                justify-content: flex-start;
+                padding-top: 20px;
+            }
+
+            header { margin: 0 0 15px 0; }
+            h1 { font-size: 2rem; }
+            p.subtitle { display: none; } /* Sembunyikan subtitle agar hemat tempat */
+
+            /* Tampilkan Tombol Tab */
+            .mobile-tabs { display: flex; }
+
             .main-container {
-                flex-direction: column;
-                align-items: center;
-            }
-            .category-column {
                 width: 100%;
+                padding: 0 15px;
+                gap: 0;
+                margin-bottom: 0;
+                align-items: stretch; /* Agar kartu memenuhi lebar */
             }
+
+            .category-column {
+                display: none; /* Sembunyikan semua kolom dulu */
+                width: 100%;
+                max-width: none;
+                background: transparent;
+                border: none;
+                padding: 0;
+                animation: none;
+                opacity: 1;
+            }
+
+            /* Kolom yang punya class 'active' akan muncul */
+            .category-column.active {
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+                animation: fadeIn 0.3s ease-out;
+            }
+
+            .category-title { display: none; } /* Judul disembunyikan karena sudah ada di tombol tab */
+
+            .tense-link {
+                margin-bottom: 0;
+                padding: 15px;
+                /* Agar muat 4 biji vertikal, kita mainkan flex */
+                flex: 1; 
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+            }
+
+            .tense-link h3 { font-size: 1rem; }
+            
+            /* Sembunyikan deskripsi panjang di HP agar muat */
+            .tense-link span { display: none; }
         }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
 <body>
@@ -212,9 +265,15 @@
         <p class="subtitle">Pilih tenses yang ingin Anda Kerjakan</p>
     </header>
 
+    <div class="mobile-tabs">
+        <button class="tab-btn active" onclick="switchTab('past')">PAST</button>
+        <button class="tab-btn" onclick="switchTab('present')">PRESENT</button>
+        <button class="tab-btn" onclick="switchTab('future')">FUTURE</button>
+    </div>
+
     <div class="main-container">
 
-        <div class="category-column">
+        <div id="past" class="category-column active">
             <div class="category-title">Past Tenses</div>
             
             <a href="simple past.html" class="tense-link" onmouseenter="playHoverSound()" onclick="playClickSound()">
@@ -238,7 +297,7 @@
             </a>
         </div>
 
-        <div class="category-column">
+        <div id="present" class="category-column">
             <div class="category-title">Present Tenses</div>
 
             <a href="simple present tense.html" class="tense-link" onmouseenter="playHoverSound()" onclick="playClickSound()">
@@ -248,7 +307,7 @@
 
             <a href="simple present continuous.html" class="tense-link" onmouseenter="playHoverSound()" onclick="playClickSound()">
                 <h3>Present Continuous</h3>
-                <span>Sedang berlangsung saat ini (Sekarang).</span>
+                <span>Sedang berlangsung saat ini.</span>
             </a>
 
             <a href="present perfect tense.html" class="tense-link" onmouseenter="playHoverSound()" onclick="playClickSound()">
@@ -262,7 +321,7 @@
             </a>
         </div>
 
-        <div class="category-column">
+        <div id="future" class="category-column">
             <div class="category-title">Future Tenses</div>
 
             <a href="simple future.html" class="tense-link" onmouseenter="playHoverSound()" onclick="playClickSound()">
@@ -289,6 +348,31 @@
     </div>
 
     <script>
+        // --- LOGIKA TAB UNTUK HP ---
+        function switchTab(tabName) {
+            // Mainkan suara klik saat ganti tab
+            playClickSound();
+
+            // 1. Matikan semua tombol
+            const buttons = document.querySelectorAll('.tab-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+
+            // 2. Nyalakan tombol yang diklik (cari berdasarkan teks onclick)
+            // Cara sederhana: loop dan cek atribut onclick
+            buttons.forEach(btn => {
+                if(btn.getAttribute('onclick').includes(tabName)) {
+                    btn.classList.add('active');
+                }
+            });
+
+            // 3. Sembunyikan semua kolom
+            const columns = document.querySelectorAll('.category-column');
+            columns.forEach(col => col.classList.remove('active'));
+
+            // 4. Munculkan kolom target
+            document.getElementById(tabName).classList.add('active');
+        }
+
         // --- SISTEM AUDIO (Web Audio API) ---
         const AudioContext = window.AudioContext || window.webkitAudioContext;
         const audioCtx = new AudioContext();
@@ -309,6 +393,10 @@
         }
 
         function playHoverSound() {
+            // Cek jika ini HP (touch device), jangan mainkan hover
+            // Agar tidak berisik saat scroll/tap
+            if (window.matchMedia("(max-width: 768px)").matches) return;
+
             if (audioCtx.state === 'suspended') return;
             
             const osc = audioCtx.createOscillator();
@@ -329,7 +417,7 @@
         }
 
         function playClickSound() {
-            if (audioCtx.state === 'suspended') return;
+            if (audioCtx.state === 'suspended') audioCtx.resume();
 
             const osc = audioCtx.createOscillator();
             const gain = audioCtx.createGain();
