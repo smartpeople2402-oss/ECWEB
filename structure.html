@@ -23,12 +23,12 @@
             background-color: var(--bg-deep);
             background-image: var(--bg-gradient);
             color: var(--text-main);
-            min-height: 100vh; /* Gunakan min-height agar fleksibel */
+            min-height: 100vh; /* Pastikan tinggi minimal 100% layar */
+            overflow-x: hidden;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            overflow-x: hidden; /* Mencegah scroll samping */
         }
 
         /* --- Main Content --- */
@@ -38,8 +38,12 @@
             animation: fadeIn 1s ease-out;
             width: 100%;
             max-width: 1200px;
-            padding: 20px; /* Padding agar tidak mepet pinggir di HP */
+            padding: 20px;
             box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            height: 100%; /* Agar container mengisi body */
         }
 
         @keyframes fadeIn {
@@ -48,8 +52,7 @@
         }
 
         .hub-title {
-            /* Font size responsif: minimal 2.5rem, maksimal 3.5rem */
-            font-size: clamp(2.5rem, 5vw, 3.5rem); 
+            font-size: clamp(2rem, 5vw, 3.5rem); /* Responsive Font */
             font-weight: 200;
             letter-spacing: 5px;
             margin-bottom: 10px;
@@ -58,22 +61,21 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             text-shadow: 0 0 20px rgba(74, 222, 128, 0.3);
-            line-height: 1.2;
         }
 
         .hub-subtitle {
             color: var(--text-muted);
             font-size: 1.1rem;
-            margin-bottom: 50px;
+            margin-bottom: 40px;
             letter-spacing: 1px;
-            padding: 0 10px;
         }
 
+        /* --- WRAPPER (Grid/Flex Switcher) --- */
         .cards-wrapper {
             display: flex;
             gap: 30px;
             justify-content: center;
-            flex-wrap: wrap; /* Agar kartu turun ke bawah jika layar sempit */
+            flex-wrap: wrap;
             width: 100%;
         }
 
@@ -83,9 +85,7 @@
             border: 1px solid var(--glass-border);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
-            /* Lebar fleksibel: basis 280px, tapi bisa mengecil/membesar */
-            flex: 1 1 280px; 
-            max-width: 350px; /* Batas lebar maksimal per kartu */
+            width: 280px; 
             padding: 40px 25px;
             border-radius: 20px;
             cursor: pointer;
@@ -96,10 +96,9 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            margin-bottom: 10px; /* Jarak aman tambahan untuk mobile */
         }
 
-        /* Hover Effects (Only on Desktop) */
+        /* Hover Effects (Desktop Only) */
         @media (hover: hover) {
             .choice-card:hover {
                 transform: translateY(-15px);
@@ -111,30 +110,21 @@
                 transform: scale(1.1) rotate(5deg);
                 filter: drop-shadow(0 0 20px var(--accent-glow));
             }
-            /* Shine Effect */
-            .choice-card::before {
-                content: '';
-                position: absolute;
-                top: 0; left: -100%;
-                width: 100%; height: 100%;
-                background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
-                transition: 0.5s;
-            }
             .choice-card:hover::before {
                 left: 100%;
             }
         }
 
-        /* Active Effect (Touch) */
+        /* Active/Touch Effect */
         .choice-card:active {
-            transform: scale(0.98);
+            transform: scale(0.95);
             background: rgba(20, 50, 35, 0.8);
             border-color: var(--accent);
         }
 
         .choice-card h2 {
             color: var(--text-main);
-            font-size: 1.5rem;
+            font-size: 1.6rem;
             margin: 20px 0 10px 0;
             font-weight: 500;
         }
@@ -148,16 +138,26 @@
 
         /* SVG Icons */
         .card-icon {
-            width: 70px; /* Sedikit dikecilkan agar pas di semua layar */
-            height: 70px;
+            width: 80px;
+            height: 80px;
             fill: var(--accent);
             transition: transform 0.5s ease;
             filter: drop-shadow(0 0 10px rgba(74,222,128,0.4));
         }
 
+        /* Shine Effect */
+        .choice-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            transition: 0.5s;
+        }
+
         /* Background Animation */
         .particles {
-            position: absolute;
+            position: fixed; /* Fixed agar background tidak ikut scroll layout */
             top: 0; left: 0; width: 100%; height: 100%;
             z-index: 0;
             pointer-events: none;
@@ -175,36 +175,65 @@
             to { transform: translateY(-100px); }
         }
 
-        /* --- MOBILE SPECIFIC (HP) --- */
-        @media (max-width: 768px) {
+        /* =========================================
+           KHUSUS TAMPILAN HP (MOBILE OPTIMIZED)
+           ========================================= */
+        @media (max-width: 600px) {
             body {
-                height: auto;
-                padding: 40px 0; /* Beri ruang atas bawah agar bisa discroll */
-                overflow-y: auto; /* Aktifkan scroll vertikal */
-                justify-content: flex-start; /* Mulai konten dari atas */
+                height: 100vh;      /* Kunci tinggi layar */
+                overflow: hidden;   /* Hilangkan scroll bar */
             }
 
             .hub-container {
-                padding: 0 20px;
-                margin-top: 20px;
+                padding: 1rem;
+                justify-content: flex-start; /* Mulai dari atas agar header tidak kepotong */
+                padding-top: 10vh; /* Turunkan sedikit dari atas */
             }
-            
+
+            .hub-title {
+                font-size: 2rem;
+                margin-bottom: 5px;
+            }
+
             .hub-subtitle {
-                margin-bottom: 30px; /* Kurangi jarak di HP */
+                font-size: 0.9rem;
+                margin-bottom: 1.5rem; /* Kurangi jarak ke kartu */
             }
 
             .cards-wrapper {
-                flex-direction: column; /* Susun ke bawah */
-                align-items: center;
-                gap: 20px; /* Jarak antar kartu */
+                display: grid;
+                /* Grid 2 Kolom */
+                grid-template-columns: 1fr 1fr; 
+                gap: 15px;
+                width: 100%;
             }
 
             .choice-card {
-                width: 100%; /* Lebar penuh */
-                max-width: 100%; 
-                padding: 30px 20px; /* Kurangi padding dalam */
-                flex: none; /* Matikan flex grow/shrink */
-                min-height: auto; /* Tinggi menyesuaikan isi */
+                width: 100%; /* Reset lebar fix */
+                height: auto;
+                padding: 1.5rem 0.5rem;
+                min-height: 130px; /* Tinggi kartu yang pas */
+            }
+
+            /* --- TRIK AGAR 3 KARTU TERLIHAT RAPI --- */
+            /* Kartu ke-3 (TOEFL) dibuat lebar penuh di bawah */
+            .choice-card:last-child {
+                grid-column: span 2; 
+            }
+
+            /* Elemen yang dikecilkan/disembunyikan */
+            .card-icon {
+                width: 50px;
+                height: 50px;
+            }
+
+            .choice-card h2 {
+                font-size: 1.1rem;
+                margin: 10px 0 0 0;
+            }
+
+            .choice-card p {
+                display: none; /* Sembunyikan deskripsi di HP */
             }
         }
     </style>
@@ -215,11 +244,11 @@
 
     <div class="hub-container">
         <h1 class="hub-title">PRACTICE</h1>
-        <p class="hub-subtitle">Select your training module to begin.</p>
+        <p class="hub-subtitle">Select your training module.</p>
 
         <div class="cards-wrapper">
             
-            <a href="soal all tenses.html" class="choice-card" onclick="delayNav(event, 'soal all tenses.html')">
+            <a href="soal all tenses.html" class="choice-card" onmouseenter="initAudio(); playHover()" onclick="delayNav(event, 'soal all tenses.html')">
                 <svg class="card-icon" viewBox="0 0 24 24">
                     <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
                 </svg>
@@ -227,7 +256,7 @@
                 <p>Learn Past, Present, and Future tenses. Understand time structures and grammar rules.</p>
             </a>
 
-            <a href="if conditional.html" class="choice-card" onclick="delayNav(event, 'if conditional.html')">
+            <a href="if conditional.html" class="choice-card" onmouseenter="initAudio(); playHover()" onclick="delayNav(event, 'if conditional.html')">
                 <svg class="card-icon" viewBox="0 0 24 24">
                     <path d="M10.59 9.17L5.41 4 4 5.41l5.17 5.17 1.42-1.41zM14.5 4l2.04 2.04L4 18.59 5.41 20 17.96 7.46 20 9.5V4h-5.5zm.33 9.41l-1.41 1.41 3.13 3.13L14.5 20H20v-5.5l-2.04 2.04-3.13-3.13z"/>
                 </svg>
@@ -235,7 +264,7 @@
                 <p>Master Zero, 1st, 2nd, and 3rd conditionals. Navigate hypothetical situations.</p>
             </a>
             
-            <a href="soal toefl.html" class="choice-card" onclick="delayNav(event, 'soal toefl.html')">
+            <a href="soal toefl.html" class="choice-card" onmouseenter="initAudio(); playHover()" onclick="delayNav(event, 'soal toefl.html')">
                 <svg class="card-icon" viewBox="0 0 24 24">
                     <path d="M5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82zM12 3L1 9l11 6 9-4.91V17h2V9L12 3z"/>
                 </svg>
@@ -247,8 +276,7 @@
     </div>
 
     <script>
-        // --- AUDIO SYSTEM (Sama, tapi dioptimalkan) ---
-        // AudioContext hanya dibuat saat user berinteraksi
+        // --- AUDIO SYSTEM ---
         const AudioContext = window.AudioContext || window.webkitAudioContext;
         let audioCtx;
 
@@ -261,58 +289,54 @@
             }
         }
 
-        // Suara hover dipisah ke event listener di HTML (hanya utk desktop)
-        // Kita tidak pasang 'onmouseenter' di HTML manual, biar script yg handle
-        
-        // Pasang hover sound hanya jika perangkat mendukung mouse (Desktop)
-        if (window.matchMedia("(hover: hover)").matches) {
-            document.querySelectorAll('.choice-card').forEach(card => {
-                card.addEventListener('mouseenter', () => {
-                    initAudio();
-                    playHoverSound();
-                });
-            });
+        // 1. Futuristic Hover Sound (Laptop Only)
+        function playHover() {
+            // Hanya bunyi jika di laptop (yang punya fitur hover)
+            if (window.matchMedia("(hover: hover)").matches && audioCtx) {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(600, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(800, audioCtx.currentTime + 0.1);
+                
+                gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+                gain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.1);
+                
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.1);
+            }
         }
 
-        function playHoverSound() {
-            if (!audioCtx) return;
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            osc.connect(gain);
-            gain.connect(audioCtx.destination);
-            osc.type = 'sine';
-            osc.frequency.setValueAtTime(600, audioCtx.currentTime);
-            osc.frequency.exponentialRampToValueAtTime(800, audioCtx.currentTime + 0.1);
-            gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
-            gain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.1);
-            osc.start();
-            osc.stop(audioCtx.currentTime + 0.1);
-        }
-
-        // Navigation Click Sound & Delay
+        // 2. Navigation Click Sound & Delay
         function delayNav(e, url) {
             e.preventDefault(); 
             initAudio(); 
             
-            // Mainkan suara klik
             if (audioCtx) {
                 const osc = audioCtx.createOscillator();
                 const gain = audioCtx.createGain();
+                
                 osc.connect(gain);
                 gain.connect(audioCtx.destination);
+                
                 osc.type = 'square';
                 osc.frequency.setValueAtTime(200, audioCtx.currentTime);
                 osc.frequency.exponentialRampToValueAtTime(50, audioCtx.currentTime + 0.3);
+                
                 gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
                 gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.3);
+                
                 osc.start();
                 osc.stop(audioCtx.currentTime + 0.3);
             }
 
-            // Pindah halaman setelah jeda
             setTimeout(() => {
                 window.location.href = url;
-            }, 300);
+            }, 400);
         }
     </script>
 </body>
