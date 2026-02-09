@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>English Check</title>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --emerald-deep: #051a14;
+            --emerald-dark: #0a2f23;
+            --emerald-primary: #14523d;
+            --gold-accent: #c5a059;
+            --gold-glow: #e6c888;
+            --text-main: #fdfcf8;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Lato', sans-serif;
+            background-color: var(--emerald-deep);
+            color: var(--text-main);
+            min-height: 100vh; /* Memastikan tinggi minimal setayar penuh */
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        .bg-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at center, #14523d 0%, #051a14 100%);
+            z-index: -1;
+        }
+
+        /* --- HEADER --- */
+        header {
+            text-align: center;
+            padding: 2rem 1rem 1rem;
+            z-index: 10;
+            flex-shrink: 0; /* Header tidak boleh mengecil */
+        }
+
+        .logo-badge {
+            border: 1px solid var(--gold-accent);
+            padding: 5px 15px;
+            font-size: 0.8rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--gold-accent);
+            margin-bottom: 0.5rem;
+            display: inline-block;
+        }
+
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(1.8rem, 4vw, 3rem);
+            background: linear-gradient(to bottom, #fff, var(--gold-accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.2rem;
+            line-height: 1.2;
+        }
+
+        .subtitle {
+            opacity: 0.7;
+            font-size: 1rem;
+        }
+
+        /* --- CONTAINER UTAMA --- */
+        .hub-container {
+            display: grid;
+            /* DEFAULT LAPTOP: Tetap banyak kolom */
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+            z-index: 1;
+            flex-grow: 1; /* Mengisi sisa ruang agar footer/bawah pas */
+        }
+
+        /* --- KARTU MENU --- */
+        .choice-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(197, 160, 89, 0.2);
+            border-radius: 20px;
+            padding: 2rem 1.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-decoration: none;
+            color: var(--text-main);
+            transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+            backdrop-filter: blur(10px);
+            text-align: center;
+            cursor: pointer;
+            position: relative;
+            /* Tinggi default untuk laptop agar seragam */
+            height: 100%; 
+            min-height: 320px;
+        }
+
+        .icon-circle {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: var(--emerald-dark);
+            border: 1px solid var(--gold-accent);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            transition: 0.5s;
+        }
+
+        .choice-card h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            margin-bottom: 0.8rem;
+            line-height: 1.2;
+        }
+
+        .choice-card p {
+            font-weight: 300;
+            color: #ccc;
+            line-height: 1.4;
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .btn-action {
+            margin-top: auto;
+            padding: 8px 25px;
+            border: 1px solid var(--gold-accent);
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: 0.3s;
+        }
+
+        /* Hover Effect (Laptop) */
+        @media (hover: hover) {
+            .choice-card:hover {
+                transform: translateY(-5px);
+                border-color: var(--gold-accent);
+                background: rgba(20, 82, 61, 0.4);
+                box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            }
+            .choice-card:hover .icon-circle {
+                background: var(--gold-accent);
+                transform: rotateY(360deg);
+                color: var(--emerald-deep);
+            }
+            .choice-card:hover .btn-action {
+                background: var(--gold-accent);
+                color: var(--emerald-deep);
+            }
+        }
+        
+        .choice-card:active {
+            transform: scale(0.96);
+            background: rgba(20, 82, 61, 0.6);
+            border-color: var(--gold-accent);
+        }
+
+        /* --- MODAL --- */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(5, 26, 20, 0.95);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            padding: 20px;
+        }
+        .modal-overlay.active { display: flex; opacity: 1; }
+        .modal-content {
+            background: rgba(20, 82, 61, 0.95);
+            padding: 2rem;
+            border-radius: 20px;
+            border: 2px solid var(--gold-accent);
+            text-align: center;
+            max-width: 350px;
+            width: 100%;
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+        }
+        .modal-overlay.active .modal-content { transform: scale(1); }
+        .qr-image {
+            width: 100%; max-width: 220px;
+            border-radius: 10px; margin: 1rem auto;
+            border: 2px solid var(--gold-accent); background: #fff;
+        }
+        .close-modal-btn {
+            position: absolute; top: 10px; right: 15px;
+            font-size: 2rem; color: var(--gold-accent);
+            cursor: pointer;
+        }
+
+        /* =========================================
+           KHUSUS TAMPILAN HP (MOBILE OPTIMIZED)
+           ========================================= */
+        @media (max-width: 600px) {
+            body {
+                height: 100vh; /* Kunci tinggi layar agar tidak scroll */
+                overflow: hidden; /* Hilangkan scroll bar */
+            }
+
+            header {
+                padding: 1.5rem 1rem 0.5rem; /* Header lebih tipis */
+            }
+
+            .logo-badge {
+                font-size: 0.6rem; 
+                padding: 3px 10px;
+                margin-bottom: 0.3rem;
+            }
+
+            h1 { font-size: 1.8rem; }
+            .subtitle { font-size: 0.85rem; }
+
+            .hub-container {
+                /* Ubah jadi 2 Kolom */
+                grid-template-columns: 1fr 1fr; 
+                /* Jarak antar kotak lebih rapat */
+                gap: 12px; 
+                padding: 0.8rem 1rem 1.5rem; /* Padding pinggir */
+                overflow-y: auto; /* Jaga-jaga jika layar HP sangat pendek */
+                align-content: center; /* Pusatkan kotak secara vertikal */
+            }
+
+            .choice-card {
+                /* Reset tinggi laptop */
+                min-height: 0; 
+                height: auto;
+                aspect-ratio: 1 / 1; /* Kotak persegi */
+                padding: 1rem 0.5rem;
+                justify-content: center; /* Tengahkan isi */
+            }
+
+            /* --- ELEMENT YG DIHILANGKAN DI HP AGAR MUAT --- */
+            .choice-card p {
+                display: none; /* Sembunyikan deskripsi panjang */
+            }
+
+            .btn-action {
+                display: none; /* Sembunyikan tombol 'Enter', klik kartunya saja */
+            }
+
+            /* --- ELEMENT YG DISESUAIKAN --- */
+            .icon-circle {
+                width: 50px;
+                height: 50px;
+                font-size: 1.5rem;
+                margin-bottom: 0.5rem;
+            }
+
+            .choice-card h2 {
+                font-size: 1rem; /* Judul lebih kecil */
+                margin-bottom: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <audio id="hoverSound" src="https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3" preload="auto"></audio>
+    <audio id="clickSound" src="https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3" preload="auto"></audio>
+
+    <div class="bg-overlay"></div>
+
+    <header>
+        <div class="logo-badge">COLLABORATING FOR CHANGE</div>
+        <h1>English Check</h1>
+        <p class="subtitle">Select your path to mastery</p>
+    </header>
+
+    <div class="hub-container">
+        <a href="Modul Check.html" class="choice-card" onclick="playClick(event)">
+            <div class="icon-circle">📜</div>
+            <h2>Modul Check</h2>
+            <p>Master language structure through Tenses, Phrases, and Clauses.</p>
+            <div class="btn-action">Enter</div>
+        </a>
+
+        <a href="structure.html" class="choice-card" onclick="playClick(event)">
+            <div class="icon-circle">⚖️</div>
+            <h2>Practice Check</h2>
+            <p>Practice with detailed explanations.</p>
+            <div class="btn-action">Start</div>
+        </a>
+
+        <a href="all.html" class="choice-card" onclick="playClick(event)">
+            <div class="icon-circle">⚔️</div>
+            <h2>Game (PC)</h2>
+            <p>Conquer three levels of vocabulary from Beginner to Master.</p>
+            <div class="btn-action">Play</div>
+        </a>
+
+        <a href="Vocab Check.html" class="choice-card" onclick="playClick(event)">
+            <div class="icon-circle">💎</div>
+            <h2>Vocab Games</h2>
+            <p>Identify your current lexicon level and unlock new challenges.</p>
+            <div class="btn-action">Level Up</div>
+        </a>
+
+        <a href="Absensi.html" class="choice-card" onclick="playClick(event)">
+            <div class="icon-circle">✍️</div>
+            <h2>Attendance</h2>
+            <p>Record your lesson progress and submit session proof.</p>
+            <div class="btn-action">Submit</div>
+        </a>
+
+        <a href="#" class="choice-card" onclick="openDonationModal(event)">
+            <div class="icon-circle">💝</div>
+            <h2>Donation</h2>
+            <p>Support our mission voluntarily by scanning the QR code.</p>
+            <div class="btn-action">Support</div>
+        </a>
+    </div>
+
+    <div id="donationModal" class="modal-overlay" onclick="closeDonationModal()">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <span class="close-modal-btn" onclick="closeDonationModal()">&times;</span>
+            <h2>Support Us</h2>
+            <p>Scan QRIS code below</p>
+            <img src="qris.jpeg" alt="QR Code" class="qr-image">
+        </div>
+    </div>
+
+    <script>
+        const clickSfx = document.getElementById('clickSound');
+        clickSfx.volume = 0.4;
+
+        function playClick(event) {
+            const targetUrl = event.currentTarget.getAttribute('href');
+            if(targetUrl && targetUrl !== '#') event.preventDefault();
+            
+            clickSfx.currentTime = 0;
+            clickSfx.play().catch(e => {});
+
+            if(targetUrl && targetUrl !== '#') {
+                setTimeout(() => window.location.href = targetUrl, 150);
+            }
+        }
+
+        function openDonationModal(event) {
+            event.preventDefault();
+            clickSfx.play().catch(e => {});
+            setTimeout(() => document.getElementById('donationModal').classList.add('active'), 100);
+        }
+
+        function closeDonationModal() {
+            document.getElementById('donationModal').classList.remove('active');
+        }
+    </script>
+</body>
+</html>
