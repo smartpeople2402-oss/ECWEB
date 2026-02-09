@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>TOEFL Structure Mastery</title>
     <style>
         :root {
@@ -20,12 +20,12 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: var(--bg-color);
             color: var(--text-main);
-            height: 100vh;
+            height: 100vh; /* Kunci tinggi layar */
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            overflow: hidden;
+            overflow: hidden; /* Hilangkan scroll bar */
             position: relative;
         }
 
@@ -46,6 +46,7 @@
             max-width: 1000px;
             width: 90%;
             animation: fadeIn 1.5s ease-out;
+            box-sizing: border-box;
         }
 
         /* Header Logo Styling */
@@ -82,7 +83,7 @@
             font-weight: 300;
         }
 
-        /* Card Grid */
+        /* Card Grid (Default Laptop) */
         .level-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -105,11 +106,25 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            height: 100%; /* Ensure full height usage */
         }
 
-        .level-card:hover {
-            transform: translateY(-10px) scale(1.02);
-            box-shadow: 0 20px 40px rgba(74, 222, 128, 0.15);
+        /* Hover Effect (Laptop Only) */
+        @media (hover: hover) {
+            .level-card:hover {
+                transform: translateY(-10px) scale(1.02);
+                box-shadow: 0 20px 40px rgba(74, 222, 128, 0.15);
+                border-color: var(--accent);
+                background: rgba(20, 46, 32, 0.9);
+            }
+            .level-card:hover .icon-svg {
+                transform: scale(1.2) rotate(5deg);
+            }
+        }
+
+        /* Active Effect (Mobile/Touch) */
+        .level-card:active {
+            transform: scale(0.96);
             border-color: var(--accent);
             background: rgba(20, 46, 32, 0.9);
         }
@@ -121,10 +136,6 @@
             fill: var(--accent);
             margin-bottom: 20px;
             transition: transform 0.3s;
-        }
-
-        .level-card:hover .icon-svg {
-            transform: scale(1.2) rotate(5deg);
         }
 
         .level-title {
@@ -172,11 +183,76 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Responsive */
-        @media (max-width: 768px) {
-            h1 { font-size: 2.5rem; }
-            .level-grid { grid-template-columns: 1fr; }
-            .main-header { flex-direction: column; }
+        /* =========================================
+           KHUSUS TAMPILAN HP (MOBILE OPTIMIZED)
+           ========================================= */
+        @media (max-width: 600px) {
+            .container {
+                padding: 10px;
+                height: 100%;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+            }
+
+            .main-header {
+                margin-bottom: 5px;
+                gap: 10px;
+            }
+
+            .logo-svg { width: 35px; height: 35px; }
+
+            h1 { font-size: 2rem; letter-spacing: 2px; }
+
+            p.subtitle {
+                font-size: 0.9rem;
+                margin-bottom: 20px;
+            }
+
+            .level-grid {
+                display: grid;
+                /* 2 Kolom */
+                grid-template-columns: 1fr 1fr;
+                /* Jarak lebih rapat */
+                gap: 12px;
+                width: 100%;
+                /* Grid mengisi sisa ruang yang ada */
+                flex-grow: 1; 
+                max-height: 70vh; /* Batasi tinggi agar tidak overflow */
+            }
+
+            .level-card {
+                padding: 15px 10px;
+                justify-content: center;
+                border-radius: 12px;
+            }
+
+            /* Kartu Terakhir (Expert) jadi lebar penuh di bawah */
+            .level-card:last-child {
+                grid-column: span 2;
+                flex-direction: row; /* Icon disamping teks khusus expert */
+                gap: 15px;
+            }
+            
+            /* Penyesuaian khusus kartu Expert horizontal */
+            .level-card:last-child .icon-svg { margin-bottom: 0; }
+            .level-card:last-child .level-title { margin-bottom: 0; }
+
+            .icon-svg {
+                width: 40px; height: 40px;
+                margin-bottom: 10px;
+            }
+
+            .level-title {
+                font-size: 1.1rem;
+                margin-bottom: 0;
+            }
+
+            /* Sembunyikan Deskripsi agar muat */
+            .level-desc { display: none; }
+
+            /* Mute button size */
+            .mute-btn { top: 10px; right: 10px; padding: 8px; }
         }
     </style>
 </head>
@@ -196,7 +272,7 @@
             <h1>TOEFL CHECK</h1>
         </div>
         
-        <p class="subtitle">Select your proficiency level to begin the simulation.</p>
+        <p class="subtitle">Select proficiency level.</p>
 
         <div class="level-grid">
             <a href="soal beginner.html" class="level-card" onmouseenter="playHover()" onclick="playClick()">
@@ -226,7 +302,7 @@
     </div>
 
     <script>
-        // --- ANIMATED BACKGROUND (Fireflies) ---
+        // --- ANIMATED BACKGROUND ---
         const canvas = document.getElementById('canvas');
         const ctx = canvas.getContext('2d');
         let width, height;
@@ -286,18 +362,19 @@
         animate();
 
         // --- AUDIO SYSTEM ---
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        const audioCtx = new AudioContext();
         let isMuted = false;
 
         function toggleMute() {
             isMuted = !isMuted;
             const btn = document.getElementById('muteBtn');
-            // Toggle SVG opacity to show mute state
             btn.style.opacity = isMuted ? '0.5' : '1';
         }
 
         function playHover() {
-            if (isMuted) return;
+            // Check hover capability (Laptop only)
+            if (isMuted || !window.matchMedia("(hover: hover)").matches) return;
             if (audioCtx.state === 'suspended') audioCtx.resume();
 
             const osc = audioCtx.createOscillator();
@@ -309,7 +386,6 @@
             osc.type = 'sine';
             const now = audioCtx.currentTime;
             
-            // High tech "blip" sound
             osc.frequency.setValueAtTime(440, now);
             osc.frequency.exponentialRampToValueAtTime(880, now + 0.1);
             
@@ -333,7 +409,6 @@
             osc.type = 'triangle';
             const now = audioCtx.currentTime;
 
-            // Deeper selection sound
             osc.frequency.setValueAtTime(200, now);
             osc.frequency.linearRampToValueAtTime(50, now + 0.2);
 
