@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>English Conditionals Master Hub</title>
     <style>
         :root {
@@ -52,6 +52,7 @@
             padding: 40px 20px;
             text-align: center;
             animation: slideUp 0.8s ease-out;
+            box-sizing: border-box; /* Penting agar padding tidak melebarkan layar */
         }
 
         header {
@@ -236,10 +237,96 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Responsive */
-        @media (max-width: 768px) {
-            h1 { font-size: 2.5rem; }
-            .card.exam-card { flex-direction: column; text-align: center; gap: 20px; }
+        /* =========================================
+           KHUSUS TAMPILAN HP (MOBILE OPTIMIZED)
+           ========================================= */
+        @media (max-width: 600px) {
+            body {
+                height: 100vh;      /* Kunci Tinggi Layar */
+                overflow: hidden;   /* Hilangkan Scroll */
+                justify-content: space-between; /* Distribusi vertikal */
+            }
+
+            .container {
+                height: 100%;
+                display: flex;
+                flex-direction: column;
+                padding: 15px; /* Kurangi padding */
+                padding-top: 20px;
+            }
+
+            header {
+                margin-bottom: 10px; /* Header lebih tipis */
+                flex-shrink: 0;
+            }
+
+            h1 { font-size: 1.8rem; }
+            .subtitle { font-size: 0.8rem; margin-top: 5px; }
+
+            /* Sembunyikan Label Section agar muat */
+            .section-label { display: none; }
+
+            /* Grid 2x2 untuk Practice (0, 1, 2, 3) */
+            .practice-grid {
+                display: grid;
+                grid-template-columns: 1fr 1fr; /* 2 Kolom */
+                grid-template-rows: 1fr 1fr;    /* 2 Baris */
+                gap: 12px;
+                flex-grow: 1; /* Mengisi ruang yang tersedia di tengah */
+                margin-bottom: 15px;
+                height: auto;
+            }
+
+            /* Kartu versi Mini */
+            .card {
+                padding: 10px;
+                justify-content: center;
+                border-radius: 12px;
+            }
+
+            .card-icon {
+                width: 45px; height: 45px; /* Ikon kecil */
+                font-size: 1.3rem;
+                margin-bottom: 5px;
+            }
+
+            .card h3 { 
+                font-size: 1rem; 
+                margin: 0; 
+            }
+            
+            /* Sembunyikan Deskripsi di HP */
+            .card p { display: none; }
+
+            /* Exam Section (Paling Bawah) */
+            .exam-section {
+                margin-top: 0;
+                flex-shrink: 0; /* Jangan menyusut */
+                margin-bottom: 40px; /* Beri ruang untuk tombol sound */
+            }
+
+            .card.exam-card {
+                padding: 15px 20px;
+                height: 60px;
+                border-radius: 50px; /* Bentuk kapsul */
+            }
+
+            .exam-content h3 { 
+                font-size: 1.1rem; 
+                margin: 0; 
+                text-align: center;
+            }
+            
+            /* Sembunyikan elemen exam yang tidak perlu */
+            .exam-content p { display: none; }
+            .exam-action { display: none; } /* Klik seluruh bar saja */
+
+            /* Sesuaikan tombol sound agar tidak menutupi konten */
+            .sound-btn {
+                bottom: 15px;
+                right: 15px;
+                width: 40px; height: 40px; font-size: 1rem;
+            }
         }
     </style>
 </head>
@@ -250,7 +337,7 @@
     <div class="container">
         <header>
             <h1>If Conditional Mastery</h1>
-            <p class="subtitle">Select a module to begin your training</p>
+            <p class="subtitle">Select a module to begin</p>
         </header>
 
         <div class="section-label"><span></span>Practice</div>
@@ -258,25 +345,25 @@
         <div class="practice-grid">
             <a href="if 0.html" class="card" onmouseenter="playHover()" onclick="playClick(event, this.href)">
                 <div class="card-icon">0</div>
-                <h3>Zero Conditional</h3>
+                <h3>Zero</h3>
                 <p>Facts, habits, and general truths.</p>
             </a>
 
             <a href="if 1.html" class="card" onmouseenter="playHover()" onclick="playClick(event, this.href)">
                 <div class="card-icon">1</div>
-                <h3>First Conditional</h3>
+                <h3>First</h3>
                 <p>Real possibilities in the future.</p>
             </a>
 
             <a href="if 2.html" class="card" onmouseenter="playHover()" onclick="playClick(event, this.href)">
                 <div class="card-icon">2</div>
-                <h3>Second Conditional</h3>
+                <h3>Second</h3>
                 <p>Hypothetical situations in the present.</p>
             </a>
 
             <a href="if 3.html" class="card" onmouseenter="playHover()" onclick="playClick(event, this.href)">
                 <div class="card-icon">3</div>
-                <h3>Third Conditional</h3>
+                <h3>Third</h3>
                 <p>Regrets and past imaginary outcomes.</p>
             </a>
         </div>
@@ -303,20 +390,24 @@
 
     <script>
         // --- AUDIO SYSTEM ---
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        let audioCtx = new AudioContext();
         let isSoundOn = true;
 
         function toggleSound() {
             isSoundOn = !isSoundOn;
             const btn = document.getElementById('sound-toggle');
             btn.textContent = isSoundOn ? '🔊' : '🔇';
+            
             if (isSoundOn && audioCtx.state === 'suspended') {
                 audioCtx.resume();
             }
         }
 
         function playHover() {
-            if (!isSoundOn) return;
+            // Hanya mainkan hover jika di Laptop (yang ada kursor mouse)
+            if (!isSoundOn || !window.matchMedia("(hover: hover)").matches) return;
+            
             if (audioCtx.state === 'suspended') audioCtx.resume();
 
             const osc = audioCtx.createOscillator();
@@ -327,12 +418,11 @@
 
             const now = audioCtx.currentTime;
             
-            // High-tech subtle blip
             osc.type = 'sine';
             osc.frequency.setValueAtTime(600, now);
             osc.frequency.exponentialRampToValueAtTime(800, now + 0.05);
             
-            gain.gain.setValueAtTime(0.02, now); // Very quiet
+            gain.gain.setValueAtTime(0.02, now); 
             gain.gain.linearRampToValueAtTime(0, now + 0.1);
 
             osc.start(now);
@@ -340,7 +430,7 @@
         }
 
         function playClick(e, url) {
-            e.preventDefault(); // Pause navigation briefly for sound
+            e.preventDefault(); 
             
             if (audioCtx.state === 'suspended') audioCtx.resume();
 
@@ -353,10 +443,9 @@
 
                 const now = audioCtx.currentTime;
 
-                // "Enter Portal" Sound
                 osc.type = 'triangle';
                 osc.frequency.setValueAtTime(200, now);
-                osc.frequency.linearRampToValueAtTime(50, now + 0.3); // Pitch drop effect
+                osc.frequency.linearRampToValueAtTime(50, now + 0.3); 
 
                 gain.gain.setValueAtTime(0.1, now);
                 gain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
@@ -365,7 +454,6 @@
                 osc.stop(now + 0.3);
             }
 
-            // Navigate after 300ms
             setTimeout(() => {
                 window.location.href = url;
             }, 300);
