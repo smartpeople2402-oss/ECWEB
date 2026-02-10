@@ -150,7 +150,6 @@
         }
 
         .quick-actions { display: flex; justify-content: space-between; margin-bottom: 5px; padding: 0 5px; }
-        /* Ubah a menjadi div agar kita bisa kontrol klik-nya */
         .q-action { display: flex; flex-direction: column; align-items: center; gap: 8px; color: white; text-decoration: none; width: 25%; cursor: pointer; position: relative; }
         .q-action:active { transform: scale(0.9); }
         .q-icon-box {
@@ -180,7 +179,6 @@
         .search-box input { border: none; background: transparent; outline: none; width: 100%; font-family: 'Poppins'; font-size: 0.9rem; }
 
         .grid-menu { display: grid; grid-template-columns: repeat(4, 1fr); gap: 25px 10px; }
-        /* Ubah a menjadi div agar kita bisa kontrol klik-nya */
         .grid-item { display: flex; flex-direction: column; align-items: center; gap: 8px; text-decoration: none; color: var(--text-dark); cursor: pointer; position: relative; }
         .grid-icon {
             width: 50px; height: 50px; border-radius: 16px; display: flex; justify-content: center;
@@ -263,7 +261,7 @@
         .tool-btn.comment { color: #64b5f6; } .tool-btn.comment:hover { color: #1976d2; background: #e3f2fd; }
 
         .comment-list { flex: 1; overflow-y: auto; margin-bottom: 15px; display: flex; flex-direction: column; gap: 10px; max-height: 400px; padding-right: 5px; }
-        .comment-item { background: #fff; padding: 10px 12px; border-radius: 12px; font-size: 0.85rem; border: 1px solid #eee; }
+        .comment-item { background: #fff; padding: 10px 12px; border-radius: 12px; font-size: 0.85rem; border: 1px solid #eee; position: relative; }
         .comment-user { font-weight: 700; color: var(--bg-dark); font-size: 0.75rem; margin-bottom: 3px; display: block; }
         .comment-text { color: var(--text-dark); line-height: 1.4; }
         .comment-time { font-size: 0.6rem; color: #aaa; float: right; margin-top: 5px; }
@@ -280,20 +278,18 @@
         .view-more-comments { font-size: 0.75rem; color: var(--text-dark); font-weight: 600; cursor: pointer; margin-top: 5px; display: inline-block; text-decoration: none; }
         .view-more-comments:hover { text-decoration: underline; color: var(--bg-dark); }
 
-        /* --- STYLES UNTUK FITUR LOCK (BARU) --- */
         .tutor-lock-btn {
             position: absolute; top: -5px; right: -5px;
             width: 24px; height: 24px; background: white; border-radius: 50%;
             box-shadow: 0 2px 5px rgba(0,0,0,0.2); z-index: 15;
-            display: none; /* Muncul lewat JS jika Tutor */
+            display: none; 
             justify-content: center; align-items: center; font-size: 0.7rem; color: #aaa;
             transition: 0.2s;
         }
         .tutor-lock-btn:hover { transform: scale(1.1); }
-        .tutor-lock-btn.locked { color: #e53935; border: 1px solid #e53935; } /* Merah jika terkunci */
+        .tutor-lock-btn.locked { color: #e53935; border: 1px solid #e53935; } 
 
-        /* State ketika Item Terkunci (Untuk Student) */
-        .item-locked { opacity: 0.6; filter: grayscale(0.8); pointer-events: none; /* Klik di-handle parent */ }
+        .item-locked { opacity: 0.6; filter: grayscale(0.8); pointer-events: none; }
         .lock-overlay {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             display: none; justify-content: center; align-items: center;
@@ -301,6 +297,12 @@
         }
         .item-locked .lock-overlay { display: flex; }
         .lock-icon-large { font-size: 1.5rem; color: #555; background: rgba(255,255,255,0.9); padding: 8px; border-radius: 50%; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+
+        /* --- STYLES BARU: EDIT & DELETE KOMENTAR --- */
+        .comment-actions { float: right; font-size: 0.7rem; opacity: 0.6; display: flex; gap: 8px; }
+        .comment-actions i { cursor: pointer; transition: 0.2s; }
+        .comment-actions i.fa-edit:hover { color: var(--bg-dark); opacity: 1; }
+        .comment-actions i.fa-trash:hover { color: #e53935; opacity: 1; }
 
     </style>
 </head>
@@ -337,7 +339,7 @@
     <div id="dashboard">
         <div class="header-section">
             <div class="top-bar">
-                <div class="greeting"><p>Collaborating For Change</p><h1>English Check</h1></div>
+                <div class="greeting"><p>Collaborating For Change, Empowering For Impact</p><h1>English Check</h1></div>
                 <div class="top-icons">
                     <div class="icon-btn" onclick="toggleModal('notif-modal')"><i class="far fa-bell"></i><div class="badge" id="notif-count">!</div></div>
                     <div class="icon-btn" onclick="toggleSound(this)"><i class="fas fa-headset" id="soundIcon"></i></div>
@@ -477,7 +479,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.1.3/firebase-app.js";
-        import { getDatabase, ref, push, onValue, query, limitToLast, remove, off, set, get } from "https://www.gstatic.com/firebasejs/9.1.3/firebase-database.js";
+        import { getDatabase, ref, push, onValue, query, limitToLast, remove, off, set, update } from "https://www.gstatic.com/firebasejs/9.1.3/firebase-database.js";
 
         // --- PASTE FIREBASE CONFIG ANDA DISINI ---
        const firebaseConfig = {
@@ -494,79 +496,44 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        // --- LOCK SYSTEM (BARU) ---
+        // --- LOCK SYSTEM ---
         let lockedFeatures = {};
-
-        // Fungsi Global untuk Toggle Lock (Tutor Only)
         window.toggleLock = function(featureId) {
-            // Cek status saat ini, lalu balik (true -> false, false -> true)
             const isLocked = lockedFeatures[featureId] || false;
-            set(ref(db, 'locks/' + featureId), !isLocked)
-            .then(() => {
-                // Feedback visual (opsional)
-            })
-            .catch((err) => console.error(err));
+            set(ref(db, 'locks/' + featureId), !isLocked).catch((err) => console.error(err));
         };
-
-        // Listen perubahan Lock dari Firebase Realtime
         onValue(ref(db, 'locks'), (snapshot) => {
-            if (snapshot.exists()) {
-                lockedFeatures = snapshot.val();
-            } else {
-                lockedFeatures = {};
-            }
+            lockedFeatures = snapshot.exists() ? snapshot.val() : {};
             updateLockUI();
         });
-
         function updateLockUI() {
             const isTutor = localStorage.getItem('ec_role') === 'tutor';
             const features = ['modul', 'structure', 'vocab', 'game', 'absensi', 'support', 'certif', 'lainnya'];
-
             features.forEach(id => {
                 const isLocked = lockedFeatures[id] === true;
-                
-                // Update tampilan Button Lock (Tutor)
                 const gridLockBtn = document.querySelector(`#grid-${id} .tutor-lock-btn`);
                 const qaLockBtn = document.querySelector(`#qa-${id} .tutor-lock-btn`);
                 
                 if(gridLockBtn) {
-                    if(isLocked) {
-                        gridLockBtn.innerHTML = '<i class="fas fa-lock"></i>';
-                        gridLockBtn.classList.add('locked');
-                    } else {
-                        gridLockBtn.innerHTML = '<i class="fas fa-lock-open"></i>';
-                        gridLockBtn.classList.remove('locked');
-                    }
+                    gridLockBtn.innerHTML = isLocked ? '<i class="fas fa-lock"></i>' : '<i class="fas fa-lock-open"></i>';
+                    isLocked ? gridLockBtn.classList.add('locked') : gridLockBtn.classList.remove('locked');
                 }
                 if(qaLockBtn) {
-                    if(isLocked) {
-                        qaLockBtn.innerHTML = '<i class="fas fa-lock"></i>';
-                        qaLockBtn.classList.add('locked');
-                    } else {
-                        qaLockBtn.innerHTML = '<i class="fas fa-lock-open"></i>';
-                        qaLockBtn.classList.remove('locked');
-                    }
+                    qaLockBtn.innerHTML = isLocked ? '<i class="fas fa-lock"></i>' : '<i class="fas fa-lock-open"></i>';
+                    isLocked ? qaLockBtn.classList.add('locked') : qaLockBtn.classList.remove('locked');
                 }
-
-                // Update tampilan Item (Student View)
                 const gridItem = document.getElementById(`grid-${id}`);
                 const qaItem = document.getElementById(`qa-${id}`);
-
                 if(isLocked && !isTutor) {
-                    // Jika terkunci & User = Student -> Tampilkan Overlay Gembok
                     if(gridItem) gridItem.classList.add('item-locked');
                     if(qaItem) qaItem.classList.add('item-locked');
                 } else {
-                    // Jika terbuka ATAU User = Tutor -> Normal
                     if(gridItem) gridItem.classList.remove('item-locked');
                     if(qaItem) qaItem.classList.remove('item-locked');
                 }
             });
         }
-
-        // Expose updateUI ke window agar bisa dipanggil saat login change
         window.refreshLockUI = updateLockUI;
-
 
         // --- POSTING & DELETE ---
         window.saveNewPost = function() {
@@ -574,12 +541,10 @@
             const desc = document.getElementById('post-desc').value;
             const color = document.getElementById('post-tag').value;
             if(!title || !desc) { alert("Mohon isi semua data"); return; }
-
             let tagText = "Umum";
             if(color === 'blue') tagText = "Tips";
             if(color === 'orange') tagText = "Materi";
             if(color === 'green') tagText = "Pengumuman";
-
             push(ref(db, 'posts'), {
                 title: title, desc: desc, color: color, tag: tagText, timestamp: Date.now()
             }).then(() => {
@@ -589,7 +554,6 @@
                 document.getElementById('post-desc').value = "";
             });
         };
-
         window.deletePost = function(postId) {
             if(confirm("Hapus informasi ini?")) {
                 remove(ref(db, 'posts/' + postId));
@@ -622,7 +586,6 @@
                         const commentsArr = Object.values(post.comments);
                         commentCount = commentsArr.length;
                         const recentComments = commentsArr.slice(-3);
-                        
                         commentsHtml = `<div class="card-comments-preview">`;
                         recentComments.forEach(c => {
                             commentsHtml += `
@@ -632,7 +595,6 @@
                                 </div>
                             `;
                         });
-
                         if(commentCount > 3) {
                             commentsHtml += `<div class="view-more-comments" onclick="event.stopPropagation(); window.openComments('${key}')">Lihat semua ${commentCount} komentar...</div>`;
                         }
@@ -663,7 +625,6 @@
                         </div>
                     `;
                 });
-                
                 container.innerHTML = html;
                 notifBody.innerHTML = html;
                 badge.innerText = posts.length;
@@ -690,13 +651,27 @@
 
                 if (snapshot.exists()) {
                     const commentsData = snapshot.val();
-                    const comments = Object.values(commentsData); 
+                    const commentsArr = Object.entries(commentsData); 
+                    const currentUser = localStorage.getItem('ec_username');
                     
-                    comments.forEach(c => {
+                    commentsArr.forEach(([commentId, c]) => {
                         const date = new Date(c.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                        
+                        // Cek kepemilikan komentar
+                        const isMyComment = c.user === currentUser;
+                        let actionsHtml = '';
+                        if(isMyComment) {
+                            actionsHtml = `
+                                <span class="comment-actions">
+                                    <i class="fas fa-edit" onclick="window.editComment('${postId}', '${commentId}', '${c.text}')"></i>
+                                    <i class="fas fa-trash" onclick="window.deleteComment('${postId}', '${commentId}')"></i>
+                                </span>
+                            `;
+                        }
+
                         listDiv.innerHTML += `
                             <div class="comment-item">
-                                <span class="comment-user">${c.user}</span>
+                                <span class="comment-user">${c.user} ${actionsHtml}</span>
                                 <span class="comment-text">${c.text}</span>
                                 <div class="comment-time">${date}</div>
                             </div>
@@ -722,17 +697,28 @@
             const input = document.getElementById('comment-input');
             const text = input.value.trim();
             const username = localStorage.getItem('ec_username') || 'Anonymous';
-
             if(!text) return;
             if(!currentPostId) return;
-
             push(ref(db, 'posts/' + currentPostId + '/comments'), {
-                user: username,
-                text: text,
-                timestamp: Date.now()
+                user: username, text: text, timestamp: Date.now()
             });
-
             input.value = '';
+        };
+
+        // --- NEW: EDIT & DELETE COMMENT FUNCTIONS ---
+        window.deleteComment = function(postId, commentId) {
+            if(confirm("Hapus komentar ini?")) {
+                remove(ref(db, 'posts/' + postId + '/comments/' + commentId));
+            }
+        };
+
+        window.editComment = function(postId, commentId, currentText) {
+            let newText = prompt("Edit komentar Anda:", currentText);
+            if(newText !== null && newText.trim() !== "") {
+                update(ref(db, 'posts/' + postId + '/comments/' + commentId), {
+                    text: newText
+                });
+            }
         };
 
         document.getElementById('comment-input').addEventListener('keypress', function (e) {
@@ -743,21 +729,16 @@
         window.handleMenuClick = function(targetUrl, featureId) {
             const isTutor = localStorage.getItem('ec_role') === 'tutor';
             const isLocked = lockedFeatures[featureId] === true;
-
-            // Jika User = Tutor -> Selalu bisa akses
             if (isTutor) {
                 window.playClick(targetUrl);
                 return;
             }
-
-            // Jika User = Student
             if (isLocked) {
                 alert("🔒 Maaf, materi ini sedang dikunci oleh Tutor.");
             } else {
                 window.playClick(targetUrl);
             }
         };
-
     </script>
 
     <script>
@@ -775,10 +756,8 @@
             const splash = document.getElementById('splash-screen');
             const login = document.getElementById('login-screen');
             const dashboard = document.getElementById('dashboard');
-
             const storedName = localStorage.getItem('ec_username');
             const storedRole = localStorage.getItem('ec_role');
-
             setTimeout(() => {
                 splash.classList.add('fade-out');
                 setTimeout(() => { 
@@ -807,7 +786,6 @@
             document.getElementById('roleSelection').style.display = 'none';
             document.getElementById('loginInputs').style.display = 'block';
             document.getElementById('backBtn').style.display = 'block';
-
             if(role === 'student') {
                 document.getElementById('loginTitle').innerText = "Hello Student!";
                 document.getElementById('loginSub').innerText = "Masukkan namamu untuk mulai belajar.";
@@ -816,7 +794,7 @@
             } else {
                 document.getElementById('loginTitle').innerText = "Tutor Login";
                 document.getElementById('loginSub').innerText = "Masukkan Kode Akses Tutor.";
-                document.getElementById('loginInput').placeholder = "Kode Akses (default: admin123)";
+                document.getElementById('loginInput').placeholder = "Kode Akses";
                 document.getElementById('loginInput').type = "password";
             }
         }
@@ -834,10 +812,8 @@
         window.processLogin = function() {
             const inputVal = document.getElementById('loginInput').value.trim();
             if(inputVal === "") { alert("Mohon isi data terlebih dahulu."); return; }
-
             let isTutor = false;
             let displayName = inputVal;
-
             if(selectedRole === 'tutor') {
                 if(inputVal === "admin123") {
                     displayName = "Tutor Admin";
@@ -846,12 +822,9 @@
                     alert("Kode Akses Salah!"); return;
                 }
             }
-
             localStorage.setItem('ec_username', displayName);
             localStorage.setItem('ec_role', isTutor ? 'tutor' : 'student');
-
             setupDashboard(displayName, isTutor);
-
             document.getElementById('login-screen').style.opacity = '0';
             setTimeout(() => {
                 document.getElementById('login-screen').style.display = 'none';
@@ -862,13 +835,10 @@
 
         function setupDashboard(name, isTutor) {
             document.getElementById('cardNameDisplay').innerText = name;
-            
-            // Show/Hide Lock Buttons for Tutor
             const lockBtns = document.querySelectorAll('.tutor-lock-btn');
             lockBtns.forEach(btn => {
                 btn.style.display = isTutor ? 'flex' : 'none';
             });
-
             if(isTutor) {
                 document.getElementById('tutor-fab').style.display = "flex";
                 document.querySelector('.balance-label').innerText = "Mode Tutor";
@@ -876,10 +846,7 @@
                 document.getElementById('tutor-fab').style.display = "none";
                 document.querySelector('.balance-label').innerText = "Active Student ID";
             }
-
-            // Panggil update UI Lock agar status gembok sinkron
             if(window.refreshLockUI) window.refreshLockUI();
-
             const randomIndex = Math.floor(Math.random() * dailyWords.length);
             const todayWord = dailyWords[randomIndex];
             document.getElementById('dw-word').innerText = todayWord.word;
