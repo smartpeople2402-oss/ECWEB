@@ -9,256 +9,96 @@
     
     <style>
         :root {
-            /* WARNA TEMA UTAMA */
-            --bg-dark: #0f3d3e;       
-            --bg-darker: #0a2b2c;     
-            --accent-lime: #d4e157;   
-            --body-bg: #f4fcf7;       
-            --text-dark: #1b4d3e;
-            --white: #ffffff;
-            --grey-text: #666666;
+            --bg-dark: #0f3d3e; --bg-darker: #0a2b2c; --accent-lime: #d4e157;   
+            --body-bg: #f4fcf7; --text-dark: #1b4d3e; --white: #ffffff; --grey-text: #666666;
         }
-
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        
-        body {
-            font-family: 'Poppins', sans-serif;
-            background-color: var(--body-bg);
-            color: var(--text-dark);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            overflow-x: hidden;
-        }
+        body { font-family: 'Poppins', sans-serif; background-color: var(--body-bg); color: var(--text-dark); min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; }
 
-        /* --- 1. SPLASH SCREEN --- */
-        #splash-screen {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-color: var(--bg-dark);
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-            z-index: 10000; transition: opacity 0.5s ease, visibility 0.5s;
-            text-align: center; padding: 20px; color: white;
-        }
+        /* Styles tetap sama seperti sebelumnya */
+        #splash-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: var(--bg-dark); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 10000; transition: opacity 0.5s ease, visibility 0.5s; text-align: center; padding: 20px; color: white; }
         .splash-logo { font-size: 2.5rem; font-weight: 800; color: var(--accent-lime); margin-bottom: 10px; }
-        .splash-loader {
-            width: 50px; height: 4px; background: rgba(255,255,255,0.1); margin-top: 20px;
-            border-radius: 10px; overflow: hidden; position: relative;
-        }
-        .splash-loader::after {
-            content: ''; position: absolute; width: 40%; height: 100%; background: var(--accent-lime);
-            animation: loading 1.5s infinite ease-in-out;
-        }
+        .splash-loader { width: 50px; height: 4px; background: rgba(255,255,255,0.1); margin-top: 20px; border-radius: 10px; overflow: hidden; position: relative; }
+        .splash-loader::after { content: ''; position: absolute; width: 40%; height: 100%; background: var(--accent-lime); animation: loading 1.5s infinite ease-in-out; }
         @keyframes loading { 0% { left: -40%; } 100% { left: 100%; } }
         .fade-out { opacity: 0; visibility: hidden; }
 
-        /* --- 2. LOGIN SCREEN (REDESIGNED) --- */
-        #login-screen {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(135deg, var(--bg-dark), var(--bg-darker));
-            display: none; flex-direction: column; justify-content: center; align-items: center;
-            z-index: 9999; padding: 30px;
-        }
-
-        .login-card {
-            background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px);
-            padding: 30px 25px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.2);
-            width: 100%; max-width: 350px; text-align: center; animation: fadeInUp 0.5s ease-out;
-            position: relative;
-        }
+        #login-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, var(--bg-dark), var(--bg-darker)); display: none; flex-direction: column; justify-content: center; align-items: center; z-index: 9999; padding: 30px; }
+        .login-card { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); padding: 30px 25px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.2); width: 100%; max-width: 350px; text-align: center; animation: fadeInUp 0.5s ease-out; position: relative; }
         @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-
         .login-title { color: var(--accent-lime); font-size: 1.5rem; font-weight: 700; margin-bottom: 5px; }
         .login-subtitle { color: #e0f2f1; font-size: 0.85rem; margin-bottom: 25px; opacity: 0.8; }
-        
-        /* Role Selection Grid */
         .role-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; width: 100%; margin-bottom: 20px; }
-        .role-card {
-            background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
-            border-radius: 15px; padding: 20px 10px; cursor: pointer; transition: 0.3s;
-            display: flex; flex-direction: column; align-items: center; gap: 10px;
-        }
+        .role-card { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 15px; padding: 20px 10px; cursor: pointer; transition: 0.3s; display: flex; flex-direction: column; align-items: center; gap: 10px; }
         .role-card:hover, .role-card.active { background: var(--accent-lime); border-color: var(--accent-lime); }
         .role-card i { font-size: 2rem; color: white; transition: 0.3s; }
         .role-card span { font-size: 0.9rem; font-weight: 600; color: white; transition: 0.3s; }
-        
-        .role-card:hover i, .role-card.active i, 
-        .role-card:hover span, .role-card.active span { color: var(--bg-dark); }
-
-        /* Input Forms */
-        .input-group input {
-            width: 100%; padding: 15px 20px; border-radius: 50px; border: none; outline: none;
-            background: rgba(255,255,255,0.9); font-family: 'Poppins'; font-size: 1rem;
-            color: var(--bg-dark); text-align: center; font-weight: 600; margin-bottom: 20px;
-        }
-        .btn-start {
-            background: var(--accent-lime); color: var(--bg-dark); border: none; padding: 12px 40px;
-            border-radius: 50px; font-size: 1rem; font-weight: 700; cursor: pointer; width: 100%;
-            transition: transform 0.2s;
-        }
+        .role-card:hover i, .role-card.active i, .role-card:hover span, .role-card.active span { color: var(--bg-dark); }
+        .input-group input { width: 100%; padding: 15px 20px; border-radius: 50px; border: none; outline: none; background: rgba(255,255,255,0.9); font-family: 'Poppins'; font-size: 1rem; color: var(--bg-dark); text-align: center; font-weight: 600; margin-bottom: 20px; }
+        .btn-start { background: var(--accent-lime); color: var(--bg-dark); border: none; padding: 12px 40px; border-radius: 50px; font-size: 1rem; font-weight: 700; cursor: pointer; width: 100%; transition: transform 0.2s; }
         .btn-start:active { transform: scale(0.95); }
+        .back-login { position: absolute; top: 15px; left: 15px; color: rgba(255,255,255,0.6); cursor: pointer; font-size: 1.2rem; display: none; }
 
-        /* Back Button inside Login */
-        .back-login {
-            position: absolute; top: 15px; left: 15px; color: rgba(255,255,255,0.6);
-            cursor: pointer; font-size: 1.2rem; display: none;
-        }
-
-        /* --- 3. DASHBOARD --- */
         #dashboard { display: none; flex-direction: column; min-height: 100vh; }
-
-        .header-section {
-            background: linear-gradient(180deg, var(--bg-dark) 0%, var(--bg-darker) 100%);
-            padding: 20px 20px 35px 20px; color: white;
-            border-bottom-left-radius: 30px; border-bottom-right-radius: 30px;
-            box-shadow: 0 10px 30px rgba(15, 61, 62, 0.3);
-            position: relative; z-index: 50;
-        }
-
+        .header-section { background: linear-gradient(180deg, var(--bg-dark) 0%, var(--bg-darker) 100%); padding: 20px 20px 35px 20px; color: white; border-bottom-left-radius: 30px; border-bottom-right-radius: 30px; box-shadow: 0 10px 30px rgba(15, 61, 62, 0.3); position: relative; z-index: 50; }
         .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
         .greeting h1 { font-size: 1.5rem; font-weight: 800; color: var(--white); letter-spacing: -0.5px; }
         .greeting p { font-size: 0.75rem; color: var(--accent-lime); font-weight: 600; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 2px;}
-        
         .top-icons { display: flex; gap: 15px; }
         .icon-btn { position: relative; font-size: 1.2rem; cursor: pointer; color: var(--white); transition: transform 0.2s; }
         .icon-btn:active { transform: scale(0.8); }
-        .badge {
-            position: absolute; top: -5px; right: -5px; background: var(--accent-lime);
-            color: var(--bg-dark); font-size: 0.6rem; padding: 2px 5px; border-radius: 50%; font-weight: 800;
-        }
-
-        /* KARTU STUDENT */
-        .balance-card {
-            background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.1); border-radius: 18px; padding: 20px;
-            margin-bottom: 25px; box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-            position: relative; overflow: hidden;
-        }
-        .balance-card::before {
-            content: ''; position: absolute; top: -20px; right: -20px; width: 80px; height: 80px;
-            background: var(--accent-lime); opacity: 0.2; border-radius: 50%; filter: blur(20px);
-        }
-
+        .badge { position: absolute; top: -5px; right: -5px; background: var(--accent-lime); color: var(--bg-dark); font-size: 0.6rem; padding: 2px 5px; border-radius: 50%; font-weight: 800; }
+        .balance-card { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); border-radius: 18px; padding: 20px; margin-bottom: 25px; box-shadow: 0 8px 20px rgba(0,0,0,0.2); position: relative; overflow: hidden; }
+        .balance-card::before { content: ''; position: absolute; top: -20px; right: -20px; width: 80px; height: 80px; background: var(--accent-lime); opacity: 0.2; border-radius: 50%; filter: blur(20px); }
         .balance-label { font-size: 0.8rem; opacity: 0.8; margin-bottom: 5px; color: var(--accent-lime); }
-        .student-name-display { 
-            font-size: 1.6rem; font-weight: 700; color: var(--white);
-            white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 8px;
-        }
-        .daily-score-badge {
-            display: inline-flex; align-items: center; gap: 8px;
-            background: rgba(0, 0, 0, 0.2); border: 1px solid rgba(255,255,255,0.1);
-            padding: 6px 12px; border-radius: 12px; color: white; font-size: 0.85rem;
-        }
+        .student-name-display { font-size: 1.6rem; font-weight: 700; color: var(--white); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 8px; }
+        .daily-score-badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(0, 0, 0, 0.2); border: 1px solid rgba(255,255,255,0.1); padding: 6px 12px; border-radius: 12px; color: white; font-size: 0.85rem; }
         .score-val { color: var(--accent-lime); font-weight: 700; font-size: 1rem; }
-        .balance-footer { 
-            margin-top: 15px; border-top: 1px solid rgba(255,255,255,0.15); 
-            padding-top: 12px; font-size: 0.85rem; display: flex; justify-content: space-between;
-            align-items: center; cursor: pointer; color: var(--white); font-weight: 500; opacity: 0.9;
-        }
-
-        /* FITUR UTAMA */
+        .balance-footer { margin-top: 15px; border-top: 1px solid rgba(255,255,255,0.15); padding-top: 12px; font-size: 0.85rem; display: flex; justify-content: space-between; align-items: center; cursor: pointer; color: var(--white); font-weight: 500; opacity: 0.9; }
         .quick-actions { display: flex; justify-content: space-between; margin-bottom: 5px; padding: 0 5px; }
         .q-action { display: flex; flex-direction: column; align-items: center; gap: 8px; color: white; text-decoration: none; width: 25%; }
         .q-action:active { transform: scale(0.9); }
-        .q-icon-box {
-            width: 48px; height: 48px; background: rgba(255,255,255,0.15); border-radius: 14px;
-            display: flex; justify-content: center; align-items: center; font-size: 1.3rem;
-            color: var(--accent-lime); border: 1px solid rgba(212, 225, 87, 0.2);
-        }
+        .q-icon-box { width: 48px; height: 48px; background: rgba(255,255,255,0.15); border-radius: 14px; display: flex; justify-content: center; align-items: center; font-size: 1.3rem; color: var(--accent-lime); border: 1px solid rgba(212, 225, 87, 0.2); }
         .q-text { font-size: 0.75rem; font-weight: 500; text-align: center; }
-
         .content-section { flex: 1; padding: 25px 20px; margin-top: -10px; }
-        
-        /* DAILY WORD */
-        .daily-word-card {
-            background: linear-gradient(135deg, #d4e157 0%, #afb42b 100%);
-            color: var(--bg-dark); border-radius: 20px; padding: 20px;
-            margin-bottom: 25px; box-shadow: 0 10px 20px rgba(212, 225, 87, 0.3);
-            position: relative; overflow: hidden; border: 2px solid white;
-        }
+        .daily-word-card { background: linear-gradient(135deg, #d4e157 0%, #afb42b 100%); color: var(--bg-dark); border-radius: 20px; padding: 20px; margin-bottom: 25px; box-shadow: 0 10px 20px rgba(212, 225, 87, 0.3); position: relative; overflow: hidden; border: 2px solid white; }
         .dw-header { font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; opacity: 0.8; display: flex; align-items: center; gap: 5px; }
         .dw-word { font-size: 1.8rem; font-weight: 800; line-height: 1.2; margin-bottom: 2px; }
         .dw-meaning { font-size: 1rem; font-weight: 600; margin-bottom: 12px; font-style: italic; opacity: 0.9; }
         .dw-sentence { font-size: 0.85rem; background: rgba(255,255,255,0.4); padding: 10px 12px; border-radius: 12px; font-weight: 500; }
-
-        /* Search Box */
-        .search-box {
-            background: #ffffff; border-radius: 50px; padding: 12px 20px; display: flex;
-            align-items: center; gap: 12px; margin-bottom: 25px; box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-        }
+        .search-box { background: #ffffff; border-radius: 50px; padding: 12px 20px; display: flex; align-items: center; gap: 12px; margin-bottom: 25px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
         .search-box input { border: none; background: transparent; outline: none; width: 100%; font-family: 'Poppins'; font-size: 0.9rem; }
-
         .grid-menu { display: grid; grid-template-columns: repeat(4, 1fr); gap: 25px 10px; }
         .grid-item { display: flex; flex-direction: column; align-items: center; gap: 8px; text-decoration: none; color: var(--text-dark); }
-        .grid-icon {
-            width: 50px; height: 50px; border-radius: 16px; display: flex; justify-content: center;
-            align-items: center; font-size: 1.3rem; background: #ffffff;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05); color: var(--bg-dark); transition: 0.2s;
-        }
+        .grid-icon { width: 50px; height: 50px; border-radius: 16px; display: flex; justify-content: center; align-items: center; font-size: 1.3rem; background: #ffffff; box-shadow: 0 4px 10px rgba(0,0,0,0.05); color: var(--bg-dark); transition: 0.2s; }
         .grid-item:active .grid-icon { transform: scale(0.95); background: var(--accent-lime); }
         .grid-text { font-size: 0.7rem; text-align: center; font-weight: 600; color: #444; }
-
-        .icon-lime { color: #afb42b; background: #f9fbe7; }
-        .icon-green { color: #2e7d32; background: #e8f5e9; }
-        .icon-blue { color: #0277bd; background: #e1f5fe; }
-        .icon-orange { color: #ef6c00; background: #fff3e0; }
-        .icon-teal { color: #00897b; background: #e0f2f1; }
-        .icon-pink { color: #d81b60; background: #fce4ec; }
-
-        /* INFORMASI SECTION */
+        .icon-lime { color: #afb42b; background: #f9fbe7; } .icon-green { color: #2e7d32; background: #e8f5e9; } .icon-blue { color: #0277bd; background: #e1f5fe; } .icon-orange { color: #ef6c00; background: #fff3e0; } .icon-teal { color: #00897b; background: #e0f2f1; } .icon-pink { color: #d81b60; background: #fce4ec; }
         .info-section { margin-top: 35px; margin-bottom: 20px; position: relative; }
         .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
         .section-title { font-size: 1.1rem; font-weight: 700; color: var(--bg-dark); }
         .see-all { font-size: 0.8rem; color: var(--text-dark); text-decoration: none; font-weight: 600; }
-        .info-card {
-            background: var(--white); border-radius: 16px; padding: 15px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05); display: flex; align-items: flex-start; gap: 15px;
-            margin-bottom: 15px; cursor: pointer; transition: transform 0.2s; position: relative;
-        }
+        .info-card { background: var(--white); border-radius: 16px; padding: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); display: flex; align-items: flex-start; gap: 15px; margin-bottom: 15px; cursor: pointer; transition: transform 0.2s; position: relative; }
         .info-card:active { transform: scale(0.98); }
         .info-icon-container { width: 50px; height: 50px; border-radius: 12px; flex-shrink: 0; display: flex; justify-content: center; align-items: center; font-size: 1.5rem; }
         .info-content { flex: 1; }
         .info-tag { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; padding: 2px 8px; border-radius: 4px; display: inline-block; margin-bottom: 5px; }
         .info-title { font-size: 0.95rem; font-weight: 700; color: var(--text-dark); margin-bottom: 3px; line-height: 1.3; }
         .info-desc { font-size: 0.75rem; color: var(--grey-text); line-height: 1.4; }
-        
         .info-blue { background: #e3f2fd; color: #1976d2; } .tag-blue { background: #e3f2fd; color: #1976d2; }
         .info-orange { background: #fff3e0; color: #f57c00; } .tag-orange { background: #fff3e0; color: #f57c00; }
         .info-green { background: #e8f5e9; color: #2e7d32; } .tag-green { background: #e8f5e9; color: #2e7d32; }
-
-        /* MODAL (Notifikasi & Add Update) */
-        .modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.6); z-index: 99999;
-            display: none; justify-content: center; align-items: flex-end;
-        }
-        .modal-content {
-            background: #f4fcf7; width: 100%; max-width: 500px;
-            border-top-left-radius: 25px; border-top-right-radius: 25px;
-            padding: 25px; max-height: 80vh; overflow-y: auto;
-            animation: slideUp 0.3s ease-out;
-        }
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); z-index: 99999; display: none; justify-content: center; align-items: flex-end; }
+        .modal-content { background: #f4fcf7; width: 100%; max-width: 500px; border-top-left-radius: 25px; border-top-right-radius: 25px; padding: 25px; max-height: 80vh; overflow-y: auto; animation: slideUp 0.3s ease-out; }
         @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
         .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
         .modal-header h3 { color: var(--bg-dark); font-weight: 700; }
         .close-btn { font-size: 1.5rem; color: #888; cursor: pointer; }
-
-        /* --- FITUR TUTOR MODE (Floating Button) --- */
-        #tutor-fab {
-            position: fixed; bottom: 30px; right: 30px;
-            width: 60px; height: 60px; background: var(--accent-lime);
-            color: var(--bg-dark); border-radius: 50%;
-            display: none; justify-content: center; align-items: center;
-            font-size: 1.5rem; box-shadow: 0 10px 20px rgba(0,0,0,0.2);
-            z-index: 999; cursor: pointer; transition: transform 0.2s;
-        }
+        #tutor-fab { position: fixed; bottom: 30px; right: 30px; width: 60px; height: 60px; background: var(--accent-lime); color: var(--bg-dark); border-radius: 50%; display: none; justify-content: center; align-items: center; font-size: 1.5rem; box-shadow: 0 10px 20px rgba(0,0,0,0.2); z-index: 999; cursor: pointer; transition: transform 0.2s; }
         #tutor-fab:active { transform: scale(0.9); }
-
         .form-group { margin-bottom: 15px; }
         .form-group label { display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 5px; }
-        .form-group input, .form-group textarea, .form-group select {
-            width: 100%; padding: 10px; border-radius: 10px; border: 1px solid #ddd;
-            font-family: 'Poppins'; font-size: 0.9rem;
-        }
+        .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 10px; border-radius: 10px; border: 1px solid #ddd; font-family: 'Poppins'; font-size: 0.9rem; }
         .btn-submit { background: var(--bg-dark); color: white; border: none; padding: 10px 20px; border-radius: 10px; width: 100%; font-weight: 700; cursor: pointer; }
     </style>
 </head>
@@ -276,22 +116,13 @@
     <div id="login-screen">
         <div class="login-card">
             <i class="fas fa-arrow-left back-login" id="backBtn" onclick="resetLogin()"></i>
-            
             <div style="font-size: 3rem; margin-bottom: 15px;">🎓</div>
             <h2 class="login-title" id="loginTitle">Choose Role</h2>
             <p class="login-subtitle" id="loginSub">Masuk sebagai Student atau Tutor?</p>
-            
             <div class="role-grid" id="roleSelection">
-                <div class="role-card" onclick="selectRole('student')">
-                    <i class="fas fa-user-graduate"></i>
-                    <span>Student</span>
-                </div>
-                <div class="role-card" onclick="selectRole('tutor')">
-                    <i class="fas fa-chalkboard-teacher"></i>
-                    <span>Tutor</span>
-                </div>
+                <div class="role-card" onclick="selectRole('student')"><i class="fas fa-user-graduate"></i><span>Student</span></div>
+                <div class="role-card" onclick="selectRole('tutor')"><i class="fas fa-chalkboard-teacher"></i><span>Tutor</span></div>
             </div>
-
             <div id="loginInputs" style="display: none; width: 100%;">
                 <div class="input-group">
                     <input type="text" id="loginInput" placeholder="..." autocomplete="off">
@@ -304,50 +135,25 @@
     <div id="dashboard">
         <div class="header-section">
             <div class="top-bar">
-                <div class="greeting">
-                    <p>Collaborating For Change</p>
-                    <h1>English Check</h1>
-                </div>
+                <div class="greeting"><p>Collaborating For Change</p><h1>English Check</h1></div>
                 <div class="top-icons">
-                    <div class="icon-btn" onclick="toggleModal('notif-modal')">
-                        <i class="far fa-bell"></i>
-                        <div class="badge">!</div>
-                    </div>
-                    <div class="icon-btn" onclick="toggleSound(this)">
-                        <i class="fas fa-headset" id="soundIcon"></i>
-                    </div>
+                    <div class="icon-btn" onclick="toggleModal('notif-modal')"><i class="far fa-bell"></i><div class="badge" id="notif-count">!</div></div>
+                    <div class="icon-btn" onclick="toggleSound(this)"><i class="fas fa-headset" id="soundIcon"></i></div>
                 </div>
             </div>
-
             <div class="balance-card">
                 <div class="balance-label">Active Session</div>
                 <div class="student-name-display" id="cardNameDisplay">User</div>
-                <div class="daily-score-badge">
-                    <i class="fas fa-star" style="color: #f1c40f;"></i>
-                    <span>Score Harian: <span class="score-val" id="dailyScoreDisplay">0</span></span>
-                </div>
-                <div class="balance-footer" onclick="playClick('Modul Check.html')">
-                    <span>Cek Progress Belajar</span>
-                    <i class="fas fa-chart-line"></i>
-                </div>
+                <div class="daily-score-badge"><i class="fas fa-star" style="color: #f1c40f;"></i><span>Score Harian: <span class="score-val" id="dailyScoreDisplay">0</span></span></div>
+                <div class="balance-footer" onclick="playClick('Modul Check.html')"><span>Cek Progress Belajar</span><i class="fas fa-chart-line"></i></div>
             </div>
-
             <div class="quick-actions">
-                <a href="Modul Check.html" class="q-action" onclick="playClick('Modul Check.html'); return false;">
-                    <div class="q-icon-box"><i class="fas fa-scroll"></i></div><div class="q-text">Modul</div>
-                </a>
-                <a href="structure.html" class="q-action" onclick="playClick('structure.html'); return false;">
-                    <div class="q-icon-box"><i class="fas fa-pen-fancy"></i></div><div class="q-text">Practice</div>
-                </a>
-                <a href="Vocab Check.html" class="q-action" onclick="playClick('Vocab Check.html'); return false;">
-                    <div class="q-icon-box"><i class="fas fa-spell-check"></i></div><div class="q-text">Vocab</div>
-                </a>
-                <a href="all.html" class="q-action" onclick="playClick('all.html'); return false;">
-                    <div class="q-icon-box"><i class="fas fa-gamepad"></i></div><div class="q-text">Game</div>
-                </a>
+                <a href="Modul Check.html" class="q-action" onclick="playClick('Modul Check.html'); return false;"><div class="q-icon-box"><i class="fas fa-scroll"></i></div><div class="q-text">Modul</div></a>
+                <a href="structure.html" class="q-action" onclick="playClick('structure.html'); return false;"><div class="q-icon-box"><i class="fas fa-pen-fancy"></i></div><div class="q-text">Practice</div></a>
+                <a href="Vocab Check.html" class="q-action" onclick="playClick('Vocab Check.html'); return false;"><div class="q-icon-box"><i class="fas fa-spell-check"></i></div><div class="q-text">Vocab</div></a>
+                <a href="all.html" class="q-action" onclick="playClick('all.html'); return false;"><div class="q-icon-box"><i class="fas fa-gamepad"></i></div><div class="q-text">Game</div></a>
             </div>
         </div>
-
         <div class="content-section">
             <div class="daily-word-card">
                 <div class="dw-header"><i class="fas fa-calendar-day"></i> Daily Word</div>
@@ -357,12 +163,7 @@
                     <p class="dw-sentence" id="dw-sentence">...</p>
                 </div>
             </div>
-
-            <div class="search-box">
-                <i class="fas fa-search" style="color: var(--bg-dark);"></i>
-                <input type="text" placeholder="Cari materi...">
-            </div>
-
+            <div class="search-box"><i class="fas fa-search" style="color: var(--bg-dark);"></i><input type="text" placeholder="Cari materi..."></div>
             <div class="grid-menu">
                 <a href="Modul Check.html" class="grid-item" onclick="playClick('Modul Check.html'); return false;"><div class="grid-icon icon-lime"><i class="fas fa-scroll"></i></div><div class="grid-text">Modul</div></a>
                 <a href="structure.html" class="grid-item" onclick="playClick('structure.html'); return false;"><div class="grid-icon icon-green"><i class="fas fa-pen-fancy"></i></div><div class="grid-text">Practice</div></a>
@@ -373,221 +174,59 @@
                 <div class="grid-item"><div class="grid-icon icon-blue"><i class="fas fa-certificate"></i></div><div class="grid-text">Certif</div></div>
                 <div class="grid-item"><div class="grid-icon" style="color: #777; background: #f1f2f6;"><i class="fas fa-th-large"></i></div><div class="grid-text">Lainnya</div></div>
             </div>
-
             <div class="info-section">
-                <div class="section-header">
-                    <div class="section-title">Informasi & Update</div>
+                <div class="section-header"><div class="section-title">Informasi & Update</div></div>
+                <div id="info-feed-container">
+                    <p style="text-align:center; opacity:0.6; font-size:0.8rem;">Memuat data...</p>
                 </div>
-                <div id="info-feed-container"></div>
             </div>
         </div>
     </div>
 
-    <div id="tutor-fab" onclick="toggleModal('add-modal')">
-        <i class="fas fa-plus"></i>
-    </div>
+    <div id="tutor-fab" onclick="toggleModal('add-modal')"><i class="fas fa-plus"></i></div>
 
     <div id="notif-modal" class="modal-overlay" onclick="closeModalOnOutside(event, 'notif-modal')">
         <div class="modal-content">
-            <div class="modal-header">
-                <h3>Notifikasi</h3>
-                <div class="close-btn" onclick="toggleModal('notif-modal')">&times;</div>
-            </div>
+            <div class="modal-header"><h3>Notifikasi</h3><div class="close-btn" onclick="toggleModal('notif-modal')">&times;</div></div>
             <div id="notif-content-body"></div>
         </div>
     </div>
 
     <div id="add-modal" class="modal-overlay" onclick="closeModalOnOutside(event, 'add-modal')">
         <div class="modal-content">
-            <div class="modal-header">
-                <h3>Tambah Info Baru</h3>
-                <div class="close-btn" onclick="toggleModal('add-modal')">&times;</div>
-            </div>
-            <div class="form-group">
-                <label>Judul Informasi</label>
-                <input type="text" id="post-title" placeholder="Contoh: Kelas Tambahan">
-            </div>
-            <div class="form-group">
-                <label>Kategori</label>
-                <select id="post-tag">
-                    <option value="blue">Tips (Biru)</option>
-                    <option value="orange">Materi (Orange)</option>
-                    <option value="green">Pengumuman (Hijau)</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label>Deskripsi Singkat</label>
-                <textarea id="post-desc" rows="3" placeholder="Isi detail informasi..."></textarea>
-            </div>
+            <div class="modal-header"><h3>Tambah Info Baru</h3><div class="close-btn" onclick="toggleModal('add-modal')">&times;</div></div>
+            <div class="form-group"><label>Judul Informasi</label><input type="text" id="post-title" placeholder="Contoh: Kelas Tambahan"></div>
+            <div class="form-group"><label>Kategori</label><select id="post-tag"><option value="blue">Tips (Biru)</option><option value="orange">Materi (Orange)</option><option value="green">Pengumuman (Hijau)</option></select></div>
+            <div class="form-group"><label>Deskripsi Singkat</label><textarea id="post-desc" rows="3" placeholder="Isi detail informasi..."></textarea></div>
             <button class="btn-submit" onclick="saveNewPost()">Posting</button>
         </div>
     </div>
 
-    <script>
-        // --- DATA & STATE ---
-        const defaultPosts = [
-            { title: "Perseverance", tag: "Word of the Day", color: "blue", desc: "Ketekunan dalam melakukan sesuatu meski sulit.", icon: "fa-lightbulb" },
-            { title: "Cara Cepat Paham Structure", tag: "Tips TOEFL", color: "orange", desc: "Pelajari pola Subject + Verb untuk skor tinggi.", icon: "fa-fire" },
-            { title: "Kelas Speaking Baru!", tag: "Pengumuman", color: "green", desc: "Daftar sekarang untuk sesi latihan minggu depan.", icon: "fa-bullhorn" }
-        ];
+    <script type="module">
+        // ----------------------------------------------------
+        // 1. KONFIGURASI FIREBASE (GANTI BAGIAN INI!)
+        // ----------------------------------------------------
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.1.3/firebase-app.js";
+        import { getDatabase, ref, push, onValue, query, limitToLast } from "https://www.gstatic.com/firebasejs/9.1.3/firebase-database.js";
 
-        const dailyWords = [
-            { word: "Resilience", meaning: "Ketangguhan", sentence: "Resilience is key to overcoming life's challenges." },
-            { word: "Ephemeral", meaning: "Sesaat / Fana", sentence: "Fashion trends are often ephemeral." },
-            { word: "Serendipity", meaning: "Kebetulan", sentence: "Meeting you here was pure serendipity." }
-        ];
+        // --- PASTE_CONFIG_DISINI (Ganti dengan kode dari Firebase Console Anda) ---
+        const firebaseConfig = {
+  apiKey: "AIzaSyAgYCaaoGMzZWVT2dRov7ALUnnMhHoqXmE",
+  authDomain: "english-check-db.firebaseapp.com",
+  databaseURL: "https://english-check-db-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "english-check-db",
+  storageBucket: "english-check-db.firebasestorage.app",
+  messagingSenderId: "136352630898",
+  appId: "1:136352630898:web:dcaa103fa848ca38de9aeb"
+};
+        // ----------------------------------------------------
 
-        let selectedRole = ''; 
+        // Init Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
 
-        // --- INIT ---
-        window.addEventListener('load', () => {
-            const splash = document.getElementById('splash-screen');
-            const login = document.getElementById('login-screen');
-            loadPosts(); 
-            
-            setTimeout(() => {
-                splash.classList.add('fade-out');
-                setTimeout(() => { 
-                    splash.style.display = 'none';
-                    login.style.display = 'flex';
-                }, 500);
-            }, 2500);
-        });
-
-        // --- LOGIN FLOW LOGIC ---
-        
-        // 1. Pilih Role
-        function selectRole(role) {
-            selectedRole = role;
-            const roleGrid = document.getElementById('roleSelection');
-            const inputs = document.getElementById('loginInputs');
-            const title = document.getElementById('loginTitle');
-            const sub = document.getElementById('loginSub');
-            const inputField = document.getElementById('loginInput');
-            const backBtn = document.getElementById('backBtn');
-
-            roleGrid.style.display = 'none';
-            inputs.style.display = 'block';
-            backBtn.style.display = 'block';
-
-            if(role === 'student') {
-                title.innerText = "Hello Student!";
-                sub.innerText = "Masukkan namamu untuk mulai belajar.";
-                inputField.placeholder = "Ketik namamu...";
-                inputField.type = "text";
-            } else {
-                title.innerText = "Tutor Login";
-                sub.innerText = "Masukkan Kode Akses Tutor.";
-                inputField.placeholder = "Kode Akses";
-                inputField.type = "password";
-            }
-        }
-
-        // 2. Reset (Tombol Back)
-        function resetLogin() {
-            selectedRole = '';
-            document.getElementById('roleSelection').style.display = 'grid';
-            document.getElementById('loginInputs').style.display = 'none';
-            document.getElementById('backBtn').style.display = 'none';
-            document.getElementById('loginTitle').innerText = "Choose Role";
-            document.getElementById('loginSub').innerText = "Masuk sebagai Student atau Tutor?";
-            document.getElementById('loginInput').value = '';
-        }
-
-        // 3. Proses Login
-        function processLogin() {
-            const inputVal = document.getElementById('loginInput').value.trim();
-            const loginScreen = document.getElementById('login-screen');
-            const dashboard = document.getElementById('dashboard');
-
-            if(inputVal === "") {
-                alert("Mohon isi data terlebih dahulu.");
-                return;
-            }
-
-            if(selectedRole === 'tutor') {
-                // Sederhana: Cek password hardcoded
-                if(inputVal === "admin123") {
-                    setupDashboard("Tutor Admin", true);
-                } else {
-                    alert("Kode Akses Salah!");
-                    return;
-                }
-            } else {
-                // Student mode
-                setupDashboard(inputVal, false);
-            }
-
-            // Transisi Masuk
-            loginScreen.style.opacity = '0';
-            setTimeout(() => {
-                loginScreen.style.display = 'none';
-                dashboard.style.display = 'flex';
-                playClick(null);
-            }, 300);
-        }
-
-        // 4. Setup Tampilan Dashboard
-        function setupDashboard(name, isTutor) {
-            document.getElementById('cardNameDisplay').innerText = name;
-            
-            if(isTutor) {
-                document.getElementById('tutor-fab').style.display = "flex";
-                document.querySelector('.balance-label').innerText = "Mode Tutor";
-            } else {
-                document.getElementById('tutor-fab').style.display = "none";
-                document.querySelector('.balance-label').innerText = "Active Student ID";
-            }
-
-            // Load Daily Word & Score Randomly
-            const randomIndex = Math.floor(Math.random() * dailyWords.length);
-            const todayWord = dailyWords[randomIndex];
-            document.getElementById('dw-word').innerText = todayWord.word;
-            document.getElementById('dw-meaning').innerText = todayWord.meaning;
-            document.getElementById('dw-sentence').innerText = `"${todayWord.sentence}"`;
-            document.getElementById('dailyScoreDisplay').innerText = Math.floor(Math.random() * 50) * 10;
-        }
-
-        // --- POSTING SYSTEM (LOCAL STORAGE) ---
-        function loadPosts() {
-            let posts = JSON.parse(localStorage.getItem('englishCheckPosts'));
-            if(!posts) {
-                posts = defaultPosts;
-                localStorage.setItem('englishCheckPosts', JSON.stringify(posts));
-            }
-            renderFeed(posts);
-        }
-
-        function renderFeed(posts) {
-            const container = document.getElementById('info-feed-container');
-            const notifBody = document.getElementById('notif-content-body');
-            let html = '';
-
-            posts.forEach(post => {
-                let iconClass = 'fa-bell';
-                if(post.color === 'blue') iconClass = 'fa-lightbulb';
-                if(post.color === 'orange') iconClass = 'fa-fire';
-                if(post.color === 'green') iconClass = 'fa-bullhorn';
-
-                html += `
-                    <div class="info-card" onclick="playClick('#')">
-                        <div class="info-icon-container info-${post.color}">
-                            <i class="fas ${iconClass}"></i>
-                        </div>
-                        <div class="info-content">
-                            <span class="info-tag tag-${post.color}">${post.tag}</span>
-                            <h4 class="info-title">${post.title}</h4>
-                            <p class="info-desc">${post.desc}</p>
-                        </div>
-                    </div>
-                `;
-            });
-
-            container.innerHTML = html;
-            notifBody.innerHTML = html; 
-        }
-
-        function saveNewPost() {
+        // --- GLOBAL VARIABLES VIA WINDOW (Agar bisa diakses onclick HTML) ---
+        window.saveNewPost = function() {
             const title = document.getElementById('post-title').value;
             const desc = document.getElementById('post-desc').value;
             const color = document.getElementById('post-tag').value;
@@ -599,53 +238,181 @@
             if(color === 'orange') tagText = "Materi";
             if(color === 'green') tagText = "Pengumuman";
 
-            const newPost = { title: title, desc: desc, color: color, tag: tagText };
+            // PUSH KE FIREBASE (BUKAN LOCALSTORAGE)
+            push(ref(db, 'posts'), {
+                title: title,
+                desc: desc,
+                color: color,
+                tag: tagText,
+                timestamp: Date.now()
+            }).then(() => {
+                alert("Berhasil diposting!");
+                document.getElementById('add-modal').style.display = 'none';
+                document.getElementById('post-title').value = "";
+                document.getElementById('post-desc').value = "";
+            }).catch((error) => {
+                alert("Gagal posting: " + error.message);
+            });
+        };
 
-            let posts = JSON.parse(localStorage.getItem('englishCheckPosts')) || defaultPosts;
-            posts.unshift(newPost);
-            localStorage.setItem('englishCheckPosts', JSON.stringify(posts));
-
-            renderFeed(posts);
-            toggleModal('add-modal');
+        // --- LISTEN DATA REALTIME ---
+        const postsRef = query(ref(db, 'posts'), limitToLast(10));
+        
+        onValue(postsRef, (snapshot) => {
+            const container = document.getElementById('info-feed-container');
+            const notifBody = document.getElementById('notif-content-body');
+            const badge = document.getElementById('notif-count');
             
-            document.getElementById('post-title').value = "";
-            document.getElementById('post-desc').value = "";
-        }
+            if (snapshot.exists()) {
+                const data = snapshot.val();
+                // Convert Object to Array & Reverse (Biar yang baru di atas)
+                const posts = Object.values(data).reverse(); 
+                
+                let html = '';
+                posts.forEach(post => {
+                    let iconClass = 'fa-bell';
+                    if(post.color === 'blue') iconClass = 'fa-lightbulb';
+                    if(post.color === 'orange') iconClass = 'fa-fire';
+                    if(post.color === 'green') iconClass = 'fa-bullhorn';
 
-        // --- UTILS ---
-        function toggleModal(id) {
-            const modal = document.getElementById(id);
-            if(modal.style.display === 'flex') {
-                modal.style.display = 'none';
+                    html += `
+                        <div class="info-card" onclick="window.playClick('#')">
+                            <div class="info-icon-container info-${post.color}">
+                                <i class="fas ${iconClass}"></i>
+                            </div>
+                            <div class="info-content">
+                                <span class="info-tag tag-${post.color}">${post.tag}</span>
+                                <h4 class="info-title">${post.title}</h4>
+                                <p class="info-desc">${post.desc}</p>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                container.innerHTML = html;
+                notifBody.innerHTML = html;
+                badge.innerText = posts.length; // Update angka notif
             } else {
-                modal.style.display = 'flex';
-                if(!isMuted) clickSfx.play();
+                container.innerHTML = '<p style="text-align:center; opacity:0.6;">Belum ada update terbaru.</p>';
             }
-        }
-        function closeModalOnOutside(e, id) {
-            if(e.target.id === id) document.getElementById(id).style.display = 'none';
-        }
+        });
 
+    </script>
+
+    <script>
+        const dailyWords = [
+            { word: "Resilience", meaning: "Ketangguhan", sentence: "Resilience is key to overcoming life's challenges." },
+            { word: "Ephemeral", meaning: "Sesaat / Fana", sentence: "Fashion trends are often ephemeral." },
+            { word: "Serendipity", meaning: "Kebetulan", sentence: "Meeting you here was pure serendipity." }
+        ];
+
+        let selectedRole = '';
         let isMuted = false;
         const clickSfx = document.getElementById('clickSound');
-        function toggleSound(btn) {
-            isMuted = !isMuted;
-            const icon = document.getElementById('soundIcon');
-            if(isMuted) {
-                icon.classList.remove('fa-headset'); icon.classList.add('fa-volume-mute'); icon.style.opacity = "0.6";
+
+        window.addEventListener('load', () => {
+            const splash = document.getElementById('splash-screen');
+            const login = document.getElementById('login-screen');
+            setTimeout(() => {
+                splash.classList.add('fade-out');
+                setTimeout(() => { 
+                    splash.style.display = 'none';
+                    login.style.display = 'flex';
+                }, 500);
+            }, 2500);
+        });
+
+        // LOGIN UI LOGIC
+        window.selectRole = function(role) {
+            selectedRole = role;
+            document.getElementById('roleSelection').style.display = 'none';
+            document.getElementById('loginInputs').style.display = 'block';
+            document.getElementById('backBtn').style.display = 'block';
+
+            if(role === 'student') {
+                document.getElementById('loginTitle').innerText = "Hello Student!";
+                document.getElementById('loginSub').innerText = "Masukkan namamu untuk mulai belajar.";
+                document.getElementById('loginInput').placeholder = "Ketik namamu...";
+                document.getElementById('loginInput').type = "text";
             } else {
-                icon.classList.remove('fa-volume-mute'); icon.classList.add('fa-headset'); icon.style.opacity = "1";
-                clickSfx.currentTime = 0; clickSfx.play();
+                document.getElementById('loginTitle').innerText = "Tutor Login";
+                document.getElementById('loginSub').innerText = "Masukkan Kode Akses Tutor.";
+                document.getElementById('loginInput').placeholder = "Kode Akses";
+                document.getElementById('loginInput').type = "password";
             }
         }
-        function playClick(targetUrl) {
+
+        window.resetLogin = function() {
+            selectedRole = '';
+            document.getElementById('roleSelection').style.display = 'grid';
+            document.getElementById('loginInputs').style.display = 'none';
+            document.getElementById('backBtn').style.display = 'none';
+            document.getElementById('loginTitle').innerText = "Choose Role";
+            document.getElementById('loginSub').innerText = "Masuk sebagai Student atau Tutor?";
+            document.getElementById('loginInput').value = '';
+        }
+
+        window.processLogin = function() {
+            const inputVal = document.getElementById('loginInput').value.trim();
+            if(inputVal === "") { alert("Mohon isi data terlebih dahulu."); return; }
+
+            if(selectedRole === 'tutor') {
+                if(inputVal === "admin123") { // Password sederhana
+                    setupDashboard("Tutor Admin", true);
+                } else {
+                    alert("Kode Akses Salah!"); return;
+                }
+            } else {
+                setupDashboard(inputVal, false);
+            }
+
+            document.getElementById('login-screen').style.opacity = '0';
+            setTimeout(() => {
+                document.getElementById('login-screen').style.display = 'none';
+                document.getElementById('dashboard').style.display = 'flex';
+                playClick(null);
+            }, 300);
+        }
+
+        function setupDashboard(name, isTutor) {
+            document.getElementById('cardNameDisplay').innerText = name;
+            if(isTutor) {
+                document.getElementById('tutor-fab').style.display = "flex";
+                document.querySelector('.balance-label').innerText = "Mode Tutor";
+            } else {
+                document.getElementById('tutor-fab').style.display = "none";
+                document.querySelector('.balance-label').innerText = "Active Student ID";
+            }
+
+            // Daily Word & Score
+            const randomIndex = Math.floor(Math.random() * dailyWords.length);
+            const todayWord = dailyWords[randomIndex];
+            document.getElementById('dw-word').innerText = todayWord.word;
+            document.getElementById('dw-meaning').innerText = todayWord.meaning;
+            document.getElementById('dw-sentence').innerText = `"${todayWord.sentence}"`;
+            document.getElementById('dailyScoreDisplay').innerText = Math.floor(Math.random() * 50) * 10;
+        }
+
+        // Utils
+        window.toggleModal = function(id) {
+            const modal = document.getElementById(id);
+            if(modal.style.display === 'flex') modal.style.display = 'none';
+            else { modal.style.display = 'flex'; if(!isMuted) clickSfx.play(); }
+        }
+        window.closeModalOnOutside = function(e, id) {
+            if(e.target.id === id) document.getElementById(id).style.display = 'none';
+        }
+        window.toggleSound = function(btn) {
+            isMuted = !isMuted;
+            const icon = document.getElementById('soundIcon');
+            if(isMuted) { icon.classList.remove('fa-headset'); icon.classList.add('fa-volume-mute'); icon.style.opacity = "0.6"; }
+            else { icon.classList.remove('fa-volume-mute'); icon.classList.add('fa-headset'); icon.style.opacity = "1"; clickSfx.currentTime = 0; clickSfx.play(); }
+        }
+        window.playClick = function(targetUrl) {
             if(!isMuted) { clickSfx.currentTime = 0; clickSfx.play().catch(e=>{}); }
             if(targetUrl && targetUrl !== '#') setTimeout(() => { window.location.href = targetUrl; }, 200);
         }
-        
-        document.getElementById('loginInput').addEventListener('keypress', function (e) {
-            if (e.key === 'Enter') processLogin();
-        });
+        document.getElementById('loginInput').addEventListener('keypress', function (e) { if (e.key === 'Enter') processLogin(); });
     </script>
 </body>
 </html>
