@@ -16,6 +16,7 @@
             --body-bg: #f4fcf7;       /* Putih Kehijauan */
             --text-dark: #1b4d3e;
             --white: #ffffff;
+            --grey-text: #666666;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -118,22 +119,19 @@
             font-size: 1.6rem; font-weight: 700; color: var(--white);
             white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 8px;
         }
-
-        /* SCORE HARIAN */
         .daily-score-badge {
             display: inline-flex; align-items: center; gap: 8px;
             background: rgba(0, 0, 0, 0.2); border: 1px solid rgba(255,255,255,0.1);
             padding: 6px 12px; border-radius: 12px; color: white; font-size: 0.85rem;
         }
         .score-val { color: var(--accent-lime); font-weight: 700; font-size: 1rem; }
-
         .balance-footer { 
             margin-top: 15px; border-top: 1px solid rgba(255,255,255,0.15); 
             padding-top: 12px; font-size: 0.85rem; display: flex; justify-content: space-between;
             align-items: center; cursor: pointer; color: var(--white); font-weight: 500; opacity: 0.9;
         }
 
-        /* 4 FITUR UTAMA (HEADER) */
+        /* FITUR UTAMA (HEADER) */
         .quick-actions { display: flex; justify-content: space-between; margin-bottom: 5px; padding: 0 5px; }
         .q-action { display: flex; flex-direction: column; align-items: center; gap: 8px; color: white; text-decoration: none; width: 25%; }
         .q-action:active { transform: scale(0.9); }
@@ -144,7 +142,7 @@
         }
         .q-text { font-size: 0.75rem; font-weight: 500; text-align: center; }
 
-        /* GRID MENU BAWAH */
+        /* GRID MENU & CONTENT */
         .content-section { flex: 1; padding: 25px 20px; margin-top: -10px; }
         .search-box {
             background: #ffffff; border-radius: 50px; padding: 12px 20px; display: flex;
@@ -162,14 +160,55 @@
         .grid-item:active .grid-icon { transform: scale(0.95); background: var(--accent-lime); }
         .grid-text { font-size: 0.7rem; text-align: center; font-weight: 600; color: #444; }
 
-        /* Icon Colors for Grid */
         .icon-lime { color: #afb42b; background: #f9fbe7; }
         .icon-green { color: #2e7d32; background: #e8f5e9; }
         .icon-blue { color: #0277bd; background: #e1f5fe; }
         .icon-orange { color: #ef6c00; background: #fff3e0; }
         .icon-teal { color: #00897b; background: #e0f2f1; }
         .icon-pink { color: #d81b60; background: #fce4ec; }
+
+        /* --- BAGIAN INFORMASI (BARU) --- */
+        .info-section { margin-top: 35px; margin-bottom: 20px; }
         
+        .section-header {
+            display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;
+        }
+        .section-title { font-size: 1.1rem; font-weight: 700; color: var(--bg-dark); }
+        .see-all { font-size: 0.8rem; color: var(--text-dark); text-decoration: none; font-weight: 600; }
+
+        /* Card Informasi */
+        .info-card {
+            background: var(--white); border-radius: 16px; padding: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            display: flex; align-items: flex-start; gap: 15px;
+            margin-bottom: 15px; cursor: pointer; transition: transform 0.2s;
+        }
+        .info-card:active { transform: scale(0.98); }
+
+        .info-icon-container {
+            width: 50px; height: 50px; border-radius: 12px; flex-shrink: 0;
+            display: flex; justify-content: center; align-items: center;
+            font-size: 1.5rem;
+        }
+
+        .info-content { flex: 1; }
+        .info-tag {
+            font-size: 0.65rem; font-weight: 700; text-transform: uppercase;
+            padding: 2px 8px; border-radius: 4px; display: inline-block; margin-bottom: 5px;
+        }
+        .info-title { font-size: 0.95rem; font-weight: 700; color: var(--text-dark); margin-bottom: 3px; line-height: 1.3; }
+        .info-desc { font-size: 0.75rem; color: var(--grey-text); line-height: 1.4; }
+
+        /* Varian Warna Info */
+        .info-blue { background: #e3f2fd; color: #1976d2; }
+        .tag-blue { background: #e3f2fd; color: #1976d2; }
+        
+        .info-orange { background: #fff3e0; color: #f57c00; }
+        .tag-orange { background: #fff3e0; color: #f57c00; }
+
+        .info-green { background: #e8f5e9; color: #2e7d32; }
+        .tag-green { background: #e8f5e9; color: #2e7d32; }
+
     </style>
 </head>
 <body>
@@ -203,21 +242,18 @@
                     <h1>English Check</h1>
                 </div>
                 <div class="top-icons">
-                    <div class="icon-btn"><i class="far fa-bell"></i><div class="badge">1</div></div>
+                    <div class="icon-btn"><i class="far fa-bell"></i><div class="badge">2</div></div>
                     <div class="icon-btn"><i class="fas fa-headset"></i></div>
                 </div>
             </div>
 
             <div class="balance-card">
                 <div class="balance-label">Active Student ID</div>
-                
                 <div class="student-name-display" id="cardNameDisplay">Student</div>
-
                 <div class="daily-score-badge">
                     <i class="fas fa-star" style="color: #f1c40f;"></i>
                     <span>Score Harian: <span class="score-val" id="dailyScoreDisplay">0</span></span>
                 </div>
-
                 <div class="balance-footer" onclick="playClick('Modul Check.html')">
                     <span>Cek Progress Belajar</span>
                     <i class="fas fa-chart-line"></i>
@@ -248,50 +284,75 @@
 
             <div class="grid-menu">
                 <a href="Modul Check.html" class="grid-item" onclick="playClick('Modul Check.html'); return false;">
-                    <div class="grid-icon icon-lime"><i class="fas fa-scroll"></i></div>
-                    <div class="grid-text">Modul</div>
+                    <div class="grid-icon icon-lime"><i class="fas fa-scroll"></i></div><div class="grid-text">Modul</div>
                 </a>
-                
                 <a href="structure.html" class="grid-item" onclick="playClick('structure.html'); return false;">
-                    <div class="grid-icon icon-green"><i class="fas fa-pen-fancy"></i></div>
-                    <div class="grid-text">Practice</div>
+                    <div class="grid-icon icon-green"><i class="fas fa-pen-fancy"></i></div><div class="grid-text">Practice</div>
                 </a>
-
                 <a href="Vocab Check.html" class="grid-item" onclick="playClick('Vocab Check.html'); return false;">
-                    <div class="grid-icon icon-blue"><i class="fas fa-spell-check"></i></div>
-                    <div class="grid-text">Vocab</div>
+                    <div class="grid-icon icon-blue"><i class="fas fa-spell-check"></i></div><div class="grid-text">Vocab</div>
                 </a>
-
                 <a href="all.html" class="grid-item" onclick="playClick('all.html'); return false;">
-                    <div class="grid-icon icon-orange"><i class="fas fa-gamepad"></i></div>
-                    <div class="grid-text">Game</div>
+                    <div class="grid-icon icon-orange"><i class="fas fa-gamepad"></i></div><div class="grid-text">Game</div>
                 </a>
-
                 <a href="Absensi.html" class="grid-item" onclick="playClick('Absensi.html'); return false;">
-                    <div class="grid-icon icon-teal"><i class="fas fa-calendar-check"></i></div>
-                    <div class="grid-text">Absensi</div>
+                    <div class="grid-icon icon-teal"><i class="fas fa-calendar-check"></i></div><div class="grid-text">Absensi</div>
                 </a>
-
                 <a href="#" class="grid-item" onclick="playClick('#'); return false;">
-                    <div class="grid-icon icon-pink"><i class="fas fa-heart"></i></div>
-                    <div class="grid-text">Support</div>
+                    <div class="grid-icon icon-pink"><i class="fas fa-heart"></i></div><div class="grid-text">Support</div>
                 </a>
-
                 <div class="grid-item">
-                    <div class="grid-icon icon-blue"><i class="fas fa-certificate"></i></div>
-                    <div class="grid-text">Certif</div>
+                    <div class="grid-icon icon-blue"><i class="fas fa-certificate"></i></div><div class="grid-text">Certif</div>
                 </div>
-
                 <div class="grid-item">
-                    <div class="grid-icon" style="color: #777; background: #f1f2f6;"><i class="fas fa-th-large"></i></div>
-                    <div class="grid-text">Lainnya</div>
+                    <div class="grid-icon" style="color: #777; background: #f1f2f6;"><i class="fas fa-th-large"></i></div><div class="grid-text">Lainnya</div>
                 </div>
             </div>
-        </div>
+
+            <div class="info-section">
+                <div class="section-header">
+                    <div class="section-title">Informasi & Update</div>
+                    <a href="#" class="see-all">Lihat Semua</a>
+                </div>
+
+                <div class="info-card" onclick="playClick('#')">
+                    <div class="info-icon-container info-blue">
+                        <i class="fas fa-lightbulb"></i>
+                    </div>
+                    <div class="info-content">
+                        <span class="info-tag tag-blue">Word of the Day</span>
+                        <h4 class="info-title">Perseverance</h4>
+                        <p class="info-desc">Ketekunan dalam melakukan sesuatu meski sulit.</p>
+                    </div>
+                </div>
+
+                <div class="info-card" onclick="playClick('#')">
+                    <div class="info-icon-container info-orange">
+                        <i class="fas fa-fire"></i>
+                    </div>
+                    <div class="info-content">
+                        <span class="info-tag tag-orange">Tips TOEFL</span>
+                        <h4 class="info-title">Cara Cepat Paham Structure</h4>
+                        <p class="info-desc">Pelajari pola Subject + Verb untuk skor tinggi.</p>
+                    </div>
+                </div>
+
+                <div class="info-card" onclick="playClick('#')">
+                    <div class="info-icon-container info-green">
+                        <i class="fas fa-bullhorn"></i>
+                    </div>
+                    <div class="info-content">
+                        <span class="info-tag tag-green">Pengumuman</span>
+                        <h4 class="info-title">Kelas Speaking Baru!</h4>
+                        <p class="info-desc">Daftar sekarang untuk sesi latihan minggu depan.</p>
+                    </div>
+                </div>
+
+            </div>
+            </div>
     </div>
 
     <script>
-        // Init Splash & Login
         window.addEventListener('load', () => {
             const splash = document.getElementById('splash-screen');
             const login = document.getElementById('login-screen');
@@ -304,7 +365,6 @@
             }, 2500);
         });
 
-        // Function Enter Dashboard
         function enterDashboard() {
             const input = document.getElementById('studentNameInput');
             const login = document.getElementById('login-screen');
@@ -312,10 +372,8 @@
             
             let name = input.value.trim();
             if(name === "") name = "Student"; 
-
             document.getElementById('cardNameDisplay').innerText = name;
             
-            // Random Score Logic (0-500)
             const randomScore = Math.floor(Math.random() * 50) * 10;
             document.getElementById('dailyScoreDisplay').innerText = randomScore;
 
@@ -328,7 +386,6 @@
             }, 300);
         }
 
-        // SFX
         const clickSfx = document.getElementById('clickSound');
         function playClick(targetUrl) {
             clickSfx.currentTime = 0;
