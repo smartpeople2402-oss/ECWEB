@@ -10,10 +10,10 @@
     <style>
         :root {
             /* WARNA TEMA UTAMA */
-            --bg-dark: #0f3d3e;       /* Hijau Tua */
-            --bg-darker: #0a2b2c;     /* Hijau Gelap */
-            --accent-lime: #d4e157;   /* Lime */
-            --body-bg: #f4fcf7;       /* Putih Kehijauan */
+            --bg-dark: #0f3d3e;       
+            --bg-darker: #0a2b2c;     
+            --accent-lime: #d4e157;   
+            --body-bg: #f4fcf7;       
             --text-dark: #1b4d3e;
             --white: #ffffff;
             --grey-text: #666666;
@@ -51,7 +51,7 @@
         @keyframes loading { 0% { left: -40%; } 100% { left: 100%; } }
         .fade-out { opacity: 0; visibility: hidden; }
 
-        /* --- 2. LOGIN SCREEN --- */
+        /* --- 2. LOGIN SCREEN (REDESIGNED) --- */
         #login-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: linear-gradient(135deg, var(--bg-dark), var(--bg-darker));
@@ -63,12 +63,28 @@
             background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px);
             padding: 30px 25px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.2);
             width: 100%; max-width: 350px; text-align: center; animation: fadeInUp 0.5s ease-out;
+            position: relative;
         }
         @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
         .login-title { color: var(--accent-lime); font-size: 1.5rem; font-weight: 700; margin-bottom: 5px; }
         .login-subtitle { color: #e0f2f1; font-size: 0.85rem; margin-bottom: 25px; opacity: 0.8; }
         
+        /* Role Selection Grid */
+        .role-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; width: 100%; margin-bottom: 20px; }
+        .role-card {
+            background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 15px; padding: 20px 10px; cursor: pointer; transition: 0.3s;
+            display: flex; flex-direction: column; align-items: center; gap: 10px;
+        }
+        .role-card:hover, .role-card.active { background: var(--accent-lime); border-color: var(--accent-lime); }
+        .role-card i { font-size: 2rem; color: white; transition: 0.3s; }
+        .role-card span { font-size: 0.9rem; font-weight: 600; color: white; transition: 0.3s; }
+        
+        .role-card:hover i, .role-card.active i, 
+        .role-card:hover span, .role-card.active span { color: var(--bg-dark); }
+
+        /* Input Forms */
         .input-group input {
             width: 100%; padding: 15px 20px; border-radius: 50px; border: none; outline: none;
             background: rgba(255,255,255,0.9); font-family: 'Poppins'; font-size: 1rem;
@@ -80,6 +96,12 @@
             transition: transform 0.2s;
         }
         .btn-start:active { transform: scale(0.95); }
+
+        /* Back Button inside Login */
+        .back-login {
+            position: absolute; top: 15px; left: 15px; color: rgba(255,255,255,0.6);
+            cursor: pointer; font-size: 1.2rem; display: none;
+        }
 
         /* --- 3. DASHBOARD --- */
         #dashboard { display: none; flex-direction: column; min-height: 100vh; }
@@ -144,31 +166,19 @@
         }
         .q-text { font-size: 0.75rem; font-weight: 500; text-align: center; }
 
-        /* GRID MENU & CONTENT */
         .content-section { flex: 1; padding: 25px 20px; margin-top: -10px; }
         
-        /* --- DAILY WORD STYLE (BARU) --- */
+        /* DAILY WORD */
         .daily-word-card {
-            background: linear-gradient(135deg, #d4e157 0%, #afb42b 100%); /* Warna Lime Gradient */
-            color: var(--bg-dark); /* Teks Hijau Tua */
-            border-radius: 20px;
-            padding: 20px;
-            margin-bottom: 25px;
-            box-shadow: 0 10px 20px rgba(212, 225, 87, 0.3);
-            position: relative;
-            overflow: hidden;
-            border: 2px solid white;
+            background: linear-gradient(135deg, #d4e157 0%, #afb42b 100%);
+            color: var(--bg-dark); border-radius: 20px; padding: 20px;
+            margin-bottom: 25px; box-shadow: 0 10px 20px rgba(212, 225, 87, 0.3);
+            position: relative; overflow: hidden; border: 2px solid white;
         }
-        .dw-header {
-            font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px;
-            margin-bottom: 5px; opacity: 0.8; display: flex; align-items: center; gap: 5px;
-        }
+        .dw-header { font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; opacity: 0.8; display: flex; align-items: center; gap: 5px; }
         .dw-word { font-size: 1.8rem; font-weight: 800; line-height: 1.2; margin-bottom: 2px; }
         .dw-meaning { font-size: 1rem; font-weight: 600; margin-bottom: 12px; font-style: italic; opacity: 0.9; }
-        .dw-sentence { 
-            font-size: 0.85rem; background: rgba(255,255,255,0.4); padding: 10px 12px; 
-            border-radius: 12px; font-weight: 500;
-        }
+        .dw-sentence { font-size: 0.85rem; background: rgba(255,255,255,0.4); padding: 10px 12px; border-radius: 12px; font-weight: 500; }
 
         /* Search Box */
         .search-box {
@@ -194,34 +204,29 @@
         .icon-teal { color: #00897b; background: #e0f2f1; }
         .icon-pink { color: #d81b60; background: #fce4ec; }
 
-        /* BAGIAN INFORMASI BAWAH */
-        .info-section { margin-top: 35px; margin-bottom: 20px; }
+        /* INFORMASI SECTION */
+        .info-section { margin-top: 35px; margin-bottom: 20px; position: relative; }
         .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
         .section-title { font-size: 1.1rem; font-weight: 700; color: var(--bg-dark); }
         .see-all { font-size: 0.8rem; color: var(--text-dark); text-decoration: none; font-weight: 600; }
         .info-card {
             background: var(--white); border-radius: 16px; padding: 15px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.05); display: flex; align-items: flex-start; gap: 15px;
-            margin-bottom: 15px; cursor: pointer; transition: transform 0.2s;
+            margin-bottom: 15px; cursor: pointer; transition: transform 0.2s; position: relative;
         }
         .info-card:active { transform: scale(0.98); }
-        .info-icon-container {
-            width: 50px; height: 50px; border-radius: 12px; flex-shrink: 0;
-            display: flex; justify-content: center; align-items: center; font-size: 1.5rem;
-        }
+        .info-icon-container { width: 50px; height: 50px; border-radius: 12px; flex-shrink: 0; display: flex; justify-content: center; align-items: center; font-size: 1.5rem; }
         .info-content { flex: 1; }
-        .info-tag {
-            font-size: 0.65rem; font-weight: 700; text-transform: uppercase;
-            padding: 2px 8px; border-radius: 4px; display: inline-block; margin-bottom: 5px;
-        }
+        .info-tag { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; padding: 2px 8px; border-radius: 4px; display: inline-block; margin-bottom: 5px; }
         .info-title { font-size: 0.95rem; font-weight: 700; color: var(--text-dark); margin-bottom: 3px; line-height: 1.3; }
         .info-desc { font-size: 0.75rem; color: var(--grey-text); line-height: 1.4; }
+        
         .info-blue { background: #e3f2fd; color: #1976d2; } .tag-blue { background: #e3f2fd; color: #1976d2; }
         .info-orange { background: #fff3e0; color: #f57c00; } .tag-orange { background: #fff3e0; color: #f57c00; }
         .info-green { background: #e8f5e9; color: #2e7d32; } .tag-green { background: #e8f5e9; color: #2e7d32; }
 
-        /* --- MODAL NOTIFIKASI --- */
-        #notif-modal {
+        /* MODAL (Notifikasi & Add Update) */
+        .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0, 0, 0, 0.6); z-index: 99999;
             display: none; justify-content: center; align-items: flex-end;
@@ -237,6 +242,24 @@
         .modal-header h3 { color: var(--bg-dark); font-weight: 700; }
         .close-btn { font-size: 1.5rem; color: #888; cursor: pointer; }
 
+        /* --- FITUR TUTOR MODE (Floating Button) --- */
+        #tutor-fab {
+            position: fixed; bottom: 30px; right: 30px;
+            width: 60px; height: 60px; background: var(--accent-lime);
+            color: var(--bg-dark); border-radius: 50%;
+            display: none; justify-content: center; align-items: center;
+            font-size: 1.5rem; box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            z-index: 999; cursor: pointer; transition: transform 0.2s;
+        }
+        #tutor-fab:active { transform: scale(0.9); }
+
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 5px; }
+        .form-group input, .form-group textarea, .form-group select {
+            width: 100%; padding: 10px; border-radius: 10px; border: 1px solid #ddd;
+            font-family: 'Poppins'; font-size: 0.9rem;
+        }
+        .btn-submit { background: var(--bg-dark); color: white; border: none; padding: 10px 20px; border-radius: 10px; width: 100%; font-weight: 700; cursor: pointer; }
     </style>
 </head>
 <body>
@@ -252,13 +275,29 @@
 
     <div id="login-screen">
         <div class="login-card">
+            <i class="fas fa-arrow-left back-login" id="backBtn" onclick="resetLogin()"></i>
+            
             <div style="font-size: 3rem; margin-bottom: 15px;">🎓</div>
-            <h2 class="login-title">Student Login</h2>
-            <p class="login-subtitle">Masukkan namamu untuk mengakses dashboard.</p>
-            <div class="input-group">
-                <input type="text" id="studentNameInput" placeholder="Ketik namamu..." autocomplete="off">
+            <h2 class="login-title" id="loginTitle">Choose Role</h2>
+            <p class="login-subtitle" id="loginSub">Masuk sebagai Student atau Tutor?</p>
+            
+            <div class="role-grid" id="roleSelection">
+                <div class="role-card" onclick="selectRole('student')">
+                    <i class="fas fa-user-graduate"></i>
+                    <span>Student</span>
+                </div>
+                <div class="role-card" onclick="selectRole('tutor')">
+                    <i class="fas fa-chalkboard-teacher"></i>
+                    <span>Tutor</span>
+                </div>
             </div>
-            <button class="btn-start" onclick="enterDashboard()">Masuk</button>
+
+            <div id="loginInputs" style="display: none; width: 100%;">
+                <div class="input-group">
+                    <input type="text" id="loginInput" placeholder="..." autocomplete="off">
+                </div>
+                <button class="btn-start" onclick="processLogin()">Masuk</button>
+            </div>
         </div>
     </div>
 
@@ -270,9 +309,9 @@
                     <h1>English Check</h1>
                 </div>
                 <div class="top-icons">
-                    <div class="icon-btn" onclick="toggleNotifModal()">
+                    <div class="icon-btn" onclick="toggleModal('notif-modal')">
                         <i class="far fa-bell"></i>
-                        <div class="badge">2</div>
+                        <div class="badge">!</div>
                     </div>
                     <div class="icon-btn" onclick="toggleSound(this)">
                         <i class="fas fa-headset" id="soundIcon"></i>
@@ -281,8 +320,8 @@
             </div>
 
             <div class="balance-card">
-                <div class="balance-label">Active Student ID</div>
-                <div class="student-name-display" id="cardNameDisplay">Student</div>
+                <div class="balance-label">Active Session</div>
+                <div class="student-name-display" id="cardNameDisplay">User</div>
                 <div class="daily-score-badge">
                     <i class="fas fa-star" style="color: #f1c40f;"></i>
                     <span>Score Harian: <span class="score-val" id="dailyScoreDisplay">0</span></span>
@@ -310,11 +349,8 @@
         </div>
 
         <div class="content-section">
-            
             <div class="daily-word-card">
-                <div class="dw-header">
-                    <i class="fas fa-calendar-day"></i> Daily Word
-                </div>
+                <div class="dw-header"><i class="fas fa-calendar-day"></i> Daily Word</div>
                 <div class="dw-content">
                     <h2 class="dw-word" id="dw-word">Loading...</h2>
                     <p class="dw-meaning" id="dw-meaning">...</p>
@@ -328,104 +364,87 @@
             </div>
 
             <div class="grid-menu">
-                <a href="Modul Check.html" class="grid-item" onclick="playClick('Modul Check.html'); return false;">
-                    <div class="grid-icon icon-lime"><i class="fas fa-scroll"></i></div><div class="grid-text">Modul</div>
-                </a>
-                <a href="structure.html" class="grid-item" onclick="playClick('structure.html'); return false;">
-                    <div class="grid-icon icon-green"><i class="fas fa-pen-fancy"></i></div><div class="grid-text">Practice</div>
-                </a>
-                <a href="Vocab Check.html" class="grid-item" onclick="playClick('Vocab Check.html'); return false;">
-                    <div class="grid-icon icon-blue"><i class="fas fa-spell-check"></i></div><div class="grid-text">Vocab</div>
-                </a>
-                <a href="all.html" class="grid-item" onclick="playClick('all.html'); return false;">
-                    <div class="grid-icon icon-orange"><i class="fas fa-gamepad"></i></div><div class="grid-text">Game</div>
-                </a>
-                <a href="Absensi.html" class="grid-item" onclick="playClick('Absensi.html'); return false;">
-                    <div class="grid-icon icon-teal"><i class="fas fa-calendar-check"></i></div><div class="grid-text">Absensi</div>
-                </a>
-                <a href="#" class="grid-item" onclick="playClick('#'); return false;">
-                    <div class="grid-icon icon-pink"><i class="fas fa-heart"></i></div><div class="grid-text">Support</div>
-                </a>
-                <div class="grid-item">
-                    <div class="grid-icon icon-blue"><i class="fas fa-certificate"></i></div><div class="grid-text">Certif</div>
-                </div>
-                <div class="grid-item">
-                    <div class="grid-icon" style="color: #777; background: #f1f2f6;"><i class="fas fa-th-large"></i></div><div class="grid-text">Lainnya</div>
-                </div>
+                <a href="Modul Check.html" class="grid-item" onclick="playClick('Modul Check.html'); return false;"><div class="grid-icon icon-lime"><i class="fas fa-scroll"></i></div><div class="grid-text">Modul</div></a>
+                <a href="structure.html" class="grid-item" onclick="playClick('structure.html'); return false;"><div class="grid-icon icon-green"><i class="fas fa-pen-fancy"></i></div><div class="grid-text">Practice</div></a>
+                <a href="Vocab Check.html" class="grid-item" onclick="playClick('Vocab Check.html'); return false;"><div class="grid-icon icon-blue"><i class="fas fa-spell-check"></i></div><div class="grid-text">Vocab</div></a>
+                <a href="all.html" class="grid-item" onclick="playClick('all.html'); return false;"><div class="grid-icon icon-orange"><i class="fas fa-gamepad"></i></div><div class="grid-text">Game</div></a>
+                <a href="Absensi.html" class="grid-item" onclick="playClick('Absensi.html'); return false;"><div class="grid-icon icon-teal"><i class="fas fa-calendar-check"></i></div><div class="grid-text">Absensi</div></a>
+                <a href="#" class="grid-item" onclick="playClick('#'); return false;"><div class="grid-icon icon-pink"><i class="fas fa-heart"></i></div><div class="grid-text">Support</div></a>
+                <div class="grid-item"><div class="grid-icon icon-blue"><i class="fas fa-certificate"></i></div><div class="grid-text">Certif</div></div>
+                <div class="grid-item"><div class="grid-icon" style="color: #777; background: #f1f2f6;"><i class="fas fa-th-large"></i></div><div class="grid-text">Lainnya</div></div>
             </div>
 
             <div class="info-section">
                 <div class="section-header">
                     <div class="section-title">Informasi & Update</div>
-                    <a href="#" class="see-all">Lihat Semua</a>
                 </div>
-                <div id="info-feed-content">
-                    <div class="info-card" onclick="playClick('#')">
-                        <div class="info-icon-container info-blue">
-                            <i class="fas fa-lightbulb"></i>
-                        </div>
-                        <div class="info-content">
-                            <span class="info-tag tag-blue">Word of the Day</span>
-                            <h4 class="info-title">Perseverance</h4>
-                            <p class="info-desc">Ketekunan dalam melakukan sesuatu meski sulit.</p>
-                        </div>
-                    </div>
-                    <div class="info-card" onclick="playClick('#')">
-                        <div class="info-icon-container info-orange">
-                            <i class="fas fa-fire"></i>
-                        </div>
-                        <div class="info-content">
-                            <span class="info-tag tag-orange">Tips TOEFL</span>
-                            <h4 class="info-title">Cara Cepat Paham Structure</h4>
-                            <p class="info-desc">Pelajari pola Subject + Verb untuk skor tinggi.</p>
-                        </div>
-                    </div>
-                    <div class="info-card" onclick="playClick('#')">
-                        <div class="info-icon-container info-green">
-                            <i class="fas fa-bullhorn"></i>
-                        </div>
-                        <div class="info-content">
-                            <span class="info-tag tag-green">Pengumuman</span>
-                            <h4 class="info-title">Kelas Speaking Baru!</h4>
-                            <p class="info-desc">Daftar sekarang untuk sesi latihan minggu depan.</p>
-                        </div>
-                    </div>
-                </div>
+                <div id="info-feed-container"></div>
             </div>
-
         </div>
     </div>
 
-    <div id="notif-modal" onclick="closeNotifModal(event)">
+    <div id="tutor-fab" onclick="toggleModal('add-modal')">
+        <i class="fas fa-plus"></i>
+    </div>
+
+    <div id="notif-modal" class="modal-overlay" onclick="closeModalOnOutside(event, 'notif-modal')">
         <div class="modal-content">
             <div class="modal-header">
                 <h3>Notifikasi</h3>
-                <div class="close-btn" onclick="toggleNotifModal()">&times;</div>
+                <div class="close-btn" onclick="toggleModal('notif-modal')">&times;</div>
             </div>
-            <div id="modal-body-content">
-                </div>
+            <div id="notif-content-body"></div>
+        </div>
+    </div>
+
+    <div id="add-modal" class="modal-overlay" onclick="closeModalOnOutside(event, 'add-modal')">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Tambah Info Baru</h3>
+                <div class="close-btn" onclick="toggleModal('add-modal')">&times;</div>
+            </div>
+            <div class="form-group">
+                <label>Judul Informasi</label>
+                <input type="text" id="post-title" placeholder="Contoh: Kelas Tambahan">
+            </div>
+            <div class="form-group">
+                <label>Kategori</label>
+                <select id="post-tag">
+                    <option value="blue">Tips (Biru)</option>
+                    <option value="orange">Materi (Orange)</option>
+                    <option value="green">Pengumuman (Hijau)</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Deskripsi Singkat</label>
+                <textarea id="post-desc" rows="3" placeholder="Isi detail informasi..."></textarea>
+            </div>
+            <button class="btn-submit" onclick="saveNewPost()">Posting</button>
         </div>
     </div>
 
     <script>
-        // Data Daily Word (Bisa ditambah lagi)
+        // --- DATA & STATE ---
+        const defaultPosts = [
+            { title: "Perseverance", tag: "Word of the Day", color: "blue", desc: "Ketekunan dalam melakukan sesuatu meski sulit.", icon: "fa-lightbulb" },
+            { title: "Cara Cepat Paham Structure", tag: "Tips TOEFL", color: "orange", desc: "Pelajari pola Subject + Verb untuk skor tinggi.", icon: "fa-fire" },
+            { title: "Kelas Speaking Baru!", tag: "Pengumuman", color: "green", desc: "Daftar sekarang untuk sesi latihan minggu depan.", icon: "fa-bullhorn" }
+        ];
+
         const dailyWords = [
             { word: "Resilience", meaning: "Ketangguhan", sentence: "Resilience is key to overcoming life's challenges." },
             { word: "Ephemeral", meaning: "Sesaat / Fana", sentence: "Fashion trends are often ephemeral." },
-            { word: "Serendipity", meaning: "Kebetulan yang menyenangkan", sentence: "Meeting you here was pure serendipity." },
-            { word: "Eloquent", meaning: "Fasih / Pandai bicara", sentence: "She gave an eloquent speech at the ceremony." },
-            { word: "Meticulous", meaning: "Sangat teliti", sentence: "He is meticulous about keeping his records." },
-            { word: "Pragmatic", meaning: "Praktis", sentence: "We need a pragmatic solution to this problem." },
-            { word: "Ineffable", meaning: "Tak terlukiskan", sentence: " The beauty of the sunset was ineffable." }
+            { word: "Serendipity", meaning: "Kebetulan", sentence: "Meeting you here was pure serendipity." }
         ];
 
+        let selectedRole = ''; 
+
+        // --- INIT ---
         window.addEventListener('load', () => {
             const splash = document.getElementById('splash-screen');
             const login = document.getElementById('login-screen');
+            loadPosts(); 
             
-            // Setup Modal Content
-            document.getElementById('modal-body-content').innerHTML = document.getElementById('info-feed-content').innerHTML;
-
             setTimeout(() => {
                 splash.classList.add('fade-out');
                 setTimeout(() => { 
@@ -435,68 +454,167 @@
             }, 2500);
         });
 
-        function enterDashboard() {
-            const input = document.getElementById('studentNameInput');
-            const login = document.getElementById('login-screen');
+        // --- LOGIN FLOW LOGIC ---
+        
+        // 1. Pilih Role
+        function selectRole(role) {
+            selectedRole = role;
+            const roleGrid = document.getElementById('roleSelection');
+            const inputs = document.getElementById('loginInputs');
+            const title = document.getElementById('loginTitle');
+            const sub = document.getElementById('loginSub');
+            const inputField = document.getElementById('loginInput');
+            const backBtn = document.getElementById('backBtn');
+
+            roleGrid.style.display = 'none';
+            inputs.style.display = 'block';
+            backBtn.style.display = 'block';
+
+            if(role === 'student') {
+                title.innerText = "Hello Student!";
+                sub.innerText = "Masukkan namamu untuk mulai belajar.";
+                inputField.placeholder = "Ketik namamu...";
+                inputField.type = "text";
+            } else {
+                title.innerText = "Tutor Login";
+                sub.innerText = "Masukkan Kode Akses Tutor.";
+                inputField.placeholder = "Kode Akses (default: admin123)";
+                inputField.type = "password";
+            }
+        }
+
+        // 2. Reset (Tombol Back)
+        function resetLogin() {
+            selectedRole = '';
+            document.getElementById('roleSelection').style.display = 'grid';
+            document.getElementById('loginInputs').style.display = 'none';
+            document.getElementById('backBtn').style.display = 'none';
+            document.getElementById('loginTitle').innerText = "Choose Role";
+            document.getElementById('loginSub').innerText = "Masuk sebagai Student atau Tutor?";
+            document.getElementById('loginInput').value = '';
+        }
+
+        // 3. Proses Login
+        function processLogin() {
+            const inputVal = document.getElementById('loginInput').value.trim();
+            const loginScreen = document.getElementById('login-screen');
             const dashboard = document.getElementById('dashboard');
-            
-            let name = input.value.trim();
-            if(name === "") name = "Student"; 
-            document.getElementById('cardNameDisplay').innerText = name;
-            
-            // Random Score
-            const randomScore = Math.floor(Math.random() * 50) * 10;
-            document.getElementById('dailyScoreDisplay').innerText = randomScore;
 
-            // --- LOGIKA DAILY WORD ACAK ---
-            const randomIndex = Math.floor(Math.random() * dailyWords.length);
-            const todayWord = dailyWords[randomIndex];
-            
-            document.getElementById('dw-word').innerText = todayWord.word;
-            document.getElementById('dw-meaning').innerText = todayWord.meaning;
-            document.getElementById('dw-sentence').innerText = `"${todayWord.sentence}"`;
-            // -----------------------------
+            if(inputVal === "") {
+                alert("Mohon isi data terlebih dahulu.");
+                return;
+            }
 
-            login.style.opacity = '0';
-            login.style.transition = 'opacity 0.3s';
+            if(selectedRole === 'tutor') {
+                // Sederhana: Cek password hardcoded
+                if(inputVal === "admin123") {
+                    setupDashboard("Tutor Admin", true);
+                } else {
+                    alert("Kode Akses Salah!");
+                    return;
+                }
+            } else {
+                // Student mode
+                setupDashboard(inputVal, false);
+            }
+
+            // Transisi Masuk
+            loginScreen.style.opacity = '0';
             setTimeout(() => {
-                login.style.display = 'none';
+                loginScreen.style.display = 'none';
                 dashboard.style.display = 'flex';
                 playClick(null);
             }, 300);
         }
 
-        // --- SOUND & NOTIF LOGIC ---
-        let isMuted = false;
-        const clickSfx = document.getElementById('clickSound');
-        
-        function toggleSound(btn) {
-            isMuted = !isMuted;
-            const icon = document.getElementById('soundIcon');
-            if(isMuted) {
-                icon.classList.remove('fa-headset');
-                icon.classList.add('fa-volume-mute');
-                icon.style.opacity = "0.6";
+        // 4. Setup Tampilan Dashboard
+        function setupDashboard(name, isTutor) {
+            document.getElementById('cardNameDisplay').innerText = name;
+            
+            if(isTutor) {
+                document.getElementById('tutor-fab').style.display = "flex";
+                document.querySelector('.balance-label').innerText = "Mode Tutor";
             } else {
-                icon.classList.remove('fa-volume-mute');
-                icon.classList.add('fa-headset');
-                icon.style.opacity = "1";
-                clickSfx.currentTime = 0; clickSfx.play();
+                document.getElementById('tutor-fab').style.display = "none";
+                document.querySelector('.balance-label').innerText = "Active Student ID";
             }
+
+            // Load Daily Word & Score Randomly
+            const randomIndex = Math.floor(Math.random() * dailyWords.length);
+            const todayWord = dailyWords[randomIndex];
+            document.getElementById('dw-word').innerText = todayWord.word;
+            document.getElementById('dw-meaning').innerText = todayWord.meaning;
+            document.getElementById('dw-sentence').innerText = `"${todayWord.sentence}"`;
+            document.getElementById('dailyScoreDisplay').innerText = Math.floor(Math.random() * 50) * 10;
         }
 
-        function playClick(targetUrl) {
-            if(!isMuted) {
-                clickSfx.currentTime = 0;
-                clickSfx.play().catch(e => {});
+        // --- POSTING SYSTEM (LOCAL STORAGE) ---
+        function loadPosts() {
+            let posts = JSON.parse(localStorage.getItem('englishCheckPosts'));
+            if(!posts) {
+                posts = defaultPosts;
+                localStorage.setItem('englishCheckPosts', JSON.stringify(posts));
             }
-            if(targetUrl && targetUrl !== '#') {
-                setTimeout(() => { window.location.href = targetUrl; }, 200);
-            }
+            renderFeed(posts);
         }
 
-        function toggleNotifModal() {
-            const modal = document.getElementById('notif-modal');
+        function renderFeed(posts) {
+            const container = document.getElementById('info-feed-container');
+            const notifBody = document.getElementById('notif-content-body');
+            let html = '';
+
+            posts.forEach(post => {
+                let iconClass = 'fa-bell';
+                if(post.color === 'blue') iconClass = 'fa-lightbulb';
+                if(post.color === 'orange') iconClass = 'fa-fire';
+                if(post.color === 'green') iconClass = 'fa-bullhorn';
+
+                html += `
+                    <div class="info-card" onclick="playClick('#')">
+                        <div class="info-icon-container info-${post.color}">
+                            <i class="fas ${iconClass}"></i>
+                        </div>
+                        <div class="info-content">
+                            <span class="info-tag tag-${post.color}">${post.tag}</span>
+                            <h4 class="info-title">${post.title}</h4>
+                            <p class="info-desc">${post.desc}</p>
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+            notifBody.innerHTML = html; 
+        }
+
+        function saveNewPost() {
+            const title = document.getElementById('post-title').value;
+            const desc = document.getElementById('post-desc').value;
+            const color = document.getElementById('post-tag').value;
+            
+            if(!title || !desc) { alert("Mohon isi semua data"); return; }
+
+            let tagText = "Umum";
+            if(color === 'blue') tagText = "Tips";
+            if(color === 'orange') tagText = "Materi";
+            if(color === 'green') tagText = "Pengumuman";
+
+            const newPost = { title: title, desc: desc, color: color, tag: tagText };
+
+            let posts = JSON.parse(localStorage.getItem('englishCheckPosts')) || defaultPosts;
+            posts.unshift(newPost);
+            localStorage.setItem('englishCheckPosts', JSON.stringify(posts));
+
+            renderFeed(posts);
+            toggleModal('add-modal');
+            
+            document.getElementById('post-title').value = "";
+            document.getElementById('post-desc').value = "";
+        }
+
+        // --- UTILS ---
+        function toggleModal(id) {
+            const modal = document.getElementById(id);
             if(modal.style.display === 'flex') {
                 modal.style.display = 'none';
             } else {
@@ -504,15 +622,29 @@
                 if(!isMuted) clickSfx.play();
             }
         }
-
-        function closeNotifModal(e) {
-            if(e.target.id === 'notif-modal') {
-                document.getElementById('notif-modal').style.display = 'none';
-            }
+        function closeModalOnOutside(e, id) {
+            if(e.target.id === id) document.getElementById(id).style.display = 'none';
         }
 
-        document.getElementById('studentNameInput').addEventListener('keypress', function (e) {
-            if (e.key === 'Enter') enterDashboard();
+        let isMuted = false;
+        const clickSfx = document.getElementById('clickSound');
+        function toggleSound(btn) {
+            isMuted = !isMuted;
+            const icon = document.getElementById('soundIcon');
+            if(isMuted) {
+                icon.classList.remove('fa-headset'); icon.classList.add('fa-volume-mute'); icon.style.opacity = "0.6";
+            } else {
+                icon.classList.remove('fa-volume-mute'); icon.classList.add('fa-headset'); icon.style.opacity = "1";
+                clickSfx.currentTime = 0; clickSfx.play();
+            }
+        }
+        function playClick(targetUrl) {
+            if(!isMuted) { clickSfx.currentTime = 0; clickSfx.play().catch(e=>{}); }
+            if(targetUrl && targetUrl !== '#') setTimeout(() => { window.location.href = targetUrl; }, 200);
+        }
+        
+        document.getElementById('loginInput').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') processLogin();
         });
     </script>
 </body>
