@@ -146,6 +146,31 @@
 
         /* GRID MENU & CONTENT */
         .content-section { flex: 1; padding: 25px 20px; margin-top: -10px; }
+        
+        /* --- DAILY WORD STYLE (BARU) --- */
+        .daily-word-card {
+            background: linear-gradient(135deg, #d4e157 0%, #afb42b 100%); /* Warna Lime Gradient */
+            color: var(--bg-dark); /* Teks Hijau Tua */
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 20px rgba(212, 225, 87, 0.3);
+            position: relative;
+            overflow: hidden;
+            border: 2px solid white;
+        }
+        .dw-header {
+            font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px;
+            margin-bottom: 5px; opacity: 0.8; display: flex; align-items: center; gap: 5px;
+        }
+        .dw-word { font-size: 1.8rem; font-weight: 800; line-height: 1.2; margin-bottom: 2px; }
+        .dw-meaning { font-size: 1rem; font-weight: 600; margin-bottom: 12px; font-style: italic; opacity: 0.9; }
+        .dw-sentence { 
+            font-size: 0.85rem; background: rgba(255,255,255,0.4); padding: 10px 12px; 
+            border-radius: 12px; font-weight: 500;
+        }
+
+        /* Search Box */
         .search-box {
             background: #ffffff; border-radius: 50px; padding: 12px 20px; display: flex;
             align-items: center; gap: 12px; margin-bottom: 25px; box-shadow: 0 5px 15px rgba(0,0,0,0.05);
@@ -195,7 +220,7 @@
         .info-orange { background: #fff3e0; color: #f57c00; } .tag-orange { background: #fff3e0; color: #f57c00; }
         .info-green { background: #e8f5e9; color: #2e7d32; } .tag-green { background: #e8f5e9; color: #2e7d32; }
 
-        /* --- MODAL NOTIFIKASI (BARU) --- */
+        /* --- MODAL NOTIFIKASI --- */
         #notif-modal {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0, 0, 0, 0.6); z-index: 99999;
@@ -285,6 +310,18 @@
         </div>
 
         <div class="content-section">
+            
+            <div class="daily-word-card">
+                <div class="dw-header">
+                    <i class="fas fa-calendar-day"></i> Daily Word
+                </div>
+                <div class="dw-content">
+                    <h2 class="dw-word" id="dw-word">Loading...</h2>
+                    <p class="dw-meaning" id="dw-meaning">...</p>
+                    <p class="dw-sentence" id="dw-sentence">...</p>
+                </div>
+            </div>
+
             <div class="search-box">
                 <i class="fas fa-search" style="color: var(--bg-dark);"></i>
                 <input type="text" placeholder="Cari materi...">
@@ -371,11 +408,22 @@
     </div>
 
     <script>
-        // Init
+        // Data Daily Word (Bisa ditambah lagi)
+        const dailyWords = [
+            { word: "Resilience", meaning: "Ketangguhan", sentence: "Resilience is key to overcoming life's challenges." },
+            { word: "Ephemeral", meaning: "Sesaat / Fana", sentence: "Fashion trends are often ephemeral." },
+            { word: "Serendipity", meaning: "Kebetulan yang menyenangkan", sentence: "Meeting you here was pure serendipity." },
+            { word: "Eloquent", meaning: "Fasih / Pandai bicara", sentence: "She gave an eloquent speech at the ceremony." },
+            { word: "Meticulous", meaning: "Sangat teliti", sentence: "He is meticulous about keeping his records." },
+            { word: "Pragmatic", meaning: "Praktis", sentence: "We need a pragmatic solution to this problem." },
+            { word: "Ineffable", meaning: "Tak terlukiskan", sentence: " The beauty of the sunset was ineffable." }
+        ];
+
         window.addEventListener('load', () => {
             const splash = document.getElementById('splash-screen');
             const login = document.getElementById('login-screen');
-            // Populate Modal with Feed Content
+            
+            // Setup Modal Content
             document.getElementById('modal-body-content').innerHTML = document.getElementById('info-feed-content').innerHTML;
 
             setTimeout(() => {
@@ -387,7 +435,6 @@
             }, 2500);
         });
 
-        // Dashboard Login
         function enterDashboard() {
             const input = document.getElementById('studentNameInput');
             const login = document.getElementById('login-screen');
@@ -397,8 +444,18 @@
             if(name === "") name = "Student"; 
             document.getElementById('cardNameDisplay').innerText = name;
             
+            // Random Score
             const randomScore = Math.floor(Math.random() * 50) * 10;
             document.getElementById('dailyScoreDisplay').innerText = randomScore;
+
+            // --- LOGIKA DAILY WORD ACAK ---
+            const randomIndex = Math.floor(Math.random() * dailyWords.length);
+            const todayWord = dailyWords[randomIndex];
+            
+            document.getElementById('dw-word').innerText = todayWord.word;
+            document.getElementById('dw-meaning').innerText = todayWord.meaning;
+            document.getElementById('dw-sentence').innerText = `"${todayWord.sentence}"`;
+            // -----------------------------
 
             login.style.opacity = '0';
             login.style.transition = 'opacity 0.3s';
@@ -409,28 +466,22 @@
             }, 300);
         }
 
-        // --- SOUND SYSTEM (TOGGLE) ---
+        // --- SOUND & NOTIF LOGIC ---
         let isMuted = false;
         const clickSfx = document.getElementById('clickSound');
-        const hoverSfx = document.getElementById('hoverSound');
-
+        
         function toggleSound(btn) {
             isMuted = !isMuted;
             const icon = document.getElementById('soundIcon');
-            
             if(isMuted) {
-                // Ubah ikon ke mute
                 icon.classList.remove('fa-headset');
                 icon.classList.add('fa-volume-mute');
                 icon.style.opacity = "0.6";
             } else {
-                // Ubah ikon ke headset (on)
                 icon.classList.remove('fa-volume-mute');
                 icon.classList.add('fa-headset');
                 icon.style.opacity = "1";
-                // Play sound feedback
-                clickSfx.currentTime = 0;
-                clickSfx.play();
+                clickSfx.currentTime = 0; clickSfx.play();
             }
         }
 
@@ -444,7 +495,6 @@
             }
         }
 
-        // --- NOTIFICATION SYSTEM (MODAL) ---
         function toggleNotifModal() {
             const modal = document.getElementById('notif-modal');
             if(modal.style.display === 'flex') {
