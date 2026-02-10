@@ -9,11 +9,11 @@
     
     <style>
         :root {
-            /* WARNA DARI FILE ASLI ANDA */
-            --bg-dark: #0f3d3e;       /* Hijau Tua Utama */
-            --bg-darker: #0a2b2c;     /* Hijau lebih gelap */
-            --accent-lime: #d4e157;   /* Lime Cerah */
-            --body-bg: #f4fcf7;       /* Putih kehijauan */
+            /* WARNA TEMA UTAMA */
+            --bg-dark: #0f3d3e;       /* Hijau Tua */
+            --bg-darker: #0a2b2c;     /* Hijau Gelap */
+            --accent-lime: #d4e157;   /* Lime */
+            --body-bg: #f4fcf7;       /* Putih Kehijauan */
             --text-dark: #1b4d3e;
             --white: #ffffff;
         }
@@ -76,7 +76,9 @@
         .btn-start {
             background: var(--accent-lime); color: var(--bg-dark); border: none; padding: 12px 40px;
             border-radius: 50px; font-size: 1rem; font-weight: 700; cursor: pointer; width: 100%;
+            transition: transform 0.2s;
         }
+        .btn-start:active { transform: scale(0.95); }
 
         /* --- 3. DASHBOARD --- */
         #dashboard { display: none; flex-direction: column; min-height: 100vh; }
@@ -99,7 +101,7 @@
             color: var(--bg-dark); font-size: 0.6rem; padding: 2px 5px; border-radius: 50%; font-weight: 800;
         }
 
-        /* KARTU UTAMA */
+        /* KARTU STUDENT */
         .balance-card {
             background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px);
             border: 1px solid rgba(255,255,255,0.1); border-radius: 18px; padding: 20px;
@@ -112,13 +114,12 @@
         }
 
         .balance-label { font-size: 0.8rem; opacity: 0.8; margin-bottom: 5px; color: var(--accent-lime); }
-        
         .student-name-display { 
             font-size: 1.6rem; font-weight: 700; color: var(--white);
             white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 8px;
         }
 
-        /* FITUR BARU: SCORE HARIAN */
+        /* SCORE HARIAN */
         .daily-score-badge {
             display: inline-flex; align-items: center; gap: 8px;
             background: rgba(0, 0, 0, 0.2); border: 1px solid rgba(255,255,255,0.1);
@@ -132,7 +133,7 @@
             align-items: center; cursor: pointer; color: var(--white); font-weight: 500; opacity: 0.9;
         }
 
-        /* MENU ACTIONS */
+        /* 4 FITUR UTAMA (HEADER) */
         .quick-actions { display: flex; justify-content: space-between; margin-bottom: 5px; padding: 0 5px; }
         .q-action { display: flex; flex-direction: column; align-items: center; gap: 8px; color: white; text-decoration: none; width: 25%; }
         .q-action:active { transform: scale(0.9); }
@@ -143,6 +144,7 @@
         }
         .q-text { font-size: 0.75rem; font-weight: 500; text-align: center; }
 
+        /* GRID MENU BAWAH */
         .content-section { flex: 1; padding: 25px 20px; margin-top: -10px; }
         .search-box {
             background: #ffffff; border-radius: 50px; padding: 12px 20px; display: flex;
@@ -155,12 +157,19 @@
         .grid-icon {
             width: 50px; height: 50px; border-radius: 16px; display: flex; justify-content: center;
             align-items: center; font-size: 1.3rem; background: #ffffff;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05); color: var(--bg-dark);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05); color: var(--bg-dark); transition: 0.2s;
         }
         .grid-item:active .grid-icon { transform: scale(0.95); background: var(--accent-lime); }
         .grid-text { font-size: 0.7rem; text-align: center; font-weight: 600; color: #444; }
 
-        .icon-bg-1 { color: #2e7d32; } .icon-bg-4 { color: #ef6c00; } .icon-bg-3 { color: #00838f; }
+        /* Icon Colors for Grid */
+        .icon-lime { color: #afb42b; background: #f9fbe7; }
+        .icon-green { color: #2e7d32; background: #e8f5e9; }
+        .icon-blue { color: #0277bd; background: #e1f5fe; }
+        .icon-orange { color: #ef6c00; background: #fff3e0; }
+        .icon-teal { color: #00897b; background: #e0f2f1; }
+        .icon-pink { color: #d81b60; background: #fce4ec; }
+        
     </style>
 </head>
 <body>
@@ -190,7 +199,7 @@
         <div class="header-section">
             <div class="top-bar">
                 <div class="greeting">
-                    <p>Collaborating For Change, Empowering For Impact</p>
+                    <p>Collaborating For Change</p>
                     <h1>English Check</h1>
                 </div>
                 <div class="top-icons">
@@ -210,23 +219,23 @@
                 </div>
 
                 <div class="balance-footer" onclick="playClick('Modul Check.html')">
-                    <span>Cek Modul Belajar</span>
+                    <span>Cek Progress Belajar</span>
                     <i class="fas fa-chart-line"></i>
                 </div>
             </div>
 
             <div class="quick-actions">
                 <a href="Modul Check.html" class="q-action" onclick="playClick('Modul Check.html'); return false;">
-                    <div class="q-icon-box"><i class="fas fa-scroll"></i></div><div class="q-text">Modul Check</div>
+                    <div class="q-icon-box"><i class="fas fa-scroll"></i></div><div class="q-text">Modul</div>
                 </a>
                 <a href="structure.html" class="q-action" onclick="playClick('structure.html'); return false;">
-                    <div class="q-icon-box"><i class="fas fa-pen-fancy"></i></div><div class="q-text">Practice Check</div>
+                    <div class="q-icon-box"><i class="fas fa-pen-fancy"></i></div><div class="q-text">Practice</div>
                 </a>
                 <a href="Vocab Check.html" class="q-action" onclick="playClick('Vocab Check.html'); return false;">
-                    <div class="q-icon-box"><i class="fas fa-spell-check"></i></div><div class="q-text">Vocab Check</div>
+                    <div class="q-icon-box"><i class="fas fa-spell-check"></i></div><div class="q-text">Vocab</div>
                 </a>
                 <a href="all.html" class="q-action" onclick="playClick('all.html'); return false;">
-                    <div class="q-icon-box"><i class="fas fa-gamepad"></i></div><div class="q-text">Game For PC</div>
+                    <div class="q-icon-box"><i class="fas fa-gamepad"></i></div><div class="q-text">Game</div>
                 </a>
             </div>
         </div>
@@ -238,20 +247,43 @@
             </div>
 
             <div class="grid-menu">
+                <a href="Modul Check.html" class="grid-item" onclick="playClick('Modul Check.html'); return false;">
+                    <div class="grid-icon icon-lime"><i class="fas fa-scroll"></i></div>
+                    <div class="grid-text">Modul</div>
+                </a>
+                
+                <a href="structure.html" class="grid-item" onclick="playClick('structure.html'); return false;">
+                    <div class="grid-icon icon-green"><i class="fas fa-pen-fancy"></i></div>
+                    <div class="grid-text">Practice</div>
+                </a>
+
+                <a href="Vocab Check.html" class="grid-item" onclick="playClick('Vocab Check.html'); return false;">
+                    <div class="grid-icon icon-blue"><i class="fas fa-spell-check"></i></div>
+                    <div class="grid-text">Vocab</div>
+                </a>
+
+                <a href="all.html" class="grid-item" onclick="playClick('all.html'); return false;">
+                    <div class="grid-icon icon-orange"><i class="fas fa-gamepad"></i></div>
+                    <div class="grid-text">Game</div>
+                </a>
+
                 <a href="Absensi.html" class="grid-item" onclick="playClick('Absensi.html'); return false;">
-                    <div class="grid-icon icon-bg-1"><i class="fas fa-calendar-check"></i></div>
+                    <div class="grid-icon icon-teal"><i class="fas fa-calendar-check"></i></div>
                     <div class="grid-text">Absensi</div>
                 </a>
+
                 <a href="#" class="grid-item" onclick="playClick('#'); return false;">
-                    <div class="grid-icon icon-bg-4"><i class="fas fa-heart"></i></div>
+                    <div class="grid-icon icon-pink"><i class="fas fa-heart"></i></div>
                     <div class="grid-text">Support</div>
                 </a>
+
                 <div class="grid-item">
-                    <div class="grid-icon icon-bg-3"><i class="fas fa-certificate"></i></div>
-                    <div class="grid-text">Sertifikat</div>
+                    <div class="grid-icon icon-blue"><i class="fas fa-certificate"></i></div>
+                    <div class="grid-text">Certif</div>
                 </div>
+
                 <div class="grid-item">
-                    <div class="grid-icon" style="color: #999;"><i class="fas fa-th-large"></i></div>
+                    <div class="grid-icon" style="color: #777; background: #f1f2f6;"><i class="fas fa-th-large"></i></div>
                     <div class="grid-text">Lainnya</div>
                 </div>
             </div>
@@ -259,6 +291,7 @@
     </div>
 
     <script>
+        // Init Splash & Login
         window.addEventListener('load', () => {
             const splash = document.getElementById('splash-screen');
             const login = document.getElementById('login-screen');
@@ -271,6 +304,7 @@
             }, 2500);
         });
 
+        // Function Enter Dashboard
         function enterDashboard() {
             const input = document.getElementById('studentNameInput');
             const login = document.getElementById('login-screen');
@@ -281,9 +315,8 @@
 
             document.getElementById('cardNameDisplay').innerText = name;
             
-            // Random Score Logic (Opsional: agar terlihat dinamis)
-            // Anda bisa menghapus baris ini jika ingin statis '0'
-            const randomScore = Math.floor(Math.random() * 50) * 10; // Kelipatan 10
+            // Random Score Logic (0-500)
+            const randomScore = Math.floor(Math.random() * 50) * 10;
             document.getElementById('dailyScoreDisplay').innerText = randomScore;
 
             login.style.opacity = '0';
@@ -295,6 +328,7 @@
             }, 300);
         }
 
+        // SFX
         const clickSfx = document.getElementById('clickSound');
         function playClick(targetUrl) {
             clickSfx.currentTime = 0;
