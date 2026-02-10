@@ -3,280 +3,270 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>English Mastery Hub</title>
+    <title>English Check - Practice</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <style>
+        /* --- TEMA SERAGAM DENGAN DASHBOARD --- */
         :root {
-            --bg-deep: #020804;
-            --bg-gradient: radial-gradient(circle at 50% 10%, #0f3521 0%, #020804 80%);
-            --glass-bg: rgba(20, 50, 35, 0.4);
-            --glass-border: rgba(74, 222, 128, 0.2);
-            --accent: #4ade80;
-            --accent-glow: rgba(74, 222, 128, 0.6);
-            --text-main: #f0fdf4;
-            --text-muted: #86efac;
+            --bg-dark: #0f3d3e;       
+            --bg-darker: #0a2b2c;     
+            --accent-lime: #d4e157;   
+            --body-bg: #f4fcf7;       
+            --text-dark: #1b4d3e;
+            --white: #ffffff;
+            --grey-text: #666666;
         }
 
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        
         body {
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-deep);
-            background-image: var(--bg-gradient);
-            color: var(--text-main);
-            min-height: 100vh; /* Pastikan tinggi minimal 100% layar */
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--body-bg);
+            color: var(--text-dark);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
             overflow-x: hidden;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
         }
 
-        /* --- Main Content --- */
-        .hub-container {
+        /* HEADER */
+        .header-section {
+            background: linear-gradient(180deg, var(--bg-dark) 0%, var(--bg-darker) 100%);
+            padding: 30px 20px 40px 20px;
+            color: white;
+            border-bottom-left-radius: 35px;
+            border-bottom-right-radius: 35px;
+            box-shadow: 0 10px 30px rgba(15, 61, 62, 0.3);
             text-align: center;
-            z-index: 10;
-            animation: fadeIn 1s ease-out;
-            width: 100%;
-            max-width: 1200px;
-            padding: 20px;
-            box-sizing: border-box;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            height: 100%; /* Agar container mengisi body */
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: scale(0.95); }
-            to { opacity: 1; transform: scale(1); }
-        }
-
-        .hub-title {
-            font-size: clamp(2rem, 5vw, 3.5rem); /* Responsive Font */
-            font-weight: 200;
-            letter-spacing: 5px;
-            margin-bottom: 10px;
-            text-transform: uppercase;
-            background: linear-gradient(to bottom, #fff, var(--accent));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-shadow: 0 0 20px rgba(74, 222, 128, 0.3);
-        }
-
-        .hub-subtitle {
-            color: var(--text-muted);
-            font-size: 1.1rem;
-            margin-bottom: 40px;
-            letter-spacing: 1px;
-        }
-
-        /* --- WRAPPER (Grid/Flex Switcher) --- */
-        .cards-wrapper {
-            display: flex;
-            gap: 30px;
-            justify-content: center;
-            flex-wrap: wrap;
-            width: 100%;
-        }
-
-        /* --- The Cards --- */
-        .choice-card {
-            background: var(--glass-bg);
-            border: 1px solid var(--glass-border);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            width: 280px; 
-            padding: 40px 25px;
-            border-radius: 20px;
-            cursor: pointer;
-            text-decoration: none;
-            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
             position: relative;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            z-index: 10;
         }
 
-        /* Hover Effects (Desktop Only) */
-        @media (hover: hover) {
-            .choice-card:hover {
-                transform: translateY(-15px);
-                border-color: var(--accent);
-                box-shadow: 0 15px 40px rgba(0,0,0,0.4), 0 0 20px var(--glass-border);
-                background: rgba(20, 50, 35, 0.6);
-            }
-            .choice-card:hover .card-icon {
-                transform: scale(1.1) rotate(5deg);
-                filter: drop-shadow(0 0 20px var(--accent-glow));
-            }
-            .choice-card:hover::before {
-                left: 100%;
-            }
+        .back-btn {
+            position: absolute; top: 30px; left: 20px;
+            color: white; font-size: 1.2rem; cursor: pointer;
+            text-decoration: none;
+            transition: transform 0.2s;
+        }
+        .back-btn:active { transform: scale(0.9); }
+
+        .header-title h1 { font-size: 1.8rem; font-weight: 800; color: var(--white); margin: 0; }
+        .header-title p { font-size: 0.85rem; color: var(--accent-lime); opacity: 0.9; margin-top: 5px; }
+
+        /* CONTENT CONTAINER */
+        .content-container {
+            padding: 30px 20px;
+            margin-top: -20px;
+            z-index: 20;
         }
 
-        /* Active/Touch Effect */
-        .choice-card:active {
-            transform: scale(0.95);
-            background: rgba(20, 50, 35, 0.8);
-            border-color: var(--accent);
+        /* GRID MENU (3 Kolom untuk Practice) */
+        .grid-menu {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr); /* 3 Kolom agar seimbang */
+            gap: 20px;
         }
 
-        .choice-card h2 {
-            color: var(--text-main);
-            font-size: 1.6rem;
-            margin: 20px 0 10px 0;
-            font-weight: 500;
+        .grid-item {
+            display: flex; flex-direction: column; align-items: center; gap: 8px;
+            text-decoration: none; color: var(--text-dark); cursor: pointer;
+            transition: transform 0.2s; position: relative;
+        }
+        .grid-item:active { transform: scale(0.95); }
+
+        .grid-icon {
+            width: 65px; height: 65px; border-radius: 20px;
+            display: flex; justify-content: center; align-items: center;
+            font-size: 1.8rem; background: #ffffff;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            color: var(--bg-dark); transition: 0.2s;
+            position: relative;
         }
 
-        .choice-card p {
-            color: var(--text-muted);
-            font-size: 0.9rem;
-            line-height: 1.5;
-            margin: 0;
+        .grid-text {
+            font-size: 0.8rem; text-align: center; font-weight: 700;
+            color: #444; line-height: 1.2;
         }
 
-        /* SVG Icons */
-        .card-icon {
-            width: 80px;
-            height: 80px;
-            fill: var(--accent);
-            transition: transform 0.5s ease;
-            filter: drop-shadow(0 0 10px rgba(74,222,128,0.4));
+        /* WARNA ICON */
+        .icon-orange { color: #ef6c00; background: #fff3e0; }
+        .icon-teal { color: #00897b; background: #e0f2f1; }
+        .icon-purple { color: #7b1fa2; background: #f3e5f5; }
+
+        /* --- FITUR LOCK --- */
+        .tutor-lock-btn {
+            position: absolute; top: -8px; left: 0;
+            width: 24px; height: 24px; background: white; border-radius: 50%;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2); z-index: 15;
+            display: none; /* Muncul lewat JS */
+            justify-content: center; align-items: center; font-size: 0.7rem; color: #aaa;
+            transition: 0.2s;
+        }
+        .tutor-lock-btn:hover { transform: scale(1.1); }
+        .tutor-lock-btn.locked { color: #e53935; border: 1px solid #e53935; }
+
+        .item-locked { opacity: 0.6; filter: grayscale(0.8); }
+        .lock-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            display: none; justify-content: center; align-items: center;
+            z-index: 5; border-radius: 20px;
+        }
+        .item-locked .lock-overlay { display: flex; }
+        .lock-icon-large {
+            font-size: 1.5rem; color: #555; background: rgba(255,255,255,0.9);
+            padding: 8px; border-radius: 50%; box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
 
-        /* Shine Effect */
-        .choice-card::before {
-            content: '';
-            position: absolute;
-            top: 0; left: -100%;
-            width: 100%; height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
-            transition: 0.5s;
-        }
+        /* Animasi */
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .grid-item { opacity: 0; animation: fadeInUp 0.4s forwards; }
+        .grid-item:nth-child(1) { animation-delay: 0.1s; }
+        .grid-item:nth-child(2) { animation-delay: 0.2s; }
+        .grid-item:nth-child(3) { animation-delay: 0.3s; }
 
-        /* Background Animation */
-        .particles {
-            position: fixed; /* Fixed agar background tidak ikut scroll layout */
-            top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 0;
-            pointer-events: none;
-            background-image: 
-                radial-gradient(var(--glass-border) 1px, transparent 1px),
-                radial-gradient(var(--glass-border) 1px, transparent 1px);
-            background-size: 40px 40px;
-            background-position: 0 0, 20px 20px;
-            opacity: 0.2;
-            animation: moveBackground 60s linear infinite;
-        }
-
-        @keyframes moveBackground {
-            from { transform: translateY(0); }
-            to { transform: translateY(-100px); }
-        }
-
-        /* =========================================
-           KHUSUS TAMPILAN HP (MOBILE OPTIMIZED)
-           ========================================= */
-        @media (max-width: 600px) {
-            body {
-                height: 100vh;      /* Kunci tinggi layar */
-                overflow: hidden;   /* Hilangkan scroll bar */
-            }
-
-            .hub-container {
-                padding: 1rem;
-                justify-content: flex-start; /* Mulai dari atas agar header tidak kepotong */
-                padding-top: 10vh; /* Turunkan sedikit dari atas */
-            }
-
-            .hub-title {
-                font-size: 2rem;
-                margin-bottom: 5px;
-            }
-
-            .hub-subtitle {
-                font-size: 0.9rem;
-                margin-bottom: 1.5rem; /* Kurangi jarak ke kartu */
-            }
-
-            .cards-wrapper {
-                display: grid;
-                /* Grid 2 Kolom */
-                grid-template-columns: 1fr 1fr; 
-                gap: 15px;
-                width: 100%;
-            }
-
-            .choice-card {
-                width: 100%; /* Reset lebar fix */
-                height: auto;
-                padding: 1.5rem 0.5rem;
-                min-height: 130px; /* Tinggi kartu yang pas */
-            }
-
-            /* --- TRIK AGAR 3 KARTU TERLIHAT RAPI --- */
-            /* Kartu ke-3 (TOEFL) dibuat lebar penuh di bawah */
-            .choice-card:last-child {
-                grid-column: span 2; 
-            }
-
-            /* Elemen yang dikecilkan/disembunyikan */
-            .card-icon {
-                width: 50px;
-                height: 50px;
-            }
-
-            .choice-card h2 {
-                font-size: 1.1rem;
-                margin: 10px 0 0 0;
-            }
-
-            .choice-card p {
-                display: none; /* Sembunyikan deskripsi di HP */
-            }
-        }
     </style>
 </head>
 <body>
 
-    <div class="particles"></div>
+    <div class="header-section">
+        <a href="index.html" class="back-btn"><i class="fas fa-arrow-left"></i></a>
+        <div class="header-title">
+            <h1>Practice Check</h1>
+            <p>Sharpen Your Skills</p>
+        </div>
+    </div>
 
-    <div class="hub-container">
-        <h1 class="hub-title">PRACTICE</h1>
-        <p class="hub-subtitle">Select your training module.</p>
-
-        <div class="cards-wrapper">
+    <div class="content-container">
+        
+        <div class="grid-menu">
             
-            <a href="soal all tenses.html" class="choice-card" onmouseenter="initAudio(); playHover()" onclick="delayNav(event, 'soal all tenses.html')">
-                <svg class="card-icon" viewBox="0 0 24 24">
-                    <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
-                </svg>
-                <h2>TENSES CHECK</h2>
-                <p>Learn Past, Present, and Future tenses. Understand time structures and grammar rules.</p>
-            </a>
+            <div class="grid-item" id="p_tenses" onclick="handlePracticeClick('soal all tenses.html', 'p_tenses')">
+                <div class="tutor-lock-btn" onclick="event.stopPropagation(); toggleLock('p_tenses')"><i class="fas fa-lock"></i></div>
+                <div class="grid-icon icon-orange">
+                    <div class="lock-overlay"><i class="fas fa-lock lock-icon-large"></i></div>
+                    📝
+                </div>
+                <div class="grid-text">Tenses Check</div>
+            </div>
 
-            <a href="if conditional.html" class="choice-card" onmouseenter="initAudio(); playHover()" onclick="delayNav(event, 'if conditional.html')">
-                <svg class="card-icon" viewBox="0 0 24 24">
-                    <path d="M10.59 9.17L5.41 4 4 5.41l5.17 5.17 1.42-1.41zM14.5 4l2.04 2.04L4 18.59 5.41 20 17.96 7.46 20 9.5V4h-5.5zm.33 9.41l-1.41 1.41 3.13 3.13L14.5 20H20v-5.5l-2.04 2.04-3.13-3.13z"/>
-                </svg>
-                <h2>CONDITIONALS</h2>
-                <p>Master Zero, 1st, 2nd, and 3rd conditionals. Navigate hypothetical situations.</p>
-            </a>
-            
-            <a href="soal toefl.html" class="choice-card" onmouseenter="initAudio(); playHover()" onclick="delayNav(event, 'soal toefl.html')">
-                <svg class="card-icon" viewBox="0 0 24 24">
-                    <path d="M5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82zM12 3L1 9l11 6 9-4.91V17h2V9L12 3z"/>
-                </svg>
-                <h2>TOEFL CHECK</h2>
-                <p>Challenge yourself with Structure and Written Expression questions. Beginner to Expert.</p>
-            </a>
+            <div class="grid-item" id="p_cond" onclick="handlePracticeClick('if conditional.html', 'p_cond')">
+                <div class="tutor-lock-btn" onclick="event.stopPropagation(); toggleLock('p_cond')"><i class="fas fa-lock"></i></div>
+                <div class="grid-icon icon-teal">
+                    <div class="lock-overlay"><i class="fas fa-lock lock-icon-large"></i></div>
+                    🔀
+                </div>
+                <div class="grid-text">If Conditionals</div>
+            </div>
+
+            <div class="grid-item" id="p_toefl" onclick="handlePracticeClick('soal toefl.html', 'p_toefl')">
+                <div class="tutor-lock-btn" onclick="event.stopPropagation(); toggleLock('p_toefl')"><i class="fas fa-lock"></i></div>
+                <div class="grid-icon icon-purple">
+                    <div class="lock-overlay"><i class="fas fa-lock lock-icon-large"></i></div>
+                    🎓
+                </div>
+                <div class="grid-text">TOEFL Check</div>
+            </div>
 
         </div>
     </div>
 
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.1.3/firebase-app.js";
+        import { getDatabase, ref, onValue, set } from "https://www.gstatic.com/firebasejs/9.1.3/firebase-database.js";
+
+        // --- PASTE FIREBASE CONFIG DARI INDEX.HTML ANDA DISINI ---
+       const firebaseConfig = {
+  apiKey: "AIzaSyAgYCaaoGMzZWVT2dRov7ALUnnMhHoqXmE",
+  authDomain: "english-check-db.firebaseapp.com",
+  databaseURL: "https://english-check-db-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "english-check-db",
+  storageBucket: "english-check-db.firebasestorage.app",
+  messagingSenderId: "136352630898",
+  appId: "1:136352630898:web:dcaa103fa848ca38de9aeb"
+};
+        // ----------------------------------------------------
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        let lockedFeatures = {};
+
+        // 1. Toggle Lock (Tutor Only)
+        window.toggleLock = function(featureId) {
+            const isLocked = lockedFeatures[featureId] || false;
+            set(ref(db, 'locks/' + featureId), !isLocked).catch((err) => console.error(err));
+        };
+
+        // 2. Listen Data Lock
+        onValue(ref(db, 'locks'), (snapshot) => {
+            if (snapshot.exists()) {
+                lockedFeatures = snapshot.val();
+            } else {
+                lockedFeatures = {};
+            }
+            updateLockUI();
+        });
+
+        // 3. Update Tampilan
+        function updateLockUI() {
+            const isTutor = localStorage.getItem('ec_role') === 'tutor';
+            const practices = ['p_tenses', 'p_cond', 'p_toefl'];
+
+            practices.forEach(id => {
+                const isLocked = lockedFeatures[id] === true;
+                const lockBtn = document.querySelector(`#${id} .tutor-lock-btn`);
+                const itemDiv = document.getElementById(id);
+
+                // Tombol Lock untuk Tutor
+                if(lockBtn) {
+                    lockBtn.style.display = isTutor ? 'flex' : 'none';
+                    if(isLocked) {
+                        lockBtn.innerHTML = '<i class="fas fa-lock"></i>';
+                        lockBtn.classList.add('locked');
+                    } else {
+                        lockBtn.innerHTML = '<i class="fas fa-lock-open"></i>';
+                        lockBtn.classList.remove('locked');
+                    }
+                }
+
+                // Efek untuk Student
+                if(isLocked && !isTutor) {
+                    if(itemDiv) itemDiv.classList.add('item-locked');
+                } else {
+                    if(itemDiv) itemDiv.classList.remove('item-locked');
+                }
+            });
+        }
+
+        // 4. Handle Click (Gabungan Audio & Lock)
+        window.handlePracticeClick = function(targetUrl, featureId) {
+            const isTutor = localStorage.getItem('ec_role') === 'tutor';
+            const isLocked = lockedFeatures[featureId] === true;
+
+            // Jika Tutor -> Bebas akses
+            if (isTutor) {
+                playNavSound(); // Bunyi
+                setTimeout(() => { window.location.href = targetUrl; }, 300);
+                return;
+            }
+
+            // Jika Student -> Cek Lock
+            if (isLocked) {
+                alert("🔒 Maaf, latihan ini sedang dikunci oleh Tutor.");
+            } else {
+                playNavSound(); // Bunyi
+                setTimeout(() => { window.location.href = targetUrl; }, 300);
+            }
+        };
+        
+        // Init UI on load
+        updateLockUI();
+    </script>
+
     <script>
-        // --- AUDIO SYSTEM ---
+        // --- SOUND EFFECT LOGIC (DIAMBIL DARI FILE ASLI ANDA) ---
         const AudioContext = window.AudioContext || window.webkitAudioContext;
         let audioCtx;
 
@@ -289,31 +279,8 @@
             }
         }
 
-        // 1. Futuristic Hover Sound (Laptop Only)
-        function playHover() {
-            // Hanya bunyi jika di laptop (yang punya fitur hover)
-            if (window.matchMedia("(hover: hover)").matches && audioCtx) {
-                const osc = audioCtx.createOscillator();
-                const gain = audioCtx.createGain();
-                
-                osc.connect(gain);
-                gain.connect(audioCtx.destination);
-                
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(600, audioCtx.currentTime);
-                osc.frequency.exponentialRampToValueAtTime(800, audioCtx.currentTime + 0.1);
-                
-                gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
-                gain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.1);
-                
-                osc.start();
-                osc.stop(audioCtx.currentTime + 0.1);
-            }
-        }
-
-        // 2. Navigation Click Sound & Delay
-        function delayNav(e, url) {
-            e.preventDefault(); 
+        // Fungsi Suara Navigasi (Sesuai file asli structure.html)
+        function playNavSound() {
             initAudio(); 
             
             if (audioCtx) {
@@ -333,11 +300,8 @@
                 osc.start();
                 osc.stop(audioCtx.currentTime + 0.3);
             }
-
-            setTimeout(() => {
-                window.location.href = url;
-            }, 400);
         }
     </script>
+
 </body>
 </html>
