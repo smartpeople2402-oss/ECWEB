@@ -9,9 +9,15 @@
     
     <style>
         :root {
-            --bg-dark: #0f3d3e; --bg-darker: #0a2b2c; --accent-lime: #d4e157;   
-            --body-bg: #f4fcf7; --text-dark: #1b4d3e; --white: #ffffff; --grey-text: #666666;
+            --bg-dark: #0f3d3e;       
+            --bg-darker: #0a2b2c;     
+            --accent-lime: #d4e157;   
+            --body-bg: #f4fcf7;       
+            --text-dark: #1b4d3e;
+            --white: #ffffff;
+            --grey-text: #666666;
         }
+
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body { font-family: 'Poppins', sans-serif; background-color: var(--body-bg); color: var(--text-dark); min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; }
 
@@ -65,7 +71,6 @@
 
         /* CONTENT SECTION */
         .content-section { background: var(--body-bg); padding: 25px 20px 40px 20px; margin-top: -10px; border-radius: 30px 30px 0 0; z-index: 40; }
-        
         .daily-word-card { background: linear-gradient(135deg, #d4e157 0%, #afb42b 100%); color: var(--bg-dark); border-radius: 20px; padding: 20px; margin-bottom: 25px; box-shadow: 0 10px 20px rgba(212, 225, 87, 0.3); position: relative; overflow: hidden; border: 2px solid white; }
         .dw-header { font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; opacity: 0.8; display: flex; align-items: center; gap: 5px; }
         .dw-word { font-size: 1.8rem; font-weight: 800; line-height: 1.2; margin-bottom: 2px; }
@@ -73,19 +78,16 @@
         .dw-sentence { font-size: 0.85rem; background: rgba(255,255,255,0.4); padding: 10px 12px; border-radius: 12px; font-weight: 500; }
         .search-box { background: #ffffff; border-radius: 50px; padding: 12px 20px; display: flex; align-items: center; gap: 12px; margin-bottom: 25px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
         .search-box input { border: none; background: transparent; outline: none; width: 100%; font-family: 'Poppins'; font-size: 0.9rem; }
-        
         .grid-menu { display: grid; grid-template-columns: repeat(4, 1fr); gap: 25px 10px; }
         .grid-item { display: flex; flex-direction: column; align-items: center; gap: 8px; text-decoration: none; color: var(--text-dark); cursor: pointer; position: relative; }
         .grid-icon { width: 50px; height: 50px; border-radius: 16px; display: flex; justify-content: center; align-items: center; font-size: 1.3rem; background: #ffffff; box-shadow: 0 4px 10px rgba(0,0,0,0.05); color: var(--bg-dark); transition: 0.2s; }
         .grid-item:active .grid-icon { transform: scale(0.95); background: var(--accent-lime); }
         .grid-text { font-size: 0.7rem; text-align: center; font-weight: 600; color: #444; }
         .icon-lime { color: #afb42b; background: #f9fbe7; } .icon-green { color: #2e7d32; background: #e8f5e9; } .icon-blue { color: #0277bd; background: #e1f5fe; } .icon-orange { color: #ef6c00; background: #fff3e0; } .icon-teal { color: #00897b; background: #e0f2f1; } .icon-pink { color: #d81b60; background: #fce4ec; }
-
-        .info-section { margin-top: 35px; position: relative; }
+        .info-section { margin-top: 35px; margin-bottom: 20px; position: relative; }
         .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
         .section-title { font-size: 1.1rem; font-weight: 700; color: var(--bg-dark); }
         .see-all { font-size: 0.8rem; color: var(--text-dark); text-decoration: none; font-weight: 600; }
-        
         .info-card { background: var(--white); border-radius: 16px; padding: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px; cursor: pointer; transition: transform 0.2s; position: relative; }
         .info-card-top { display: flex; align-items: flex-start; gap: 15px; width: 100%; }
         .info-card:active { transform: scale(0.98); }
@@ -97,86 +99,12 @@
         .info-blue { background: #e3f2fd; color: #1976d2; } .tag-blue { background: #e3f2fd; color: #1976d2; }
         .info-orange { background: #fff3e0; color: #f57c00; } .tag-orange { background: #fff3e0; color: #f57c00; }
         .info-green { background: #e8f5e9; color: #2e7d32; } .tag-green { background: #e8f5e9; color: #2e7d32; }
-
-        /* BUTTONS ADD */
-        .gallery-add-btn { font-size: 0.8rem; background: var(--bg-dark); color: var(--accent-lime); padding: 5px 12px; border-radius: 20px; font-weight: 600; cursor: pointer; display: none; transition: 0.2s; }
-        .gallery-add-btn:active { transform: scale(0.9); }
-
-        /* --- BOTTOM SECTION (DARK GREEN) --- */
-        .bottom-section {
-            background: linear-gradient(180deg, var(--bg-dark) 0%, var(--bg-darker) 100%);
-            padding: 40px 20px 80px 20px;
-            margin-top: -30px; 
-            border-top-left-radius: 35px; border-top-right-radius: 35px;
-            position: relative; z-index: 45; color: white; overflow: hidden;
-        }
-        .bottom-section::before { content: ''; position: absolute; top: -50px; right: -50px; width: 200px; height: 200px; background: radial-gradient(circle, var(--accent-lime) 0%, transparent 70%); opacity: 0.1; border-radius: 50%; pointer-events: none; }
-        .bottom-section::after { content: ''; position: absolute; bottom: 50px; left: -50px; width: 150px; height: 150px; background: radial-gradient(circle, #26a69a 0%, transparent 70%); opacity: 0.1; border-radius: 50%; pointer-events: none; }
-
-        /* PROFIL COMMUNITY */
-        .profile-section { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 20px; padding: 25px 20px; margin-bottom: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); text-align: center; position: relative; }
-        .profile-icon { font-size: 2.5rem; color: var(--accent-lime); margin-bottom: 15px; text-shadow: 0 0 10px rgba(212, 225, 87, 0.3); }
-        .profile-title { font-size: 1.2rem; font-weight: 800; margin-bottom: 10px; color: white; letter-spacing: 0.5px; }
-        .profile-desc { font-size: 0.85rem; line-height: 1.6; opacity: 0.9; color: #e0f2f1; }
-        .highlight { color: var(--accent-lime); font-weight: 700; }
-
-        /* GALLERY SECTION */
-        .gallery-section { margin-top: 10px; }
-        .gallery-header .section-title { color: white; font-weight: 700; font-size: 1.1rem; }
-        /* Tombol Add di Gallery (khusus dark mode) */
-        .gallery-header .gallery-add-btn { background: var(--accent-lime); color: var(--bg-dark); }
-        
-        .gallery-container { display: flex; gap: 15px; overflow-x: auto; padding: 5px 5px 20px 5px; scroll-behavior: smooth; -webkit-overflow-scrolling: touch; }
-        .gallery-container::-webkit-scrollbar { display: none; }
-        .gallery-item { min-width: 280px; height: 180px; border-radius: 18px; background-size: cover; background-position: center; background-repeat: no-repeat; background-color: rgba(255,255,255,0.1); box-shadow: 0 8px 20px rgba(0,0,0,0.3); position: relative; flex-shrink: 0; transition: transform 0.3s ease, box-shadow 0.3s ease; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); }
-        .gallery-item:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(0,0,0,0.4); }
-        
-        .delete-gallery-btn { position: absolute; top: 10px; right: 10px; background: rgba(255,255,255,0.9); color: #e53935; width: 28px; height: 28px; border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.2); z-index: 5; transition: transform 0.2s; }
-        .delete-gallery-btn:hover { transform: scale(1.1); }
-
-        /* LOGOUT BUTTON */
-        .logout-container { margin-top: 30px; margin-bottom: 20px; width: 100%; display: flex; justify-content: center; }
-        .btn-logout { background: rgba(255,255,255,0.1); color: #ff8a80; border: 1px solid rgba(255,138,128, 0.3); padding: 12px 30px; border-radius: 50px; font-weight: 600; font-family: 'Poppins'; cursor: pointer; display: flex; align-items: center; gap: 10px; transition: all 0.2s; backdrop-filter: blur(5px); }
-        .btn-logout:active { transform: scale(0.95); background: rgba(255,138,128, 0.1); }
-
-        /* MODALS & OTHERS */
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); z-index: 99999; display: none; justify-content: center; align-items: flex-end; }
-        .modal-content { background: #f4fcf7; width: 100%; max-width: 500px; border-top-left-radius: 25px; border-top-right-radius: 25px; padding: 25px; max-height: 80vh; overflow-y: auto; animation: slideUp 0.3s ease-out; display: flex; flex-direction: column; color: var(--text-dark); }
-        .modal-header h3 { color: var(--bg-dark); }
-        .close-btn { font-size: 1.5rem; color: #888; cursor: pointer; }
-        
-        /* FAB Styles */
-        #tutor-fab { position: fixed; bottom: 30px; right: 30px; width: 60px; height: 60px; background: var(--accent-lime); color: var(--bg-dark); border-radius: 50%; display: none; justify-content: center; align-items: center; font-size: 1.5rem; box-shadow: 0 10px 20px rgba(0,0,0,0.2); z-index: 999; cursor: pointer; transition: transform 0.2s; }
-        #tutor-fab:active { transform: scale(0.9); }
-
-        .form-group { margin-bottom: 15px; }
-        .form-group label { display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 5px; color: var(--text-dark); }
-        .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 10px; border-radius: 10px; border: 1px solid #ddd; font-family: 'Poppins'; font-size: 0.9rem; }
-        .btn-submit { background: var(--bg-dark); color: white; border: none; padding: 10px 20px; border-radius: 10px; width: 100%; font-weight: 700; cursor: pointer; }
-
-        .card-tools { position: absolute; top: 10px; right: 10px; display: flex; gap: 12px; z-index: 20; }
-        .tool-btn { cursor: pointer; font-size: 1rem; color: #aaa; transition: 0.2s; background: rgba(255,255,255,0.8); width: 25px; height: 25px; display: flex; justify-content: center; align-items: center; border-radius: 50%; }
-        .tool-btn:hover { transform: scale(1.1); }
-        .tool-btn.delete { color: #e57373; } .tool-btn.delete:hover { color: #c62828; background: #ffebee; }
-        .tool-btn.comment { color: #64b5f6; } .tool-btn.comment:hover { color: #1976d2; background: #e3f2fd; }
-
-        .comment-list { flex: 1; overflow-y: auto; margin-bottom: 15px; display: flex; flex-direction: column; gap: 10px; max-height: 400px; padding-right: 5px; }
-        .comment-item { background: #fff; padding: 10px 12px; border-radius: 12px; font-size: 0.85rem; border: 1px solid #eee; position: relative; }
-        .comment-user { font-weight: 700; color: var(--bg-dark); font-size: 0.75rem; margin-bottom: 3px; display: block; }
-        .comment-text { color: var(--text-dark); line-height: 1.4; }
-        .comment-time { font-size: 0.6rem; color: #aaa; float: right; margin-top: 5px; }
-        .comment-input-area { display: flex; gap: 10px; align-items: center; border-top: 1px solid #eee; padding-top: 15px; }
-        .comment-input-area input { flex: 1; padding: 10px 15px; border-radius: 50px; border: 1px solid #ddd; outline: none; font-family: 'Poppins'; font-size: 0.9rem; background: #f9f9f9; }
-        .btn-send-comment { background: var(--accent-lime); color: var(--bg-dark); border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; display: flex; justify-content: center; align-items: center; font-size: 1rem; transition: 0.2s; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        .btn-send-comment:active { transform: scale(0.9); }
-        
         .card-comments-preview { border-top: 1px solid #f0f0f0; margin-top: 5px; padding-top: 10px; width: 100%; }
         .preview-item { font-size: 0.75rem; margin-bottom: 6px; color: #555; display: flex; gap: 5px; }
         .preview-user { font-weight: 700; color: var(--bg-dark); white-space: nowrap; }
         .preview-text { text-overflow: ellipsis; overflow: hidden; white-space: nowrap; flex: 1; color: #777; }
         .view-more-comments { font-size: 0.75rem; color: var(--text-dark); font-weight: 600; cursor: pointer; margin-top: 5px; display: inline-block; text-decoration: none; }
         .view-more-comments:hover { text-decoration: underline; color: var(--bg-dark); }
-
         .tutor-lock-btn { position: absolute; top: -5px; right: -5px; width: 24px; height: 24px; background: white; border-radius: 50%; box-shadow: 0 2px 5px rgba(0,0,0,0.2); z-index: 15; display: none; justify-content: center; align-items: center; font-size: 0.7rem; color: #aaa; transition: 0.2s; }
         .tutor-lock-btn:hover { transform: scale(1.1); }
         .tutor-lock-btn.locked { color: #e53935; border: 1px solid #e53935; } 
@@ -184,10 +112,100 @@
         .lock-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; justify-content: center; align-items: center; z-index: 5; border-radius: 16px; }
         .item-locked .lock-overlay { display: flex; }
         .lock-icon-large { font-size: 1.5rem; color: #555; background: rgba(255,255,255,0.9); padding: 8px; border-radius: 50%; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        .comment-actions { float: right; font-size: 0.7rem; opacity: 0.6; display: flex; gap: 8px; }
-        .comment-actions i { cursor: pointer; transition: 0.2s; }
-        .comment-actions i.fa-edit:hover { color: var(--bg-dark); opacity: 1; }
-        .comment-actions i.fa-trash:hover { color: #e53935; opacity: 1; }
+        .card-tools { position: absolute; top: 10px; right: 10px; display: flex; gap: 12px; z-index: 20; }
+        .tool-btn { cursor: pointer; font-size: 1rem; color: #aaa; transition: 0.2s; background: rgba(255,255,255,0.8); width: 25px; height: 25px; display: flex; justify-content: center; align-items: center; border-radius: 50%; }
+        .tool-btn:hover { transform: scale(1.1); }
+        .tool-btn.delete { color: #e57373; } .tool-btn.delete:hover { color: #c62828; background: #ffebee; }
+        .tool-btn.comment { color: #64b5f6; } .tool-btn.comment:hover { color: #1976d2; background: #e3f2fd; }
+
+        /* CALENDAR */
+        .calendar-section { background: #fff; border-radius: 20px; padding: 20px; margin-top: 30px; margin-bottom: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+        .calendar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .cal-month { font-weight: 700; color: var(--bg-dark); font-size: 1rem; }
+        .cal-nav { cursor: pointer; color: var(--grey-text); font-size: 1.2rem; padding: 5px; }
+        .cal-nav:hover { color: var(--accent-lime); }
+        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; text-align: center; }
+        .cal-day-name { font-size: 0.7rem; font-weight: 600; color: #aaa; margin-bottom: 5px; }
+        .cal-day { height: 35px; width: 35px; display: flex; justify-content: center; align-items: center; font-size: 0.85rem; color: var(--text-dark); border-radius: 50%; cursor: pointer; margin: 0 auto; position: relative; transition: 0.2s; }
+        .cal-day:hover { background: #f0f0f0; }
+        .cal-day.empty { cursor: default; background: none; }
+        .cal-day.event-red { background: #ef5350; color: white; font-weight: 600; box-shadow: 0 3px 8px rgba(239, 83, 80, 0.4); }
+        .cal-day.event-green { background: #66bb6a; color: white; font-weight: 600; box-shadow: 0 3px 8px rgba(102, 187, 106, 0.4); }
+        .cal-day.event-blue { background: #42a5f5; color: white; font-weight: 600; box-shadow: 0 3px 8px rgba(66, 165, 245, 0.4); }
+        .cal-day.event-yellow { background: #ffa726; color: white; font-weight: 600; box-shadow: 0 3px 8px rgba(255, 167, 38, 0.4); }
+        .cal-day.today { border: 2px solid var(--bg-dark); font-weight: 800; color: var(--bg-dark); }
+        .cal-day.today.event-red, .cal-day.today.event-green, .cal-day.today.event-blue, .cal-day.today.event-yellow { color: white; border: 2px solid white; }
+
+        /* BOTTOM SECTION */
+        .bottom-section { background: linear-gradient(180deg, var(--bg-dark) 0%, var(--bg-darker) 100%); padding: 40px 20px 80px 20px; margin-top: -30px; border-top-left-radius: 35px; border-top-right-radius: 35px; position: relative; z-index: 45; color: white; overflow: hidden; }
+        .bottom-section::before { content: ''; position: absolute; top: -50px; right: -50px; width: 200px; height: 200px; background: radial-gradient(circle, var(--accent-lime) 0%, transparent 70%); opacity: 0.1; border-radius: 50%; pointer-events: none; }
+        .bottom-section::after { content: ''; position: absolute; bottom: 50px; left: -50px; width: 150px; height: 150px; background: radial-gradient(circle, #26a69a 0%, transparent 70%); opacity: 0.1; border-radius: 50%; pointer-events: none; }
+        .profile-section { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 20px; padding: 25px 20px; margin-bottom: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); text-align: center; position: relative; }
+        .profile-icon { font-size: 2.5rem; color: var(--accent-lime); margin-bottom: 15px; text-shadow: 0 0 10px rgba(212, 225, 87, 0.3); }
+        .profile-title { font-size: 1.2rem; font-weight: 800; margin-bottom: 10px; color: white; letter-spacing: 0.5px; }
+        .profile-desc { font-size: 0.85rem; line-height: 1.6; opacity: 0.9; color: #e0f2f1; }
+        .highlight { color: var(--accent-lime); font-weight: 700; }
+        .gallery-section { margin-top: 10px; }
+        .gallery-header .section-title { color: white; font-weight: 700; font-size: 1.1rem; }
+        .gallery-header .gallery-add-btn { background: var(--accent-lime); color: var(--bg-dark); }
+        .gallery-container { display: flex; gap: 15px; overflow-x: auto; padding: 5px 5px 20px 5px; scroll-behavior: smooth; -webkit-overflow-scrolling: touch; }
+        .gallery-container::-webkit-scrollbar { display: none; }
+        .gallery-item { min-width: 280px; height: 180px; border-radius: 18px; background-size: cover; background-position: center; background-repeat: no-repeat; background-color: rgba(255,255,255,0.1); box-shadow: 0 8px 20px rgba(0,0,0,0.3); position: relative; flex-shrink: 0; transition: transform 0.3s ease, box-shadow 0.3s ease; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); }
+        .gallery-item:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(0,0,0,0.4); }
+        .gallery-add-btn { font-size: 0.8rem; background: var(--bg-dark); color: var(--accent-lime); padding: 5px 12px; border-radius: 20px; font-weight: 600; cursor: pointer; display: none; transition: 0.2s; }
+        .gallery-add-btn:active { transform: scale(0.9); }
+        .delete-gallery-btn { position: absolute; top: 10px; right: 10px; background: rgba(255,255,255,0.9); color: #e53935; width: 28px; height: 28px; border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.2); z-index: 5; transition: transform 0.2s; }
+        .delete-gallery-btn:hover { transform: scale(1.1); }
+        .logout-container { margin-top: 30px; margin-bottom: 20px; width: 100%; display: flex; justify-content: center; }
+        .btn-logout { background: rgba(255,255,255,0.1); color: #ff8a80; border: 1px solid rgba(255,138,128, 0.3); padding: 12px 30px; border-radius: 50px; font-weight: 600; font-family: 'Poppins'; cursor: pointer; display: flex; align-items: center; gap: 10px; transition: all 0.2s; backdrop-filter: blur(5px); }
+        .btn-logout:active { transform: scale(0.95); background: rgba(255,138,128, 0.1); }
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); z-index: 99999; display: none; justify-content: center; align-items: flex-end; }
+        .modal-content { background: #f4fcf7; width: 100%; max-width: 500px; border-top-left-radius: 25px; border-top-right-radius: 25px; padding: 25px; max-height: 80vh; overflow-y: auto; animation: slideUp 0.3s ease-out; display: flex; flex-direction: column; color: var(--text-dark); }
+        .modal-header h3 { color: var(--bg-dark); }
+        .close-btn { font-size: 1.5rem; color: #888; cursor: pointer; }
+        #tutor-fab { position: fixed; bottom: 30px; right: 30px; width: 60px; height: 60px; background: var(--accent-lime); color: var(--bg-dark); border-radius: 50%; display: none; justify-content: center; align-items: center; font-size: 1.5rem; box-shadow: 0 10px 20px rgba(0,0,0,0.2); z-index: 999; cursor: pointer; transition: transform 0.2s; }
+        #tutor-fab:active { transform: scale(0.9); }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 5px; color: var(--text-dark); }
+        .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 10px; border-radius: 10px; border: 1px solid #ddd; font-family: 'Poppins'; font-size: 0.9rem; }
+        .btn-submit { background: var(--bg-dark); color: white; border: none; padding: 10px 20px; border-radius: 10px; width: 100%; font-weight: 700; cursor: pointer; }
+        
+        /* --- CHAT STYLES (NEW) --- */
+        .comment-list { flex: 1; overflow-y: auto; margin-bottom: 15px; display: flex; flex-direction: column; gap: 12px; padding: 15px; background: #f9f9f9; }
+        .chat-bubble { max-width: 80%; display: flex; flex-direction: column; position: relative; }
+        
+        /* My Chat (Right) */
+        .chat-right { align-self: flex-end; align-items: flex-end; }
+        .chat-right .bubble-content { background: var(--bg-dark); color: white; border-radius: 18px 18px 4px 18px; padding: 10px 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .chat-right .chat-info { font-size: 0.65rem; color: #888; margin-top: 4px; text-align: right; display: flex; align-items: center; gap: 5px; justify-content: flex-end; }
+        
+        /* Other Chat (Left) */
+        .chat-left { align-self: flex-start; align-items: flex-start; }
+        .chat-left .bubble-content { background: white; border: 1px solid #eee; color: var(--text-dark); border-radius: 18px 18px 18px 4px; padding: 10px 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .chat-left .chat-info { font-size: 0.65rem; color: #aaa; margin-top: 4px; display: flex; gap: 5px; align-items: center; }
+        
+        .chat-username { font-weight: 700; font-size: 0.7rem; margin-bottom: 2px; display: block; opacity: 0.8; }
+        .chat-right .chat-username { display: none; /* Hide my name */ }
+        .chat-left .chat-username { color: var(--bg-dark); }
+        
+        /* Avatar */
+        .chat-avatar { width: 28px; height: 28px; border-radius: 50%; background: #ddd; color: #555; display: flex; justify-content: center; align-items: center; font-size: 0.7rem; font-weight: 700; margin-bottom: 5px; }
+        .chat-right .chat-avatar { display: none; } /* No avatar for me */
+        
+        .comment-actions { opacity: 0.7; font-size: 0.75rem; display: inline-flex; gap: 8px; margin-right: 5px; }
+        .comment-actions i { cursor: pointer; }
+        
+        .comment-input-area { display: flex; gap: 10px; align-items: center; border-top: 1px solid #eee; padding: 15px; background: white; }
+        .comment-input-area input { flex: 1; padding: 12px 20px; border-radius: 50px; border: 1px solid #ddd; outline: none; font-family: 'Poppins'; font-size: 0.9rem; background: #f5f5f5; transition: 0.2s; }
+        .comment-input-area input:focus { background: white; border-color: var(--accent-lime); }
+        .btn-send-comment { background: var(--accent-lime); color: var(--bg-dark); border: none; width: 45px; height: 45px; border-radius: 50%; cursor: pointer; display: flex; justify-content: center; align-items: center; font-size: 1.1rem; transition: 0.2s; box-shadow: 0 4px 10px rgba(212, 225, 87, 0.4); }
+        .btn-send-comment:active { transform: scale(0.9); }
+
+        /* CALENDAR EVENT MODAL SPECIFIC */
+        .color-options { display: flex; gap: 10px; margin-top: 5px; }
+        .color-circle { width: 30px; height: 30px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; }
+        .color-circle.selected { border-color: var(--bg-dark); transform: scale(1.1); }
+        .bg-red { background: #ef5350; } .bg-green { background: #66bb6a; } .bg-blue { background: #42a5f5; } .bg-yellow { background: #ffa726; }
     </style>
 </head>
 <body>
@@ -324,6 +342,18 @@
                     <p style="text-align:center; opacity:0.6; font-size:0.8rem;">Memuat data...</p>
                 </div>
             </div>
+
+            <div class="calendar-section">
+                <div class="calendar-header">
+                    <i class="fas fa-chevron-left cal-nav" onclick="prevMonth()"></i>
+                    <div class="cal-month" id="calendarMonth"></div>
+                    <i class="fas fa-chevron-right cal-nav" onclick="nextMonth()"></i>
+                </div>
+                <div class="grid-names" style="display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; margin-bottom: 5px;">
+                    <div class="cal-day-name">Sun</div><div class="cal-day-name">Mon</div><div class="cal-day-name">Tue</div><div class="cal-day-name">Wed</div><div class="cal-day-name">Thu</div><div class="cal-day-name">Fri</div><div class="cal-day-name">Sat</div>
+                </div>
+                <div class="calendar-grid" id="calendarGrid"></div>
+            </div>
         </div>
 
         <div class="bottom-section">
@@ -384,118 +414,218 @@
     </div>
 
     <div id="comment-modal" class="modal-overlay" onclick="closeModalOnOutside(event, 'comment-modal')">
-        <div class="modal-content">
-            <div class="modal-header"><h3>Komentar</h3><div class="close-btn" onclick="closeComments()">&times;</div></div>
+        <div class="modal-content" style="background:#f2f2f2; height:80vh; border-radius: 20px 20px 0 0;">
+            <div class="modal-header" style="background:white; padding:15px; border-radius: 20px 20px 0 0; margin-bottom:0; border-bottom:1px solid #eee;">
+                <h3>Diskusi</h3><div class="close-btn" onclick="closeComments()">&times;</div>
+            </div>
+            
             <div class="comment-list" id="comment-list-container">
                 <p style="text-align:center; color:#aaa; margin-top:20px;">Belum ada komentar.</p>
             </div>
+            
             <div class="comment-input-area">
-                <input type="text" id="comment-input" placeholder="Tulis komentar..." autocomplete="off">
+                <input type="text" id="comment-input" placeholder="Tulis pesan..." autocomplete="off">
                 <button class="btn-send-comment" onclick="sendComment()"><i class="fas fa-paper-plane"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <div id="calendar-modal" class="modal-overlay" onclick="closeModalOnOutside(event, 'calendar-modal')">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="cal-modal-date">Tanggal</h3>
+                <div class="close-btn" onclick="toggleModal('calendar-modal')">&times;</div>
+            </div>
+            <div id="cal-tutor-form" style="display:none;">
+                <div class="form-group">
+                    <label>Deskripsi Acara</label>
+                    <textarea id="cal-event-desc" rows="3" placeholder="Misal: Kelas Speaking Jam 10"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Warna Penanda</label>
+                    <div class="color-options">
+                        <div class="color-circle bg-red" onclick="selectCalColor('red')"></div>
+                        <div class="color-circle bg-green" onclick="selectCalColor('green')"></div>
+                        <div class="color-circle bg-blue" onclick="selectCalColor('blue')"></div>
+                        <div class="color-circle bg-yellow" onclick="selectCalColor('yellow')"></div>
+                    </div>
+                    <input type="hidden" id="cal-event-color">
+                </div>
+                <button class="btn-submit" onclick="saveCalendarEvent()">Simpan Agenda</button>
+                <button class="btn-submit" style="background:#e57373; margin-top:10px;" onclick="deleteCalendarEvent()">Hapus Agenda</button>
+            </div>
+            <div id="cal-student-view" style="display:none;">
+                <p id="cal-event-display" style="font-size:1rem; color:var(--text-dark);"></p>
             </div>
         </div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.1.3/firebase-app.js";
-        import { getDatabase, ref, push, onValue, query, limitToLast, remove, off, set, update } from "https://www.gstatic.com/firebasejs/9.1.3/firebase-database.js";
+        import { getDatabase, ref, push, onValue, query, limitToLast, remove, off, set, update, get } from "https://www.gstatic.com/firebasejs/9.1.3/firebase-database.js";
         import { getStorage, ref as sRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.1.3/firebase-storage.js";
 
-        // --- PASTE FIREBASE CONFIG ANDA DISINI ---
-       const firebaseConfig = {
-  apiKey: "AIzaSyAgYCaaoGMzZWVT2dRov7ALUnnMhHoqXmE",
-  authDomain: "english-check-db.firebaseapp.com",
-  databaseURL: "https://english-check-db-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId: "english-check-db",
-  storageBucket: "english-check-db.firebasestorage.app",
-  messagingSenderId: "136352630898",
-  appId: "1:136352630898:web:dcaa103fa848ca38de9aeb"
-};
-        // ----------------------------------------
+        // --- FIREBASE CONFIG (GANTI DENGAN MILIK ANDA) ---
+        const firebaseConfig = {
+            apiKey: "AIzaSyAgYCaaoGMzZWVT2dRov7ALUnnMhHoqXmE",
+            authDomain: "english-check-db.firebaseapp.com",
+            databaseURL: "https://english-check-db-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "english-check-db",
+            storageBucket: "english-check-db.firebasestorage.app",
+            messagingSenderId: "136352630898",
+            appId: "1:136352630898:web:dcaa103fa848ca38de9aeb"
+        };
 
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
         const storage = getStorage(app);
 
-        // --- GALLERY SYSTEM (UPLOAD) ---
+        // --- CALENDAR SYSTEM ---
+        let currentMonth = new Date().getMonth();
+        let currentYear = new Date().getFullYear();
+        let calendarData = {};
+        let selectedDateKey = null;
+
+        onValue(ref(db, 'calendar'), (snapshot) => {
+            if (snapshot.exists()) { calendarData = snapshot.val(); } else { calendarData = {}; }
+            window.renderCalendar(currentMonth, currentYear);
+        });
+
+        window.renderCalendar = function(month, year) {
+            const container = document.getElementById('calendarGrid');
+            const monthLabel = document.getElementById('calendarMonth');
+            const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+            
+            monthLabel.innerText = `${months[month]} ${year}`;
+            container.innerHTML = "";
+
+            const firstDay = new Date(year, month, 1).getDay();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+            for (let i = 0; i < firstDay; i++) { container.innerHTML += `<div class="cal-day empty"></div>`; }
+
+            for (let i = 1; i <= daysInMonth; i++) {
+                const dayKey = `${year}-${month + 1}-${i}`;
+                let eventClass = "";
+                if (calendarData[dayKey]) { eventClass = `event-${calendarData[dayKey].color}`; }
+                
+                const today = new Date();
+                let todayClass = "";
+                if (i === today.getDate() && month === today.getMonth() && year === today.getFullYear()) { todayClass = "today"; }
+
+                container.innerHTML += `<div class="cal-day ${todayClass} ${eventClass}" onclick="openCalendarModal('${dayKey}')">${i}</div>`;
+            }
+        };
+
+        window.prevMonth = function() { currentMonth--; if (currentMonth < 0) { currentMonth = 11; currentYear--; } window.renderCalendar(currentMonth, currentYear); };
+        window.nextMonth = function() { currentMonth++; if (currentMonth > 11) { currentMonth = 0; currentYear++; } window.renderCalendar(currentMonth, currentYear); };
+
+        window.openCalendarModal = function(dateKey) {
+            selectedDateKey = dateKey;
+            const isTutor = localStorage.getItem('ec_role') === 'tutor';
+            document.getElementById('cal-modal-date').innerText = "Agenda: " + dateKey;
+            document.getElementById('calendar-modal').style.display = 'flex';
+            const eventData = calendarData[dateKey];
+
+            if (isTutor) {
+                document.getElementById('cal-tutor-form').style.display = 'block';
+                document.getElementById('cal-student-view').style.display = 'none';
+                if(eventData) {
+                    document.getElementById('cal-event-desc').value = eventData.desc;
+                    document.getElementById('cal-event-color').value = eventData.color;
+                } else {
+                    document.getElementById('cal-event-desc').value = "";
+                    document.getElementById('cal-event-color').value = "blue";
+                }
+            } else {
+                document.getElementById('cal-tutor-form').style.display = 'none';
+                document.getElementById('cal-student-view').style.display = 'block';
+                if (eventData) { document.getElementById('cal-event-display').innerText = eventData.desc; } 
+                else { document.getElementById('cal-event-display').innerText = "Tidak ada agenda pada tanggal ini."; }
+            }
+        };
+
+        window.selectCalColor = function(color) {
+            document.getElementById('cal-event-color').value = color;
+            document.querySelectorAll('.color-circle').forEach(el => el.classList.remove('selected'));
+            document.querySelector(`.bg-${color}`).classList.add('selected');
+        };
+
+        window.saveCalendarEvent = function() {
+            const desc = document.getElementById('cal-event-desc').value;
+            const color = document.getElementById('cal-event-color').value || 'blue';
+            if(!desc) { alert("Isi deskripsi!"); return; }
+            update(ref(db, 'calendar/' + selectedDateKey), { desc: desc, color: color }).then(() => {
+                alert("Agenda disimpan!"); document.getElementById('calendar-modal').style.display = 'none';
+            });
+        };
+
+        window.deleteCalendarEvent = function() {
+            if(confirm("Hapus agenda tanggal ini?")) {
+                remove(ref(db, 'calendar/' + selectedDateKey)).then(() => {
+                    document.getElementById('calendar-modal').style.display = 'none';
+                });
+            }
+        };
+
+        // --- GALLERY SYSTEM ---
         window.saveGalleryPhoto = function() {
             const fileInput = document.getElementById('photo-file');
             const file = fileInput.files[0];
             if(!file) { alert("Pilih foto terlebih dahulu!"); return; }
             const fileName = 'gallery/' + Date.now() + '_' + file.name;
             const storageRef = sRef(storage, fileName);
-            uploadBytes(storageRef, file).then((snapshot) => {
-                return getDownloadURL(snapshot.ref);
-            }).then((downloadURL) => {
+            uploadBytes(storageRef, file).then((snapshot) => { return getDownloadURL(snapshot.ref); }).then((downloadURL) => {
                 return push(ref(db, 'gallery'), { url: downloadURL, timestamp: Date.now() });
             }).then(() => {
                 alert("Foto berhasil diupload!");
                 document.getElementById('add-photo-modal').style.display = 'none';
                 fileInput.value = "";
-            }).catch((error) => {
-                console.error(error);
-                alert("Gagal upload: " + error.message);
-            });
+            }).catch((error) => { alert("Gagal upload: " + error.message); });
         };
 
         window.deleteGalleryPhoto = function(id) {
-            if(confirm("Hapus foto ini dari galeri?")) {
-                remove(ref(db, 'gallery/' + id));
-            }
+            if(confirm("Hapus foto ini dari galeri?")) { remove(ref(db, 'gallery/' + id)); }
         };
 
-        // Listen Gallery Data
         onValue(ref(db, 'gallery'), (snapshot) => {
             const container = document.getElementById('galleryContainer');
             if(snapshot.exists()) {
                 const data = snapshot.val();
                 const photos = Object.entries(data).reverse();
                 const isTutor = localStorage.getItem('ec_role') === 'tutor';
-                
                 let html = '';
                 photos.forEach(([key, item]) => {
                     let deleteBtn = '';
-                    if(isTutor) {
-                        deleteBtn = `<div class="delete-gallery-btn" onclick="window.deleteGalleryPhoto('${key}')"><i class="fas fa-trash"></i></div>`;
-                    }
-                    html += `
-                        <div class="gallery-item" style="background-image: url('${item.url}');">
-                            ${deleteBtn}
-                        </div>
-                    `;
+                    if(isTutor) { deleteBtn = `<div class="delete-gallery-btn" onclick="window.deleteGalleryPhoto('${key}')"><i class="fas fa-trash"></i></div>`; }
+                    html += `<div class="gallery-item" style="background-image: url('${item.url}');">${deleteBtn}</div>`;
                 });
                 if(photos.length > 2) html += html; 
                 container.innerHTML = html;
                 startAutoScroll();
-            } else {
-                container.innerHTML = '<p style="text-align:center; width:100%; opacity:0.6; font-size:0.8rem; color:#ccc;">Belum ada foto kegiatan.</p>';
-            }
+            } else { container.innerHTML = '<p style="text-align:center; width:100%; opacity:0.6; font-size:0.8rem; color:#ccc;">Belum ada foto kegiatan.</p>'; }
         });
 
-        let scrollInterval;
-        let isPaused = false;
+        let scrollInterval; let isPaused = false;
         function startAutoScroll() {
             const container = document.getElementById('galleryContainer');
             if(scrollInterval) clearInterval(scrollInterval);
             scrollInterval = setInterval(() => {
-                if(!isPaused) {
-                    container.scrollLeft += 1; 
-                    if(container.scrollLeft >= (container.scrollWidth / 2)) {
-                        container.scrollLeft = 0;
-                    }
-                }
+                if(!isPaused) { container.scrollLeft += 1; if(container.scrollLeft >= (container.scrollWidth / 2)) { container.scrollLeft = 0; } }
             }, 30);
         }
         window.pauseScroll = function() { isPaused = true; }
         window.resumeScroll = function() { isPaused = false; }
 
-        window.updateGalleryUI = function() {
+        window.updateTutorUI = function() {
             const isTutor = localStorage.getItem('ec_role') === 'tutor';
-            const btn = document.getElementById('galleryAddBtn');
-            const infoBtn = document.getElementById('infoAddBtn'); // Button Info juga
+            const galleryBtn = document.getElementById('galleryAddBtn');
+            const infoBtn = document.getElementById('infoAddBtn');
+            const fab = document.getElementById('tutor-fab');
             
-            if(btn) btn.style.display = isTutor ? 'block' : 'none';
+            if(galleryBtn) galleryBtn.style.display = isTutor ? 'block' : 'none';
             if(infoBtn) infoBtn.style.display = isTutor ? 'block' : 'none';
+            if(fab) fab.style.display = isTutor ? 'flex' : 'none';
         }
 
         // --- LOCK SYSTEM ---
@@ -546,9 +676,7 @@
             if(color === 'blue') tagText = "Tips";
             if(color === 'orange') tagText = "Materi";
             if(color === 'green') tagText = "Pengumuman";
-            push(ref(db, 'posts'), {
-                title: title, desc: desc, color: color, tag: tagText, timestamp: Date.now()
-            }).then(() => {
+            push(ref(db, 'posts'), { title: title, desc: desc, color: color, tag: tagText, timestamp: Date.now() }).then(() => {
                 alert("Berhasil diposting!");
                 document.getElementById('add-modal').style.display = 'none';
                 document.getElementById('post-title').value = "";
@@ -556,9 +684,7 @@
             });
         };
         window.deletePost = function(postId) {
-            if(confirm("Hapus informasi ini?")) {
-                remove(ref(db, 'posts/' + postId));
-            }
+            if(confirm("Hapus informasi ini?")) { remove(ref(db, 'posts/' + postId)); }
         };
 
         const postsRef = query(ref(db, 'posts'), limitToLast(10));
@@ -583,44 +709,23 @@
                         commentCount = commentsArr.length;
                         const recentComments = commentsArr.slice(-3);
                         commentsHtml = `<div class="card-comments-preview">`;
-                        recentComments.forEach(c => {
-                            commentsHtml += `<div class="preview-item"><span class="preview-user">${c.user}:</span><span class="preview-text">${c.text}</span></div>`;
-                        });
-                        if(commentCount > 3) {
-                            commentsHtml += `<div class="view-more-comments" onclick="event.stopPropagation(); window.openComments('${key}')">Lihat semua ${commentCount} komentar...</div>`;
-                        }
+                        recentComments.forEach(c => { commentsHtml += `<div class="preview-item"><span class="preview-user">${c.user}:</span><span class="preview-text">${c.text}</span></div>`; });
+                        if(commentCount > 3) { commentsHtml += `<div class="view-more-comments" onclick="event.stopPropagation(); window.openComments('${key}')">Lihat semua ${commentCount} komentar...</div>`; }
                         commentsHtml += `</div>`;
                     }
                     let toolsHtml = `<div class="card-tools">`;
                     toolsHtml += `<div class="tool-btn comment" onclick="event.stopPropagation(); window.openComments('${key}')"><i class="far fa-comment-dots"></i></div>`;
-                    if(isTutor) {
-                        toolsHtml += `<div class="tool-btn delete" onclick="event.stopPropagation(); window.deletePost('${key}')"><i class="fas fa-trash"></i></div>`;
-                    }
+                    if(isTutor) { toolsHtml += `<div class="tool-btn delete" onclick="event.stopPropagation(); window.deletePost('${key}')"><i class="fas fa-trash"></i></div>`; }
                     toolsHtml += `</div>`;
-                    html += `
-                        <div class="info-card" onclick="window.playClick('#')">
-                            ${toolsHtml}
-                            <div class="info-card-top">
-                                <div class="info-icon-container info-${post.color}"><i class="fas ${iconClass}"></i></div>
-                                <div class="info-content">
-                                    <span class="info-tag tag-${post.color}">${post.tag}</span>
-                                    <h4 class="info-title">${post.title}</h4>
-                                    <p class="info-desc">${post.desc}</p>
-                                </div>
-                            </div>
-                            ${commentsHtml}
-                        </div>
-                    `;
+                    html += `<div class="info-card" onclick="window.playClick('#')">${toolsHtml}<div class="info-card-top"><div class="info-icon-container info-${post.color}"><i class="fas ${iconClass}"></i></div><div class="info-content"><span class="info-tag tag-${post.color}">${post.tag}</span><h4 class="info-title">${post.title}</h4><p class="info-desc">${post.desc}</p></div></div>${commentsHtml}</div>`;
                 });
                 container.innerHTML = html;
                 notifBody.innerHTML = html;
                 badge.innerText = posts.length;
-            } else {
-                container.innerHTML = '<p style="text-align:center; opacity:0.6;">Belum ada update terbaru.</p>';
-            }
+            } else { container.innerHTML = '<p style="text-align:center; opacity:0.6;">Belum ada update terbaru.</p>'; }
         });
 
-        // --- COMMENTS ---
+        // --- COMMENTS (UPDATED DESIGN & LOGIC) ---
         let currentPostId = null;
         let commentsListener = null;
         window.openComments = function(postId) {
@@ -639,24 +744,55 @@
                     commentsArr.forEach(([commentId, c]) => {
                         const date = new Date(c.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
                         const isMyComment = c.user === currentUser;
-                        let actionsHtml = '';
+                        
+                        // Buat inisial avatar
+                        const initial = c.user.charAt(0).toUpperCase();
+                        
+                        // Struktur HTML Baru untuk Chat Bubble
+                        let chatHtml = '';
+                        
                         if(isMyComment) {
-                            actionsHtml = `<span class="comment-actions"><i class="fas fa-edit" onclick="window.editComment('${postId}', '${commentId}', '${c.text}')"></i><i class="fas fa-trash" onclick="window.deleteComment('${postId}', '${commentId}')"></i></span>`;
+                            // My Comment (Right)
+                            chatHtml = `
+                                <div class="chat-bubble chat-right">
+                                    <div class="bubble-content">
+                                        <div class="chat-text">${c.text}</div>
+                                    </div>
+                                    <div class="chat-info">
+                                        ${date}
+                                        <span class="comment-actions">
+                                            <i class="fas fa-edit" onclick="window.editComment('${postId}', '${commentId}', '${c.text}')"></i>
+                                            <i class="fas fa-trash" onclick="window.deleteComment('${postId}', '${commentId}')"></i>
+                                        </span>
+                                    </div>
+                                </div>
+                            `;
+                        } else {
+                            // Other Comment (Left)
+                            chatHtml = `
+                                <div class="chat-bubble chat-left">
+                                    <div style="display:flex; gap:8px;">
+                                        <div class="chat-avatar">${initial}</div>
+                                        <div>
+                                            <span class="chat-username">${c.user}</span>
+                                            <div class="bubble-content">
+                                                <div class="chat-text">${c.text}</div>
+                                            </div>
+                                            <div class="chat-info">${date}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
                         }
-                        listDiv.innerHTML += `<div class="comment-item"><span class="comment-user">${c.user} ${actionsHtml}</span><span class="comment-text">${c.text}</span><div class="comment-time">${date}</div></div>`;
+                        listDiv.innerHTML += chatHtml;
                     });
                     listDiv.scrollTop = listDiv.scrollHeight;
-                } else {
-                    listDiv.innerHTML = '<p style="text-align:center; color:#aaa; margin-top:20px;">Belum ada komentar.</p>';
-                }
+                } else { listDiv.innerHTML = '<p style="text-align:center; color:#aaa; margin-top:20px;">Belum ada komentar.</p>'; }
             });
         };
         window.closeComments = function() {
             document.getElementById('comment-modal').style.display = 'none';
-            if(currentPostId) {
-                const commentsRef = ref(db, 'posts/' + currentPostId + '/comments');
-                off(commentsRef); 
-            }
+            if(currentPostId) { const commentsRef = ref(db, 'posts/' + currentPostId + '/comments'); off(commentsRef); }
             currentPostId = null;
         };
         window.sendComment = function() {
@@ -665,25 +801,17 @@
             const username = localStorage.getItem('ec_username') || 'Anonymous';
             if(!text) return;
             if(!currentPostId) return;
-            push(ref(db, 'posts/' + currentPostId + '/comments'), {
-                user: username, text: text, timestamp: Date.now()
-            });
+            push(ref(db, 'posts/' + currentPostId + '/comments'), { user: username, text: text, timestamp: Date.now() });
             input.value = '';
         };
         window.deleteComment = function(postId, commentId) {
-            if(confirm("Hapus komentar ini?")) {
-                remove(ref(db, 'posts/' + postId + '/comments/' + commentId));
-            }
+            if(confirm("Hapus komentar ini?")) { remove(ref(db, 'posts/' + postId + '/comments/' + commentId)); }
         };
         window.editComment = function(postId, commentId, currentText) {
             let newText = prompt("Edit komentar Anda:", currentText);
-            if(newText !== null && newText.trim() !== "") {
-                update(ref(db, 'posts/' + postId + '/comments/' + commentId), { text: newText });
-            }
+            if(newText !== null && newText.trim() !== "") { update(ref(db, 'posts/' + postId + '/comments/' + commentId), { text: newText }); }
         };
-        document.getElementById('comment-input').addEventListener('keypress', function (e) {
-            if (e.key === 'Enter') window.sendComment();
-        });
+        document.getElementById('comment-input').addEventListener('keypress', function (e) { if (e.key === 'Enter') window.sendComment(); });
 
         window.handleMenuClick = function(targetUrl, featureId) {
             const isTutor = localStorage.getItem('ec_role') === 'tutor';
@@ -716,6 +844,7 @@
                     if(storedName && storedRole) {
                         setupDashboard(storedName, storedRole === 'tutor');
                         dashboard.style.display = 'flex';
+                        window.renderCalendar(new Date().getMonth(), new Date().getFullYear());
                     } else {
                         login.style.display = 'flex';
                     }
@@ -781,6 +910,7 @@
                 document.getElementById('login-screen').style.display = 'none';
                 document.getElementById('dashboard').style.display = 'flex';
                 playClick(null);
+                window.renderCalendar(new Date().getMonth(), new Date().getFullYear());
             }, 300);
         }
 
@@ -798,7 +928,7 @@
                 document.querySelector('.balance-label').innerText = "Active Student ID";
             }
             if(window.refreshLockUI) window.refreshLockUI();
-            if(window.updateGalleryUI) window.updateGalleryUI();
+            if(window.updateTutorUI) window.updateTutorUI();
             const randomIndex = Math.floor(Math.random() * dailyWords.length);
             const todayWord = dailyWords[randomIndex];
             document.getElementById('dw-word').innerText = todayWord.word;
