@@ -3,13 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MULTIPLAYER BATTLE (WITH COUNTDOWN)</title>
+    <title>MULTIPLAYER BATTLE (FINAL VERSION)</title>
     <style>
         /* CSS VARIABLES & RESET */
         :root { --bg: #0f172a; --card: #1e293b; --sidebar: #111827; --primary: #38bdf8; --text: #f8fafc; --muted: #94a3b8; --danger: #f87171; --success: #4ade80; --warning: #fbbf24; --p1: #3b82f6; --p2: #ef4444; }
         * { box-sizing: border-box; }
         body { font-family: 'Segoe UI', sans-serif; background-color: var(--bg); color: var(--text); margin: 0; height: 100vh; overflow: hidden; transition: background-color 0.3s; }
         
+        /* LAYOUT UTILS */
+        .hidden { display: none !important; }
+        
+        /* AUDIO CONTROL */
+        .audio-ctrl { position: fixed; top: 20px; right: 20px; z-index: 1000; background: rgba(0,0,0,0.5); padding: 10px; border-radius: 20px; display: flex; align-items: center; gap: 10px; border: 1px solid #444; }
+        .audio-icon { cursor: pointer; font-size: 1.2rem; }
+        input[type=range] { width: 80px; accent-color: var(--primary); }
+
         /* INTRO SCREEN & LOBBY */
         #intro-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: var(--bg); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 200; transition: opacity 0.5s ease-out; }
         .intro-content { z-index: 10; text-align: center; position: relative; width: 100%; max-width: 800px; padding: 20px; }
@@ -23,6 +31,12 @@
         .btn-create:hover, .btn-join:hover { transform: scale(1.02); filter: brightness(1.1); }
         .lobby-status { margin-top: 10px; color: var(--warning); font-size: 0.9rem; min-height: 20px; text-align: center; }
 
+        /* PLAYER LIST (Lobby & Sidebar) */
+        .player-list { background: rgba(0,0,0,0.3); padding: 10px; border-radius: 8px; text-align: left; font-size: 0.9rem; }
+        .p-item { padding: 5px; border-bottom: 1px solid #444; display: flex; justify-content: space-between; }
+        .p-status { font-weight: bold; }
+        .status-wait { color: #888; } .status-ready { color: var(--success); }
+
         /* MAIN APP LAYOUT */
         #main-app { display: none; width: 100%; height: 100vh; flex-direction: row; }
         .sidebar { width: 250px; background: var(--sidebar); border-right: 1px solid #334155; display: flex; flex-direction: column; padding: 20px 10px; gap: 5px; flex-shrink: 0; }
@@ -33,6 +47,7 @@
         .settings-bar { display: flex; align-items: center; justify-content: space-between; background: rgba(0,0,0,0.2); padding: 10px 20px; border-radius: 10px; margin-bottom: 20px; border: 1px solid #334155; }
         .score-input { width: 60px; padding: 5px; text-align: center; border-radius: 5px; border: none; font-weight: bold; font-size: 1rem; }
         .apply-btn { background: var(--warning); border: none; padding: 5px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; margin-left: 10px; }
+        .reset-game-btn { background: var(--danger); color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 0.8rem; }
 
         /* GAME ZONES */
         .battle-arena { display: flex; gap: 10px; margin-top: 20px; }
@@ -55,7 +70,7 @@
         .reset-btn { padding: 15px 40px; font-size: 1.5rem; background: var(--success); border: none; border-radius: 50px; cursor: pointer; font-weight: bold; box-shadow: 0 0 20px rgba(74, 222, 128, 0.4); transition: 0.2s; }
         .reset-btn:hover { transform: scale(1.1); }
         
-        /* CONTROLS */
+        /* CONTROLS & UI */
         .tab-btn { background: transparent; color: var(--text); border: none; padding: 12px 15px; cursor: pointer; border-radius: 8px; font-size: 0.95rem; text-align: left; display: flex; align-items: center; gap: 10px; width: 100%; }
         .tab-btn:hover { background: rgba(255,255,255,0.05); }
         .tab-btn.active { background: var(--primary); color: #0f172a; font-weight: bold; }
@@ -75,10 +90,15 @@
 <audio id="sfx-beep" preload="auto"><source src="https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3" type="audio/mpeg"></audio>
 <audio id="sfx-go" preload="auto"><source src="https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3" type="audio/mpeg"></audio>
 
+<div class="audio-ctrl">
+    <span class="audio-icon" onclick="toggleAudio()">🔊</span>
+    <input type="range" id="volume-slider" min="0" max="1" step="0.1" value="0.5" oninput="setVolume(this.value)">
+</div>
+
 <div id="winner-overlay">
     <div class="winner-title" id="winner-text">PLAYER 1 WINS!</div>
     <div class="winner-subtitle">Congratulations!</div>
-    <button class="reset-btn" id="reset-btn" onclick="window.resetGame()">PLAY AGAIN 🔄</button>
+    <button class="reset-btn" id="overlay-reset-btn" onclick="window.resetGame()">PLAY AGAIN 🔄</button>
     <div id="waiting-reset-msg" style="margin-top:20px; color:#aaa; display:none;">Waiting for Host to reset...</div>
 </div>
 
@@ -100,6 +120,15 @@
         <div style="color:var(--primary); font-weight:bold; padding:10px;">MENU</div>
         <div style="padding:0 10px 20px 10px; font-size:0.9rem;">Role: <span id="my-role-badge">---</span></div>
         <button class="tab-btn active">⚔️ Battle Mode</button>
+        
+        <div style="padding:10px; margin-top:20px;">
+            <div style="font-size:0.8rem; color:#aaa; margin-bottom:5px;">CONNECTED PLAYERS</div>
+            <div class="player-list">
+                <div class="p-item"><span>P1 (Host)</span><span id="p1-status" class="p-status status-wait">...</span></div>
+                <div class="p-item"><span>P2 (Joiner)</span><span id="p2-status" class="p-status status-wait">...</span></div>
+            </div>
+        </div>
+
         <button class="tab-btn" onclick="location.reload()" style="margin-top:auto; color:var(--danger);">⬅ Exit Room</button>
     </nav>
 
@@ -110,11 +139,14 @@
                     <span>Room: <strong id="display-room-code" style="color:var(--primary);">---</strong></span>
                 </div>
                 
-                <div id="host-controls" style="display:none;">
-                    <label>Target Points:</label>
-                    <input type="number" id="target-score-input" class="score-input" value="10" min="1" max="50">
-                    <button class="apply-btn" onclick="window.updateRules()">SET</button>
+                <div id="host-controls" style="display:none; display:flex; gap:10px; align-items:center;">
+                    <div style="display:flex; align-items:center;">
+                        <label style="margin-right:5px; font-size:0.9rem;">Target:</label>
+                        <input type="number" id="target-score-input" class="score-input" value="10" min="1" max="50">
+                        <button class="apply-btn" onclick="window.updateRules()">SET</button>
+                    </div>
                     <button class="apply-btn" id="btn-start-trigger" onclick="window.triggerCountdown()" style="background:var(--success);">START ROUND</button>
+                    <button class="reset-game-btn" onclick="window.resetGame()">RESET GAME</button>
                 </div>
 
                 <div id="player-view" style="display:none; font-weight:bold;">
@@ -166,8 +198,7 @@
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
 
-    // 3. VOCABULARY LIST
-
+    
 
     // 4. GLOBAL VARIABLES
     let myRole = 0; // 1 = Host, 2 = Joiner
@@ -175,6 +206,27 @@
     let lastKeyTimestamp = 0;
     let targetScore = 10;
     let gameActive = false; // Initially false until countdown finishes
+
+    // --- AUDIO SYSTEM ---
+    const bgMusic = document.getElementById('bg-music');
+    bgMusic.volume = 0.5;
+    
+    // Autoplay hack (browser might block it initially)
+    window.addEventListener('click', () => {
+        if(bgMusic.paused) bgMusic.play().catch(e=>{});
+    }, { once: true });
+
+    window.toggleAudio = function() {
+        if(bgMusic.paused) bgMusic.play();
+        else bgMusic.pause();
+    }
+    
+    window.setVolume = function(val) {
+        bgMusic.volume = val;
+        // Also adjust SFX volume
+        document.getElementById('sfx-beep').volume = val;
+        document.getElementById('sfx-go').volume = val;
+    }
 
     // --- CREATE ROOM ---
     window.createRoom = function() {
@@ -188,6 +240,7 @@
             status: 'waiting',
             target: 10,
             winner: null,
+            players: { p1: 'connected', p2: 'waiting' },
             scores: { p1: 0, p2: 0 },
             round: { word: "Ready", def: "Press Start", answer: null, timestamp: 0 },
             input: { player: 0, key: '', timestamp: 0 },
@@ -207,7 +260,10 @@
         const roomRef = ref(db, 'matches/' + code);
         get(roomRef).then((snap) => {
             if (snap.exists()) {
-                update(roomRef, { status: 'connected' });
+                update(roomRef, { 
+                    status: 'connected',
+                    'players/p2': 'connected' 
+                });
                 enterGame(code, 2);
             } else {
                 alert("Room not found!");
@@ -230,16 +286,19 @@
         badge.className = role === 1 ? "role-badge role-p1" : "role-badge role-p2";
 
         if (role === 1) {
-            document.getElementById('host-controls').style.display = 'block';
-            document.getElementById('reset-btn').style.display = 'block';
+            document.getElementById('host-controls').style.display = 'flex'; // Changed to flex for alignment
+            document.getElementById('overlay-reset-btn').style.display = 'block';
             document.getElementById('waiting-reset-msg').style.display = 'none';
         } else {
             document.getElementById('player-view').style.display = 'block';
-            document.getElementById('reset-btn').style.display = 'none';
+            document.getElementById('overlay-reset-btn').style.display = 'none';
             document.getElementById('waiting-reset-msg').style.display = 'block';
         }
 
         listenToRoom();
+        
+        // Start Music
+        bgMusic.play().catch(()=>{});
     }
 
     // --- RULES UPDATE ---
@@ -254,24 +313,19 @@
     };
 
     // --- COUNTDOWN LOGIC (HOST) ---
-    // This replaces immediate start
     window.triggerCountdown = function() {
         if(myRole !== 1) return;
         
-        // Disable Start Button temporarily
         const btn = document.getElementById('btn-start-trigger');
         btn.disabled = true;
-
         let count = 3;
 
-        // Function to update msg recursively
         const runTimer = () => {
             if (count > 0) {
                 update(ref(db, 'matches/' + currentRoom), { msg: count.toString() });
                 count--;
                 setTimeout(runTimer, 1000);
             } else {
-                // Countdown finished
                 update(ref(db, 'matches/' + currentRoom), { msg: "GO!" });
                 setTimeout(() => {
                     broadcastStart();
@@ -279,29 +333,24 @@
                 }, 500);
             }
         };
-        
         runTimer();
     };
 
-    // --- BROADCAST ROUND (Called after Countdown) ---
+    // --- BROADCAST ROUND ---
     function broadcastStart() {
         const item = fullVocab[Math.floor(Math.random() * fullVocab.length)];
         const isTrue = Math.random() < 0.5;
         let showDef = item.idn;
-        
         if (!isTrue) {
             let wrong = fullVocab[Math.floor(Math.random() * fullVocab.length)];
             while(wrong.eng === item.eng) wrong = fullVocab[Math.floor(Math.random() * fullVocab.length)];
             showDef = wrong.idn;
         }
 
-        // Set game active on Host immediately, but Firebase listener will sync it too
-        // Important: msg is cleared so "GO!" disappears after a moment
         update(ref(db, 'matches/' + currentRoom + '/round'), {
             word: item.eng, def: showDef, answer: isTrue, timestamp: Date.now()
         });
         
-        // Slightly delay clearing the GO message so user sees it, then sees the question
         setTimeout(() => {
              update(ref(db, 'matches/' + currentRoom), { msg: "" });
         }, 1000);
@@ -327,56 +376,63 @@
             const data = snapshot.val();
             if (!data) return;
 
-            // Update UI Elements
+            // 1. Update Player List
+            if(data.players) {
+                const p1Stat = document.getElementById('p1-status');
+                const p2Stat = document.getElementById('p2-status');
+                p1Stat.innerText = data.players.p1 === 'connected' ? "Connected" : "...";
+                p1Stat.className = data.players.p1 === 'connected' ? "p-status status-ready" : "p-status status-wait";
+                
+                p2Stat.innerText = data.players.p2 === 'connected' ? "Connected" : "Waiting...";
+                p2Stat.className = data.players.p2 === 'connected' ? "p-status status-ready" : "p-status status-wait";
+            }
+
+            // 2. Update Target Score
             if (data.target) {
                 targetScore = data.target;
                 document.getElementById('display-target').innerText = targetScore;
                 if(myRole === 1) document.getElementById('target-score-input').value = targetScore;
             }
 
+            // 3. Update Scores
             if (data.scores) {
                 document.getElementById('score-p1').innerText = data.scores.p1;
                 document.getElementById('score-p2').innerText = data.scores.p2;
             }
 
+            // 4. Update Round
             if (data.round) {
                 document.getElementById('game-word').innerText = data.round.word;
                 document.getElementById('game-def').innerText = data.round.def;
             }
 
-            // Message & Sound Handler
+            // 5. Message & Sound Handler
             if (data.msg !== undefined) {
                 const msgBox = document.getElementById('game-msg');
                 msgBox.innerText = data.msg;
-                msgBox.className = "msg-box"; // reset class
+                msgBox.className = "msg-box"; 
 
-                // Handle Countdown Sounds & Visuals
                 if (["3", "2", "1"].includes(data.msg)) {
                     document.getElementById('sfx-beep').play().catch(()=>{});
-                    msgBox.classList.add('countdown-pulse'); // Add animation
-                    gameActive = false; // Lock input
+                    msgBox.classList.add('countdown-pulse');
+                    gameActive = false; 
                 } 
                 else if (data.msg === "GO!") {
                     document.getElementById('sfx-go').play().catch(()=>{});
                     msgBox.style.color = "var(--success)";
                     msgBox.classList.add('countdown-pulse');
-                    gameActive = true; // Unlock input
+                    gameActive = true; 
                 }
                 else if (data.msg === "") {
-                    // Normal state (Question displayed)
                     gameActive = true;
                 }
                 else {
-                    // Result messages (Win/Wrong)
                     if(data.msg.includes("Wins")) msgBox.style.color = "var(--success)";
                     else msgBox.style.color = "var(--text)";
-                    
-                    // Brief pause after result before next input is valid
-                    // (Actually handled by Host logic delay)
                 }
             }
 
-            // Check Winner
+            // 6. Check Winner
             if (data.winner) {
                 gameActive = false;
                 document.getElementById('winner-text').innerText = data.winner + " WINS!";
@@ -385,7 +441,7 @@
                 document.getElementById('winner-overlay').style.display = 'none';
             }
 
-            // Host Process Input
+            // 7. Host Process Input
             if (myRole === 1 && gameActive && data.input && data.input.timestamp > lastKeyTimestamp) {
                 lastKeyTimestamp = data.input.timestamp;
                 processInput(data.input.player, data.input.key, data.round.answer, data.scores);
@@ -395,7 +451,7 @@
 
     // --- HOST LOGIC: PROCESS INPUT ---
     function processInput(player, key, ans, scores) {
-        if(!gameActive) return; // Ignore input if game paused/countdown
+        if(!gameActive) return; 
         
         let choice = null;
         if (player === 1) { if(key === 'a') choice=true; if(key === 's') choice=false; }
@@ -413,12 +469,10 @@
             if(player===1) p2++; else p1++;
         }
 
-        // Check Win Condition
         let winner = null;
         if (p1 >= targetScore) winner = "PLAYER 1";
         if (p2 >= targetScore) winner = "PLAYER 2";
 
-        // Stop accepting input immediately
         gameActive = false;
 
         update(ref(db, 'matches/' + currentRoom), {
@@ -429,14 +483,13 @@
         });
 
         if(!winner) {
-            // Auto restart countdown after 1.5s delay showing the result
             setTimeout(() => { window.triggerCountdown(); }, 1500);
         }
     }
 
     // --- KEYBOARD ---
     document.addEventListener('keydown', (e) => {
-        if (!currentRoom || !gameActive) return; // Lock keys during countdown/pause
+        if (!currentRoom || !gameActive) return; 
         const key = e.key.toLowerCase();
         if (myRole === 1 && (key === 'a' || key === 's')) sendKey(1, key);
         if (myRole === 2 && (key === 'k' || key === 'l')) sendKey(2, key);
