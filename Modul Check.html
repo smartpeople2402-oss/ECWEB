@@ -2,179 +2,169 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>English Elegant | Master Class Hub</title>
-    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>English Check - Modules</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <style>
-        /* --- THEME VARIABLES --- */
+        /* --- TEMA DARI DASHBOARD --- */
         :root {
-            --emerald-deep: #051a14;
-            --emerald-dark: #0a2f23;
-            --emerald-primary: #14523d;
-            --emerald-light: #e3f0ea;
-            --gold-accent: #c5a059;
-            --gold-glow: #e6c888;
-            --text-main: #fdfcf8;
-            --card-bg: rgba(255, 255, 255, 0.03);
-            --card-hover: rgba(20, 82, 61, 0.6);
+            --bg-dark: #0f3d3e;       
+            --bg-darker: #0a2b2c;     
+            --accent-lime: #d4e157;   
+            --body-bg: #f4fcf7;       
+            --text-dark: #1b4d3e;
+            --white: #ffffff;
+            --grey-text: #666666;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         
         body {
-            font-family: 'Lato', sans-serif;
-            background-color: var(--emerald-deep);
-            color: var(--text-main);
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--body-bg);
+            color: var(--text-dark);
             min-height: 100vh;
+            display: flex;
+            flex-direction: column;
             overflow-x: hidden;
-            background-image: radial-gradient(circle at 50% 0%, #14523d 0%, #051a14 70%);
         }
 
-        /* --- TYPOGRAPHY --- */
-        h1, h2, h3 { font-family: 'Playfair Display', serif; }
-
-        /* --- HEADER --- */
-        header {
+        /* --- HEADER SECTION (Sama seperti Dashboard) --- */
+        .header-section {
+            background: linear-gradient(180deg, var(--bg-dark) 0%, var(--bg-darker) 100%);
+            padding: 30px 20px 40px 20px;
+            color: white;
+            border-bottom-left-radius: 35px;
+            border-bottom-right-radius: 35px;
+            box-shadow: 0 10px 30px rgba(15, 61, 62, 0.3);
             text-align: center;
-            padding: 4rem 1rem 2rem;
-            animation: fadeInDown 1s ease-out;
+            position: relative;
+            z-index: 10;
+        }
+
+        .back-btn {
+            position: absolute; top: 30px; left: 20px;
+            color: white; font-size: 1.2rem; cursor: pointer;
+            text-decoration: none;
         }
 
         .logo-text {
-            color: var(--gold-accent);
-            letter-spacing: 4px;
-            font-size: 0.9rem;
+            color: var(--accent-lime);
+            font-size: 0.8rem;
             text-transform: uppercase;
-            margin-bottom: 1rem;
+            letter-spacing: 2px;
+            font-weight: 600;
             display: block;
+            margin-bottom: 5px;
         }
 
         h1 {
-            font-size: 3.5rem;
-            background: linear-gradient(to right, #fff, #c5a059, #fff);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            margin-bottom: 1rem;
-            text-shadow: 0 4px 20px rgba(0,0,0,0.5);
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--white);
+            margin-bottom: 10px;
         }
 
         .subtitle {
-            font-weight: 300;
-            color: var(--emerald-light);
-            max-width: 600px;
-            margin: 0 auto;
-            line-height: 1.6;
+            font-size: 0.85rem;
+            color: #e0f2f1;
             opacity: 0.8;
+            max-width: 90%;
+            margin: 0 auto;
+            line-height: 1.5;
         }
 
         /* --- GRID LAYOUT --- */
         .container {
-            max-width: 1200px;
-            margin: 2rem auto 5rem;
-            padding: 0 2rem;
+            padding: 25px 20px;
+            margin-top: -20px; /* Overlap effect */
+            z-index: 20;
         }
 
         .grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-            gap: 25px;
-            perspective: 1000px;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
         }
 
-        /* --- CARDS --- */
+        /* --- CARD DESIGN (Updated to match Dashboard style) --- */
         .card {
-            background: var(--card-bg);
-            border: 1px solid rgba(197, 160, 89, 0.2);
-            border-radius: 15px;
-            padding: 2.5rem 1.5rem;
+            background: var(--white);
+            border-radius: 20px;
+            padding: 25px;
             text-decoration: none;
-            color: var(--text-main);
+            color: var(--text-dark);
             position: relative;
             overflow: hidden;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
             display: flex;
             flex-direction: column;
             align-items: center;
             text-align: center;
-            backdrop-filter: blur(10px);
+            border: 1px solid rgba(0,0,0,0.03);
         }
 
-        .card::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 4px;
-            background: var(--gold-accent);
-            transform: scaleX(0);
-            transform-origin: left;
-            transition: transform 0.4s ease;
+        .card:active {
+            transform: scale(0.98);
         }
 
-        .card-icon {
-            font-size: 3.5rem;
-            margin-bottom: 1.5rem;
-            transition: 0.4s ease;
-            filter: drop-shadow(0 0 10px rgba(197, 160, 89, 0.3));
+        /* Ikon Container mirip Dashboard */
+        .card-icon-box {
+            width: 70px; height: 70px;
+            background: rgba(212, 225, 87, 0.15); /* Lime transparan */
+            border-radius: 50%;
+            display: flex; justify-content: center; align-items: center;
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            border: 1px solid rgba(212, 225, 87, 0.3);
+            transition: 0.3s;
         }
 
         .card h2 {
-            font-size: 1.6rem;
-            margin-bottom: 0.5rem;
-            color: var(--white);
-            transition: 0.3s;
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--bg-dark);
         }
 
         .card p {
-            font-size: 0.9rem;
-            color: #ccc;
-            opacity: 0.8;
-            margin-bottom: 1.5rem;
+            font-size: 0.85rem;
+            color: var(--grey-text);
+            line-height: 1.5;
+            margin-bottom: 20px;
+            flex-grow: 1;
         }
 
+        /* Tombol di dalam card */
         .btn-enter {
-            margin-top: auto;
-            padding: 0.6rem 1.5rem;
-            border: 1px solid var(--gold-accent);
-            color: var(--gold-accent);
+            background: var(--bg-dark);
+            color: var(--accent-lime);
+            padding: 10px 25px;
             border-radius: 50px;
-            font-size: 0.8rem;
-            letter-spacing: 1px;
+            font-size: 0.85rem;
+            font-weight: 700;
             text-transform: uppercase;
-            transition: 0.3s;
+            letter-spacing: 1px;
+            width: 100%;
+            transition: 0.2s;
         }
 
-        /* --- HOVER EFFECTS --- */
-        .card:hover {
-            transform: translateY(-10px);
-            background: var(--card-hover);
-            border-color: var(--gold-accent);
-            box-shadow: 0 15px 40px rgba(0,0,0,0.4), 0 0 20px rgba(197, 160, 89, 0.1);
+        /* Hover Effect (Desktop) & Active State */
+        .card:hover .card-icon-box {
+            background: var(--accent-lime);
+            transform: scale(1.1);
         }
-
-        .card:hover::before { transform: scaleX(1); }
         
-        .card:hover .card-icon {
-            transform: scale(1.1) rotate(5deg);
-        }
-
-        .card:hover .btn-enter {
-            background: var(--gold-accent);
-            color: var(--emerald-deep);
-            box-shadow: 0 0 15px var(--gold-accent);
-        }
-
-        /* --- ANIMATIONS --- */
-        @keyframes fadeInDown {
-            from { opacity: 0; transform: translateY(-30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
+        /* Animasi Masuk */
         @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(30px); }
+            from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        .card { opacity: 0; animation: fadeInUp 0.6s forwards; }
+        .card { opacity: 0; animation: fadeInUp 0.5s forwards; }
         .card:nth-child(1) { animation-delay: 0.1s; }
         .card:nth-child(2) { animation-delay: 0.2s; }
         .card:nth-child(3) { animation-delay: 0.3s; }
@@ -184,75 +174,71 @@
         .card:nth-child(7) { animation-delay: 0.7s; }
         .card:nth-child(8) { animation-delay: 0.8s; }
 
-        /* --- RESPONSIVE --- */
-        @media(max-width: 600px) {
-            h1 { font-size: 2.5rem; }
-            .container { padding: 0 1.5rem; }
-        }
     </style>
 </head>
 <body>
 
-    <header>
-        <span class="logo-text">Module</span>
+    <div class="header-section">
+        <a href="index.html" class="back-btn"><i class="fas fa-arrow-left"></i></a>
+        <span class="logo-text">Learning Modules</span>
         <h1>English Check</h1>
-        <p class="subtitle">Select a module to begin your journey. Collaborate for change, empower for impact.</p>
-    </header>
+        <p class="subtitle">Pilih modul untuk memulai belajarmu. Collaborating for change, empowering for impact.</p>
+    </div>
 
     <div class="container">
         <div class="grid">
 
             <a href="POS.html" class="card" onmouseenter="playSound()">
-                <div class="card-icon">🏛️</div>
+                <div class="card-icon-box">🏛️</div>
                 <h2>POS</h2>
                 <p>The 8 foundations of language. The starting point of grammar.</p>
                 <div class="btn-enter">Enter Class</div>
             </a>
 
             <a href="phrase.html" class="card" onmouseenter="playSound()">
-                <div class="card-icon">🧩</div>
+                <div class="card-icon-box">🧩</div>
                 <h2>Phrase</h2>
                 <p>Understanding meaningful groups of words without a predicate.</p>
                 <div class="btn-enter">Enter Class</div>
             </a>
 
             <a href="circle.html" class="card" onmouseenter="playSound()">
-                <div class="card-icon">⭕</div>
+                <div class="card-icon-box">⭕</div>
                 <h2>Circle</h2>
                 <p>Grouping Nouns, Verbs, Adverbs, and Adjectives logically.</p>
                 <div class="btn-enter">Enter Class</div>
             </a>
 
             <a href="sentence.html" class="card" onmouseenter="playSound()">
-                <div class="card-icon">📝</div>
+                <div class="card-icon-box">📝</div>
                 <h2>Sentence</h2>
                 <p>The art of constructing complete thoughts. Subject + Predicate.</p>
                 <div class="btn-enter">Enter Class</div>
             </a>
 
             <a href="tenses 1.html" class="card" onmouseenter="playSound()">
-                <div class="card-icon">🕐</div>
+                <div class="card-icon-box">🕐</div>
                 <h2>Tenses 1</h2>
                 <p>Simple & Continuous forms. Present, Past, and Future basics.</p>
                 <div class="btn-enter">Enter Class</div>
             </a>
 
             <a href="tenses 2.html" class="card" onmouseenter="playSound()">
-                <div class="card-icon">⏳</div>
+                <div class="card-icon-box">⏳</div>
                 <h2>Tenses 2</h2>
                 <p>Complex timelines. Past Continuous & Future Perfect.</p>
                 <div class="btn-enter">Enter Class</div>
             </a>
 
             <a href="TENSES 3.html" class="card" onmouseenter="playSound()">
-                <div class="card-icon">🔄</div>
+                <div class="card-icon-box">🔄</div>
                 <h2>Tenses 3</h2>
                 <p>Mastering Duration. The Perfect Continuous forms.</p>
                 <div class="btn-enter">Enter Class</div>
             </a>
 
             <a href="clause.html" class="card" onmouseenter="playSound()">
-                <div class="card-icon">🔗</div>
+                <div class="card-icon-box">🔗</div>
                 <h2>Clause</h2>
                 <p>Independent vs Dependent. Creating complex sentences.</p>
                 <div class="btn-enter">Enter Class</div>
@@ -262,18 +248,14 @@
     </div>
 
     <audio id="hoverSound">
-        <source src="data:audio/mp3;base64,//uQRAAAAWMSLwUIYAAsYkXgoQwAEaYLWfkWgAI0wWs/ItAAAG84n418AAoAA IVRE2AAAPHzeP//4f/4D/wT/wn/4X/8J//4f/5/w/4T0/w/4f/4T/9//4f/9/4T/9//4f/9/4T/9//4f/9/4T/9//4f/9/4T/9//4f/9/4T/9//4f/9/4T/9//4f/9/4T/9//4f/9/4T/9//4f/9/4T/9//4f/9//uQRAAAAWMSLwUIYAAsYkXgoQwAEaYLWfkWgAI0wWs/ItAAAG84n418AAoAA IVRE2AAAPHzeP//4f/4D/wT/wn/4X/8J//4f/5/w/4T0/w/4f/4T/9//4f/9/4T/9//4f/9/4T/9//4f/9/4T/9//4f/9/4T/9//4f/9/4T/9//4f/9/4T/9//4f/9/4T/9//4f/9/4T/9//4f/9/4T/9//4f/9" type="audio/mpeg">
+        <source src="data:audio/mp3;base64,//uQRAAAAWMSLwUIYAAsYkXgoQwAEaYLWfkWgAI0wWs/ItAAAG84n418AAoAA IVRE2AAAPHzeP//4f/4D/wT/wn/4X/8J//4f/5/w/4T0/w/4f/4T/9//4f/9/4T/9//4f/9/4T/9//4f/9/4T/9//4f/9/4T/9//4f/9/4T/9//4f/9/4T/9//4f/9/4T/9//4f/9/4T/9//4f/9/4T/9//4f/9" type="audio/mpeg">
     </audio>
 
     <script>
-        // --- SOUND EFFECT LOGIC ---
-        // We use a small synthesized 'blip' sound generated via AudioContext to ensure it works 
-        // without external files, or fallback to the audio tag above.
-        
+        // --- SOUND EFFECT LOGIC (Tidak diubah) ---
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
         function playSound() {
-            // Check if context is suspended (browser policy) and resume if needed
             if (audioCtx.state === 'suspended') {
                 audioCtx.resume();
             }
@@ -282,11 +264,11 @@
             const gainNode = audioCtx.createGain();
 
             oscillator.type = 'sine';
-            oscillator.frequency.setValueAtTime(400, audioCtx.currentTime); // Frequency in Hz
-            oscillator.frequency.exponentialRampToValueAtTime(50, audioCtx.currentTime + 0.1); // Drop pitch
+            oscillator.frequency.setValueAtTime(400, audioCtx.currentTime); 
+            oscillator.frequency.exponentialRampToValueAtTime(50, audioCtx.currentTime + 0.1); 
 
-            gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime); // Volume
-            gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1); // Fade out
+            gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime); 
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1); 
 
             oscillator.connect(gainNode);
             gainNode.connect(audioCtx.destination);
