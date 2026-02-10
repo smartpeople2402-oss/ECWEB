@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MULTIPLAYER BATTLE (MOBILE OPTIMIZED)</title>
+    <title>MULTIPLAYER BATTLE (MOBILE SIMPLIFIED)</title>
     <style>
         /* CSS VARIABLES & RESET */
         :root { --bg: #0f172a; --card: #1e293b; --sidebar: #111827; --primary: #38bdf8; --text: #f8fafc; --muted: #94a3b8; --danger: #f87171; --success: #4ade80; --warning: #fbbf24; --p1: #3b82f6; --p2: #ef4444; }
@@ -11,7 +11,7 @@
         body { font-family: 'Segoe UI', sans-serif; background-color: var(--bg); color: var(--text); margin: 0; height: 100vh; overflow: hidden; transition: background-color 0.3s; }
         
         /* AUDIO CONTROL */
-        .audio-ctrl { position: fixed; top: 10px; right: 10px; z-index: 1000; background: rgba(0,0,0,0.5); padding: 8px; border-radius: 20px; display: flex; align-items: center; gap: 8px; border: 1px solid #444; backdrop-filter: blur(5px); }
+        .audio-ctrl { position: fixed; top: 10px; right: 10px; z-index: 1000; background: rgba(0,0,0,0.5); padding: 5px 10px; border-radius: 20px; display: flex; align-items: center; gap: 8px; border: 1px solid #444; backdrop-filter: blur(5px); }
         .audio-icon { cursor: pointer; font-size: 1rem; }
         input[type=range] { width: 60px; accent-color: var(--primary); }
 
@@ -25,12 +25,11 @@
         .lobby-btn { padding: 15px; border-radius: 10px; border: none; font-weight: bold; cursor: pointer; transition: 0.2s; font-size: 1rem; width: 100%; }
         .btn-create { background: var(--primary); color: #0f172a; margin-bottom: 10px; }
         .btn-join { background: var(--success); color: #0f172a; }
-        .btn-create:hover, .btn-join:hover { transform: scale(1.02); filter: brightness(1.1); }
         .lobby-status { margin-top: 10px; color: var(--warning); font-size: 0.9rem; min-height: 20px; text-align: center; }
 
         /* PLAYER LIST (Lobby & Sidebar) */
-        .player-list { background: rgba(0,0,0,0.3); padding: 10px; border-radius: 8px; text-align: left; font-size: 0.9rem; }
-        .p-item { padding: 5px; border-bottom: 1px solid #444; display: flex; justify-content: space-between; }
+        .player-list { background: rgba(0,0,0,0.3); padding: 8px; border-radius: 8px; text-align: left; font-size: 0.85rem; }
+        .p-item { padding: 4px; border-bottom: 1px solid #444; display: flex; justify-content: space-between; }
         .p-status { font-weight: bold; }
         .status-wait { color: #888; } .status-ready { color: var(--success); }
 
@@ -48,51 +47,77 @@
 
         /* GAME ZONES & CONTROLS */
         .battle-arena { display: flex; gap: 10px; margin-top: 10px; flex: 1; min-height: 0; }
-        .player-zone { flex: 1; border-radius: 15px; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 2px solid #333; background: rgba(0,0,0,0.2); transition: 0.2s; position: relative; padding: 10px; }
-        .p1-zone { border-color: var(--p1); } .p2-zone { border-color: var(--p2); }
-        .p-score { font-size: 3rem; font-weight: 800; line-height: 1; margin: 10px 0; }
         
-        /* BATTLE CENTER (SOAL) - NOW ON TOP */
-        .battle-center { text-align: center; margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px solid #333; flex-shrink: 0; }
-        .b-word { font-size: 2rem; font-weight: bold; margin-bottom: 5px; }
+        .player-zone { flex: 1; border-radius: 15px; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 2px solid #333; background: rgba(0,0,0,0.2); transition: all 0.3s ease; position: relative; padding: 10px; }
+        .p1-zone { border-color: var(--p1); } .p2-zone { border-color: var(--p2); }
+        .p-score { font-size: 3rem; font-weight: 800; line-height: 1; margin: 10px 0; transition: all 0.3s; }
+        
+        /* BATTLE CENTER (SOAL) */
+        .battle-center { text-align: center; margin-bottom: 5px; padding-bottom: 10px; border-bottom: 1px solid #334155; flex-shrink: 0; }
+        .b-word { font-size: 2rem; font-weight: bold; margin-bottom: 5px; color: var(--text); }
         .b-def { font-size: 1.3rem; color: var(--primary); margin: 5px 0; min-height: 40px; font-weight: 500; }
         .msg-box { font-size: 1.2rem; font-weight: 800; height: 30px; margin-top: 5px; transition: transform 0.2s; }
 
-        /* MOBILE TOUCH BUTTONS */
-        .touch-controls { display: none; width: 100%; gap: 10px; margin-top: 10px; }
-        .game-btn { flex: 1; padding: 15px 5px; border: none; border-radius: 12px; font-weight: 800; font-size: 1rem; color: #1e293b; cursor: pointer; transition: transform 0.1s; box-shadow: 0 4px 0 rgba(0,0,0,0.3); text-transform: uppercase; }
+        /* TOUCH CONTROLS */
+        .touch-controls { display: none; width: 100%; gap: 10px; margin-top: auto; height: 100%; }
+        .game-btn { flex: 1; border: none; border-radius: 12px; font-weight: 800; font-size: 1.2rem; color: #1e293b; cursor: pointer; transition: transform 0.1s; box-shadow: 0 4px 0 rgba(0,0,0,0.3); text-transform: uppercase; height: 100%; display: flex; align-items: center; justify-content: center; }
         .game-btn:active { transform: translateY(4px); box-shadow: none; }
         .btn-true { background: var(--success); }
         .btn-false { background: var(--danger); color: white; }
         
-        /* COUNTDOWN ANIMATION */
-        .countdown-pulse { animation: pulse 0.5s ease-in-out; color: var(--warning); font-size: 2.5rem; }
-        @keyframes pulse { 0% { transform: scale(0.5); opacity: 0; } 50% { transform: scale(1.2); opacity: 1; } 100% { transform: scale(1); } }
-
         /* WINNER OVERLAY */
-        #winner-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.95); z-index: 999; display: none; flex-direction: column; justify-content: center; align-items: center; animation: fadeIn 0.5s; padding: 20px; text-align: center; }
+        #winner-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.98); z-index: 999; display: none; flex-direction: column; justify-content: center; align-items: center; animation: fadeIn 0.5s; padding: 20px; text-align: center; }
         .winner-title { font-size: 3rem; color: var(--warning); text-shadow: 0 0 20px rgba(251, 191, 36, 0.5); font-weight: 800; margin-bottom: 20px; }
         .winner-subtitle { font-size: 1.2rem; color: white; margin-bottom: 30px; }
         .reset-btn { padding: 15px 40px; font-size: 1.2rem; background: var(--success); border: none; border-radius: 50px; cursor: pointer; font-weight: bold; box-shadow: 0 0 20px rgba(74, 222, 128, 0.4); transition: 0.2s; }
-        .reset-btn:hover { transform: scale(1.1); }
         
         /* UI ELEMENTS */
         .tab-btn { background: transparent; color: var(--text); border: none; padding: 12px 15px; cursor: pointer; border-radius: 8px; font-size: 0.95rem; text-align: left; display: flex; align-items: center; gap: 10px; width: 100%; }
-        .tab-btn:hover { background: rgba(255,255,255,0.05); }
         .tab-btn.active { background: var(--primary); color: #0f172a; font-weight: bold; }
-        .role-badge { padding: 5px 10px; border-radius: 4px; font-weight: bold; font-size: 0.8rem; }
+        .role-badge { padding: 2px 6px; border-radius: 4px; font-weight: bold; font-size: 0.7rem; display: inline-block; }
         .role-p1 { background: var(--p1); color: white; } .role-p2 { background: var(--p2); color: white; }
-        
-        /* MOBILE RESPONSIVE DESIGN */
+        .desktop-hint { font-size:0.8rem; opacity:0.7; }
+
+        /* --- MOBILE OPTIMIZATION (THE MAGIC) --- */
         @media (max-width: 768px) {
             #main-app { flex-direction: column; }
-            .sidebar { width: 100%; height: auto; flex-direction: row; overflow-x: auto; padding: 10px; border-right: none; border-bottom: 1px solid #334155; }
-            .content-container { padding: 10px; border-radius: 0; border: none; height: 100%; }
-            .settings-bar { flex-direction: column; align-items: stretch; }
-            .battle-arena { flex-direction: column; }
-            .player-zone { height: auto; padding: 15px; }
-            .game-btn { padding: 20px; font-size: 1.2rem; }
-            .intro-title { font-size: 2rem; }
+            
+            /* Compact Sidebar */
+            .sidebar { width: 100%; height: auto; flex-direction: row; overflow-x: auto; padding: 5px; border-right: none; border-bottom: 1px solid #334155; }
+            .sidebar .tab-btn { padding: 5px 10px; font-size: 0.8rem; white-space: nowrap; }
+            
+            /* Maximize Game Area */
+            .main-content { padding: 10px; }
+            .content-container { padding: 10px; border-radius: 0; border: none; }
+            .settings-bar { padding: 5px; gap: 5px; }
+            
+            /* Stacked Arena */
+            .battle-arena { flex-direction: column; gap: 5px; }
+            
+            /* DYNAMIC PLAYER VIEW (Simplification) */
+            
+            /* If I am P1: Minimize P2, Maximize P1 */
+            body[data-role="1"] .p2-zone { flex: 0 0 50px; padding: 5px; flex-direction: row; justify-content: space-between; }
+            body[data-role="1"] .p2-zone .p-score { font-size: 1.5rem; margin: 0; }
+            body[data-role="1"] .p2-zone .touch-controls { display: none !important; }
+            body[data-role="1"] .p2-zone .desktop-hint { display: none; }
+            
+            body[data-role="1"] .p1-zone { flex: 1; }
+            
+            /* If I am P2: Minimize P1, Maximize P2 */
+            body[data-role="2"] .p1-zone { flex: 0 0 50px; padding: 5px; flex-direction: row; justify-content: space-between; }
+            body[data-role="2"] .p1-zone .p-score { font-size: 1.5rem; margin: 0; }
+            body[data-role="2"] .p1-zone .touch-controls { display: none !important; }
+            body[data-role="2"] .p1-zone .desktop-hint { display: none; }
+            
+            body[data-role="2"] .p2-zone { flex: 1; }
+
+            /* Bigger Buttons for Active Player */
+            .touch-controls { gap: 15px; }
+            .game-btn { font-size: 1.5rem; border-radius: 15px; box-shadow: 0 6px 0 rgba(0,0,0,0.3); }
+            
+            .b-word { font-size: 1.5rem; }
+            .b-def { font-size: 1.1rem; min-height: 50px; }
         }
     </style>
 </head>
@@ -108,10 +133,10 @@
 </div>
 
 <div id="winner-overlay">
-    <div class="winner-title" id="winner-text">PLAYER 1 WINS!</div>
-    <div class="winner-subtitle">Congratulations!</div>
+    <div class="winner-title" id="winner-text">WINNER!</div>
+    <div class="winner-subtitle">Awesome Game!</div>
     <button class="reset-btn" id="overlay-reset-btn" onclick="window.resetGame()">PLAY AGAIN 🔄</button>
-    <div id="waiting-reset-msg" style="margin-top:20px; color:#aaa; display:none;">Waiting for Host to reset...</div>
+    <div id="waiting-reset-msg" style="margin-top:20px; color:#aaa; display:none;">Waiting for Host...</div>
 </div>
 
 <div id="intro-screen">
@@ -122,46 +147,45 @@
             <input type="text" id="room-code" class="room-input" placeholder="CODE" maxlength="4">
             <button class="lobby-btn btn-create" id="btn-create" onclick="window.createRoom()">CREATE NEW ROOM (HOST)</button>
             <button class="lobby-btn btn-join" id="btn-join" onclick="window.joinRoom()">JOIN ROOM (PLAYER)</button>
-            <div id="lobby-status" class="lobby-status">Ready to connect...</div>
+            <div id="lobby-status" class="lobby-status">Enter code...</div>
         </div>
     </div>
 </div>
 
 <div id="main-app">
     <nav class="sidebar">
-        <div style="color:var(--primary); font-weight:bold; padding:10px;">MENU</div>
-        <div style="padding:0 10px 20px 10px; font-size:0.9rem;">Role: <span id="my-role-badge">---</span></div>
-        <button class="tab-btn active">⚔️ Battle Mode</button>
+        <div style="display:flex; align-items:center; gap:10px; padding:0 10px;">
+            <div style="color:var(--primary); font-weight:bold;">MENU</div>
+            <span id="my-role-badge" class="role-badge">---</span>
+        </div>
+        <button class="tab-btn active">⚔️ Battle</button>
         
-        <div style="padding:10px; margin-top:20px; flex:1;">
-            <div style="font-size:0.8rem; color:#aaa; margin-bottom:5px;">CONNECTED PLAYERS</div>
+        <div style="padding:0 10px; flex:1; min-width:150px;">
+            <div style="font-size:0.7rem; color:#aaa;">PLAYERS</div>
             <div class="player-list">
-                <div class="p-item"><span>P1 (Host)</span><span id="p1-status" class="p-status status-wait">...</span></div>
-                <div class="p-item"><span>P2 (Joiner)</span><span id="p2-status" class="p-status status-wait">...</span></div>
+                <div class="p-item"><span>P1</span><span id="p1-status" class="p-status status-wait">.</span></div>
+                <div class="p-item"><span>P2</span><span id="p2-status" class="p-status status-wait">.</span></div>
             </div>
         </div>
 
-        <button class="tab-btn" onclick="location.reload()" style="margin-top:auto; color:var(--danger);">⬅ Exit Room</button>
+        <button class="tab-btn" onclick="location.reload()" style="color:var(--danger);">Exit</button>
     </nav>
 
     <main class="main-content">
         <div class="content-container">
             <div class="settings-bar">
-                <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+                <div style="display:flex; align-items:center; gap:10px;">
                     <span>Room: <strong id="display-room-code" style="color:var(--primary);">---</strong></span>
                     <span id="player-view" style="display:none; font-weight:bold; color:var(--warning);">Target: <span id="display-target">10</span></span>
                 </div>
                 
-                <div id="host-controls" style="display:none; flex-wrap:wrap; gap:5px; align-items:center; width:100%;">
-                    <div style="display:flex; align-items:center; gap:5px; flex:1;">
-                        <label style="font-size:0.9rem;">Target:</label>
+                <div id="host-controls" style="display:none; flex:1; justify-content:flex-end; gap:5px; flex-wrap:wrap;">
+                    <div style="display:flex; align-items:center;">
                         <input type="number" id="target-score-input" class="score-input" value="10" min="1" max="50">
                         <button class="apply-btn" onclick="window.updateRules()">SET</button>
                     </div>
-                    <div style="display:flex; gap:5px; flex:1; justify-content:flex-end;">
-                        <button class="apply-btn" id="btn-start-trigger" onclick="window.triggerCountdown()" style="background:var(--success);">START ROUND</button>
-                        <button class="reset-game-btn" onclick="window.resetGame()">RESET</button>
-                    </div>
+                    <button class="apply-btn" id="btn-start-trigger" onclick="window.triggerCountdown()" style="background:var(--success);">START</button>
+                    <button class="reset-game-btn" onclick="window.resetGame()">RESET</button>
                 </div>
             </div>
 
@@ -169,17 +193,16 @@
                 
                 <div class="battle-center">
                     <div class="b-word" id="game-word">WAITING...</div>
-                    <div style="font-style:italic; color:#666;">means</div>
-                    <div class="b-def" id="game-def">Waiting for Host to Start</div>
+                    <div style="font-style:italic; color:#666; font-size:0.9rem;">means</div>
+                    <div class="b-def" id="game-def">Host will start</div>
                     <div class="msg-box" id="game-msg"></div>
                 </div>
 
                 <div class="battle-arena">
                     <div class="player-zone p1-zone" id="zone-p1">
-                        <div style="font-weight:bold; color:var(--p1);">PLAYER 1 (HOST)</div>
+                        <div style="font-weight:bold; color:var(--p1); font-size:0.9rem;">PLAYER 1</div>
                         <div class="p-score" id="score-p1">0</div>
-                        
-                        <div style="font-size:0.8rem; opacity:0.7;" class="desktop-hint">Key: A (True) / S (False)</div>
+                        <div class="desktop-hint">Key: A / S</div>
                         
                         <div class="touch-controls" id="p1-controls">
                             <button class="game-btn btn-true" onclick="sendButtonInput(1, true)">TRUE</button>
@@ -188,10 +211,9 @@
                     </div>
 
                     <div class="player-zone p2-zone" id="zone-p2">
-                        <div style="font-weight:bold; color:var(--p2);">PLAYER 2</div>
+                        <div style="font-weight:bold; color:var(--p2); font-size:0.9rem;">PLAYER 2</div>
                         <div class="p-score" id="score-p2">0</div>
-                        
-                        <div style="font-size:0.8rem; opacity:0.7;" class="desktop-hint">Key: K (True) / L (False)</div>
+                        <div class="desktop-hint">Key: K / L</div>
 
                         <div class="touch-controls" id="p2-controls">
                             <button class="game-btn btn-true" onclick="sendButtonInput(2, true)">TRUE</button>
@@ -205,13 +227,12 @@
     </main>
 </div>
 
-<script src="intermediate game.js"></script>
+<script src="intermediate.js"></script>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
     import { getDatabase, ref, set, onValue, update, get } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js";
 
-    // 1. CONFIGURATION
    const firebaseConfig = {
   apiKey: "AIzaSyAgYCaaoGMzZWVT2dRov7ALUnnMhHoqXmE",
   authDomain: "english-check-db.firebaseapp.com",
@@ -225,146 +246,88 @@
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
 
-    // 3. VOCABULARY LIST
     
 
-    // 4. GLOBAL VARIABLES
-    let myRole = 0; // 1 = Host, 2 = Joiner
-    let currentRoom = "";
-    let lastKeyTimestamp = 0;
-    let targetScore = 10;
-    let gameActive = false; // Initially false until countdown finishes
+    let myRole = 0; let currentRoom = ""; let lastKeyTimestamp = 0; let targetScore = 10; let gameActive = false;
 
-    // --- AUDIO SYSTEM ---
-    const bgMusic = document.getElementById('bg-music');
-    bgMusic.volume = 0.5;
-    
-    // Autoplay hack
-    window.addEventListener('click', () => {
-        if(bgMusic.paused) bgMusic.play().catch(e=>{});
-    }, { once: true });
+    // AUDIO
+    const bgMusic = document.getElementById('bg-music'); bgMusic.volume = 0.5;
+    window.addEventListener('click', () => { if(bgMusic.paused) bgMusic.play().catch(e=>{}); }, { once: true });
+    window.toggleAudio = function() { if(bgMusic.paused) bgMusic.play(); else bgMusic.pause(); }
+    window.setVolume = function(val) { bgMusic.volume = val; document.getElementById('sfx-beep').volume = val; document.getElementById('sfx-go').volume = val; }
 
-    window.toggleAudio = function() {
-        if(bgMusic.paused) bgMusic.play();
-        else bgMusic.pause();
-    }
-    
-    window.setVolume = function(val) {
-        bgMusic.volume = val;
-        document.getElementById('sfx-beep').volume = val;
-        document.getElementById('sfx-go').volume = val;
-    }
-
-    // --- CREATE ROOM ---
+    // ROOM LOGIC
     window.createRoom = function() {
         const btn = document.getElementById('btn-create');
-        const status = document.getElementById('lobby-status');
-        btn.disabled = true; btn.innerText = "Creating..."; status.innerText = "Connecting...";
-
+        btn.disabled = true; btn.innerText = "Creating...";
         const code = Math.floor(1000 + Math.random() * 9000).toString();
-        
         set(ref(db, 'matches/' + code), {
-            status: 'waiting',
-            target: 10,
-            winner: null,
-            players: { p1: 'connected', p2: 'waiting' },
-            scores: { p1: 0, p2: 0 },
-            round: { word: "Ready", def: "Press Start", answer: null, timestamp: 0 },
-            input: { player: 0, key: '', timestamp: 0 },
-            msg: ""
-        }).then(() => { enterGame(code, 1); })
-          .catch((e) => { alert(e.message); btn.disabled = false; });
+            status: 'waiting', target: 10, winner: null, players: { p1: 'connected', p2: 'waiting' },
+            scores: { p1: 0, p2: 0 }, round: { word: "Ready", def: "Host Starts", answer: null, timestamp: 0 },
+            input: { player: 0, key: '', timestamp: 0 }, msg: ""
+        }).then(() => { enterGame(code, 1); }).catch((e) => { alert(e.message); btn.disabled = false; });
     };
 
-    // --- JOIN ROOM ---
     window.joinRoom = function() {
         const code = document.getElementById('room-code').value.trim();
         const btn = document.getElementById('btn-join');
         if (code.length !== 4) { alert("Invalid Code"); return; }
-
         btn.disabled = true; btn.innerText = "Joining...";
-        
         const roomRef = ref(db, 'matches/' + code);
         get(roomRef).then((snap) => {
             if (snap.exists()) {
-                update(roomRef, { 
-                    status: 'connected',
-                    'players/p2': 'connected' 
-                });
+                update(roomRef, { status: 'connected', 'players/p2': 'connected' });
                 enterGame(code, 2);
-            } else {
-                alert("Room not found!");
-                btn.disabled = false; btn.innerText = "JOIN ROOM";
-            }
+            } else { alert("Room not found!"); btn.disabled = false; btn.innerText = "JOIN ROOM"; }
         });
     };
 
-    // --- GAME UI INIT ---
     function enterGame(code, role) {
-        currentRoom = code;
-        myRole = role;
+        currentRoom = code; myRole = role;
+        
+        // SET BODY ATTRIBUTE FOR CSS SIMPLIFICATION
+        document.body.setAttribute('data-role', role);
 
         document.getElementById('intro-screen').style.display = 'none';
         document.getElementById('main-app').style.display = 'flex';
         document.getElementById('display-room-code').innerText = code;
         
         const badge = document.getElementById('my-role-badge');
-        badge.innerText = role === 1 ? "PLAYER 1 (HOST)" : "PLAYER 2";
+        badge.innerText = role === 1 ? "P1 (HOST)" : "P2 (PLAYER)";
         badge.className = role === 1 ? "role-badge role-p1" : "role-badge role-p2";
 
-        // Setup Controls based on Role
         if (role === 1) {
             document.getElementById('host-controls').style.display = 'flex';
             document.getElementById('overlay-reset-btn').style.display = 'block';
             document.getElementById('waiting-reset-msg').style.display = 'none';
-            document.getElementById('p1-controls').style.display = 'flex'; // Show P1 Buttons
+            document.getElementById('p1-controls').style.display = 'flex';
         } else {
             document.getElementById('player-view').style.display = 'block';
             document.getElementById('overlay-reset-btn').style.display = 'none';
             document.getElementById('waiting-reset-msg').style.display = 'block';
-            document.getElementById('p2-controls').style.display = 'flex'; // Show P2 Buttons
+            document.getElementById('p2-controls').style.display = 'flex';
         }
-
-        listenToRoom();
-        bgMusic.play().catch(()=>{});
+        listenToRoom(); bgMusic.play().catch(()=>{});
     }
 
-    // --- RULES UPDATE ---
+    // GAMEPLAY
     window.updateRules = function() {
         if(myRole !== 1) return;
         const val = document.getElementById('target-score-input').value;
-        const newTarget = parseInt(val);
-        if(newTarget > 0) {
-            update(ref(db, 'matches/' + currentRoom), { target: newTarget });
-            alert("Winning score set to " + newTarget);
-        }
+        update(ref(db, 'matches/' + currentRoom), { target: parseInt(val) });
+        alert("Target Updated!");
     };
 
-    // --- COUNTDOWN LOGIC (HOST) ---
     window.triggerCountdown = function() {
         if(myRole !== 1) return;
-        
-        const btn = document.getElementById('btn-start-trigger');
-        btn.disabled = true;
+        const btn = document.getElementById('btn-start-trigger'); btn.disabled = true;
         let count = 3;
-
         const runTimer = () => {
-            if (count > 0) {
-                update(ref(db, 'matches/' + currentRoom), { msg: count.toString() });
-                count--;
-                setTimeout(runTimer, 1000);
-            } else {
-                update(ref(db, 'matches/' + currentRoom), { msg: "GO!" });
-                setTimeout(() => {
-                    broadcastStart();
-                    btn.disabled = false;
-                }, 500);
-            }
-        };
-        runTimer();
+            if (count > 0) { update(ref(db, 'matches/' + currentRoom), { msg: count.toString() }); count--; setTimeout(runTimer, 1000); }
+            else { update(ref(db, 'matches/' + currentRoom), { msg: "GO!" }); setTimeout(() => { broadcastStart(); btn.disabled = false; }, 500); }
+        }; runTimer();
     };
 
-    // --- BROADCAST ROUND ---
     function broadcastStart() {
         const item = fullVocab[Math.floor(Math.random() * fullVocab.length)];
         const isTrue = Math.random() < 0.5;
@@ -374,173 +337,79 @@
             while(wrong.eng === item.eng) wrong = fullVocab[Math.floor(Math.random() * fullVocab.length)];
             showDef = wrong.idn;
         }
-
-        update(ref(db, 'matches/' + currentRoom + '/round'), {
-            word: item.eng, def: showDef, answer: isTrue, timestamp: Date.now()
-        });
-        
-        setTimeout(() => {
-             update(ref(db, 'matches/' + currentRoom), { msg: "" });
-        }, 1000);
+        update(ref(db, 'matches/' + currentRoom + '/round'), { word: item.eng, def: showDef, answer: isTrue, timestamp: Date.now() });
+        setTimeout(() => { update(ref(db, 'matches/' + currentRoom), { msg: "" }); }, 1000);
     }
 
-    // --- RESET GAME ---
     window.resetGame = function() {
         if(myRole !== 1) return;
-        update(ref(db, 'matches/' + currentRoom), {
-            scores: { p1: 0, p2: 0 },
-            winner: null,
-            msg: "Game Reset!",
-            round: { word: "Ready", def: "Press Start", answer: null, timestamp: Date.now() }
-        });
-        document.getElementById('winner-overlay').style.display = 'none';
-        gameActive = false;
+        update(ref(db, 'matches/' + currentRoom), { scores: { p1: 0, p2: 0 }, winner: null, msg: "Reset!", round: { word: "Ready", def: "Press Start", answer: null, timestamp: Date.now() } });
+        document.getElementById('winner-overlay').style.display = 'none'; gameActive = false;
     };
 
-    // --- FIREBASE LISTENER ---
     function listenToRoom() {
         const roomRef = ref(db, 'matches/' + currentRoom);
         onValue(roomRef, (snapshot) => {
-            const data = snapshot.val();
-            if (!data) return;
+            const data = snapshot.val(); if (!data) return;
 
-            // 1. Update Player List
             if(data.players) {
-                const p1Stat = document.getElementById('p1-status');
-                const p2Stat = document.getElementById('p2-status');
-                p1Stat.innerText = data.players.p1 === 'connected' ? "Connected" : "...";
-                p1Stat.className = data.players.p1 === 'connected' ? "p-status status-ready" : "p-status status-wait";
-                
-                p2Stat.innerText = data.players.p2 === 'connected' ? "Connected" : "Waiting...";
-                p2Stat.className = data.players.p2 === 'connected' ? "p-status status-ready" : "p-status status-wait";
+                const p1S = document.getElementById('p1-status'); const p2S = document.getElementById('p2-status');
+                p1S.innerText = data.players.p1==='connected'?"Conn":"..."; p1S.className = data.players.p1==='connected'?"p-status status-ready":"p-status";
+                p2S.innerText = data.players.p2==='connected'?"Conn":"..."; p2S.className = data.players.p2==='connected'?"p-status status-ready":"p-status";
             }
-
-            // 2. Update Target Score
-            if (data.target) {
-                targetScore = data.target;
-                document.getElementById('display-target').innerText = targetScore;
-                if(myRole === 1) document.getElementById('target-score-input').value = targetScore;
-            }
-
-            // 3. Update Scores
-            if (data.scores) {
-                document.getElementById('score-p1').innerText = data.scores.p1;
-                document.getElementById('score-p2').innerText = data.scores.p2;
-            }
-
-            // 4. Update Round
-            if (data.round) {
-                document.getElementById('game-word').innerText = data.round.word;
-                document.getElementById('game-def').innerText = data.round.def;
-            }
-
-            // 5. Message & Sound Handler
+            if (data.target) { targetScore = data.target; document.getElementById('display-target').innerText = targetScore; if(myRole===1) document.getElementById('target-score-input').value = targetScore; }
+            if (data.scores) { document.getElementById('score-p1').innerText = data.scores.p1; document.getElementById('score-p2').innerText = data.scores.p2; }
+            if (data.round) { document.getElementById('game-word').innerText = data.round.word; document.getElementById('game-def').innerText = data.round.def; }
+            
             if (data.msg !== undefined) {
-                const msgBox = document.getElementById('game-msg');
-                msgBox.innerText = data.msg;
-                msgBox.className = "msg-box"; 
-
-                if (["3", "2", "1"].includes(data.msg)) {
-                    document.getElementById('sfx-beep').play().catch(()=>{});
-                    msgBox.classList.add('countdown-pulse');
-                    gameActive = false; 
-                } 
-                else if (data.msg === "GO!") {
-                    document.getElementById('sfx-go').play().catch(()=>{});
-                    msgBox.style.color = "var(--success)";
-                    msgBox.classList.add('countdown-pulse');
-                    gameActive = true; 
-                }
-                else if (data.msg === "") {
-                    gameActive = true;
-                }
-                else {
-                    if(data.msg.includes("Wins")) msgBox.style.color = "var(--success)";
-                    else msgBox.style.color = "var(--text)";
-                }
+                const mb = document.getElementById('game-msg'); mb.innerText = data.msg; mb.className = "msg-box";
+                if (["3", "2", "1"].includes(data.msg)) { document.getElementById('sfx-beep').play().catch(()=>{}); mb.classList.add('countdown-pulse'); gameActive = false; }
+                else if (data.msg === "GO!") { document.getElementById('sfx-go').play().catch(()=>{}); mb.style.color = "var(--success)"; mb.classList.add('countdown-pulse'); gameActive = true; }
+                else if (data.msg === "") { gameActive = true; }
+                else { mb.style.color = data.msg.includes("Wins") || data.msg.includes("Correct") ? "var(--success)" : "var(--text)"; }
             }
 
-            // 6. Check Winner
-            if (data.winner) {
-                gameActive = false;
-                document.getElementById('winner-text').innerText = data.winner + " WINS!";
-                document.getElementById('winner-overlay').style.display = 'flex';
-            } else {
-                document.getElementById('winner-overlay').style.display = 'none';
-            }
+            if (data.winner) { gameActive = false; document.getElementById('winner-text').innerText = data.winner + " WINS!"; document.getElementById('winner-overlay').style.display = 'flex'; }
+            else { document.getElementById('winner-overlay').style.display = 'none'; }
 
-            // 7. Host Process Input
             if (myRole === 1 && gameActive && data.input && data.input.timestamp > lastKeyTimestamp) {
-                lastKeyTimestamp = data.input.timestamp;
-                processInput(data.input.player, data.input.key, data.round.answer, data.scores);
+                lastKeyTimestamp = data.input.timestamp; processInput(data.input.player, data.input.key, data.round.answer, data.scores);
             }
         });
     }
 
-    // --- HOST LOGIC: PROCESS INPUT ---
     function processInput(player, key, ans, scores) {
-        if(!gameActive) return; 
-        
+        if(!gameActive) return;
         let choice = null;
         if (player === 1) { if(key === 'a') choice=true; if(key === 's') choice=false; }
         if (player === 2) { if(key === 'k') choice=true; if(key === 'l') choice=false; }
         if (choice === null) return;
 
-        let p1 = scores.p1; let p2 = scores.p2;
-        let msg = "";
+        let p1 = scores.p1; let p2 = scores.p2; let msg = "";
+        if (choice === ans) { msg = `P${player} Correct!`; if(player===1) p1++; else p2++; }
+        else { msg = `P${player} Wrong!`; if(player===1) p2++; else p1++; }
 
-        if (choice === ans) {
-            msg = `Player ${player} Correct!`;
-            if(player===1) p1++; else p2++;
-        } else {
-            msg = `Player ${player} Wrong!`;
-            if(player===1) p2++; else p1++;
-        }
-
-        let winner = null;
-        if (p1 >= targetScore) winner = "PLAYER 1";
-        if (p2 >= targetScore) winner = "PLAYER 2";
-
+        let winner = null; if (p1 >= targetScore) winner = "PLAYER 1"; if (p2 >= targetScore) winner = "PLAYER 2";
         gameActive = false;
-
-        update(ref(db, 'matches/' + currentRoom), {
-            scores: { p1, p2 },
-            msg: msg,
-            winner: winner,
-            input: { player:0, key:'', timestamp: Date.now() }
-        });
-
-        if(!winner) {
-            setTimeout(() => { window.triggerCountdown(); }, 1500);
-        }
+        update(ref(db, 'matches/' + currentRoom), { scores: { p1, p2 }, msg: msg, winner: winner, input: { player:0, key:'', timestamp: Date.now() } });
+        if(!winner) setTimeout(() => { window.triggerCountdown(); }, 1500);
     }
 
-    // --- KEYBOARD & TOUCH CONTROLS ---
-    // 1. Keyboard
     document.addEventListener('keydown', (e) => {
-        if (!currentRoom || !gameActive) return; 
-        const key = e.key.toLowerCase();
+        if (!currentRoom || !gameActive) return; const key = e.key.toLowerCase();
         if (myRole === 1 && (key === 'a' || key === 's')) sendKey(1, key);
         if (myRole === 2 && (key === 'k' || key === 'l')) sendKey(2, key);
     });
 
-    // 2. Touch/Button Function
     window.sendButtonInput = function(role, isTrue) {
         if (myRole !== role || !gameActive) return;
-        
         let key = '';
         if (role === 1) key = isTrue ? 'a' : 's';
         if (role === 2) key = isTrue ? 'k' : 'l';
-        
         sendKey(role, key);
     };
 
-    function sendKey(role, key) {
-        update(ref(db, 'matches/' + currentRoom + '/input'), {
-            player: role, key: key, timestamp: Date.now()
-        });
-    }
+    function sendKey(role, key) { update(ref(db, 'matches/' + currentRoom + '/input'), { player: role, key: key, timestamp: Date.now() }); }
 </script>
-
 </body>
 </html>
