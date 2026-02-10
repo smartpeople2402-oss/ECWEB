@@ -9,6 +9,7 @@
     
     <style>
         :root {
+            /* WARNA TEMA UTAMA */
             --bg-dark: #0f3d3e;       
             --bg-darker: #0a2b2c;     
             --accent-lime: #d4e157;   
@@ -149,7 +150,8 @@
         }
 
         .quick-actions { display: flex; justify-content: space-between; margin-bottom: 5px; padding: 0 5px; }
-        .q-action { display: flex; flex-direction: column; align-items: center; gap: 8px; color: white; text-decoration: none; width: 25%; }
+        /* Ubah a menjadi div agar kita bisa kontrol klik-nya */
+        .q-action { display: flex; flex-direction: column; align-items: center; gap: 8px; color: white; text-decoration: none; width: 25%; cursor: pointer; position: relative; }
         .q-action:active { transform: scale(0.9); }
         .q-icon-box {
             width: 48px; height: 48px; background: rgba(255,255,255,0.15); border-radius: 14px;
@@ -178,7 +180,8 @@
         .search-box input { border: none; background: transparent; outline: none; width: 100%; font-family: 'Poppins'; font-size: 0.9rem; }
 
         .grid-menu { display: grid; grid-template-columns: repeat(4, 1fr); gap: 25px 10px; }
-        .grid-item { display: flex; flex-direction: column; align-items: center; gap: 8px; text-decoration: none; color: var(--text-dark); }
+        /* Ubah a menjadi div agar kita bisa kontrol klik-nya */
+        .grid-item { display: flex; flex-direction: column; align-items: center; gap: 8px; text-decoration: none; color: var(--text-dark); cursor: pointer; position: relative; }
         .grid-icon {
             width: 50px; height: 50px; border-radius: 16px; display: flex; justify-content: center;
             align-items: center; font-size: 1.3rem; background: #ffffff;
@@ -270,35 +273,34 @@
         .btn-send-comment { background: var(--accent-lime); color: var(--bg-dark); border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; display: flex; justify-content: center; align-items: center; font-size: 1rem; transition: 0.2s; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
         .btn-send-comment:active { transform: scale(0.9); }
 
-        /* --- STYLES UNTUK PREVIEW KOMENTAR (BARU) --- */
-        .card-comments-preview {
-            border-top: 1px solid #f0f0f0;
-            margin-top: 5px;
-            padding-top: 10px;
-            width: 100%;
-        }
-        .preview-item {
-            font-size: 0.75rem;
-            margin-bottom: 6px;
-            color: #555;
-            display: flex;
-            gap: 5px;
-        }
+        .card-comments-preview { border-top: 1px solid #f0f0f0; margin-top: 5px; padding-top: 10px; width: 100%; }
+        .preview-item { font-size: 0.75rem; margin-bottom: 6px; color: #555; display: flex; gap: 5px; }
         .preview-user { font-weight: 700; color: var(--bg-dark); white-space: nowrap; }
         .preview-text { text-overflow: ellipsis; overflow: hidden; white-space: nowrap; flex: 1; color: #777; }
-        .view-more-comments {
-            font-size: 0.75rem;
-            color: var(--text-dark); /* Ganti warna di sini */
-            font-weight: 600;
-            cursor: pointer;
-            margin-top: 5px;
-            display: inline-block;
-            text-decoration: none; /* Hilangkan garis bawah default jika ada */
+        .view-more-comments { font-size: 0.75rem; color: var(--text-dark); font-weight: 600; cursor: pointer; margin-top: 5px; display: inline-block; text-decoration: none; }
+        .view-more-comments:hover { text-decoration: underline; color: var(--bg-dark); }
+
+        /* --- STYLES UNTUK FITUR LOCK (BARU) --- */
+        .tutor-lock-btn {
+            position: absolute; top: -5px; right: -5px;
+            width: 24px; height: 24px; background: white; border-radius: 50%;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2); z-index: 15;
+            display: none; /* Muncul lewat JS jika Tutor */
+            justify-content: center; align-items: center; font-size: 0.7rem; color: #aaa;
+            transition: 0.2s;
         }
-        .view-more-comments:hover {
-            text-decoration: underline; /* Tambahkan garis bawah saat di-hover */
-            color: var(--bg-dark); /* Warna saat hover */
+        .tutor-lock-btn:hover { transform: scale(1.1); }
+        .tutor-lock-btn.locked { color: #e53935; border: 1px solid #e53935; } /* Merah jika terkunci */
+
+        /* State ketika Item Terkunci (Untuk Student) */
+        .item-locked { opacity: 0.6; filter: grayscale(0.8); pointer-events: none; /* Klik di-handle parent */ }
+        .lock-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            display: none; justify-content: center; align-items: center;
+            z-index: 5; border-radius: 16px;
         }
+        .item-locked .lock-overlay { display: flex; }
+        .lock-icon-large { font-size: 1.5rem; color: #555; background: rgba(255,255,255,0.9); padding: 8px; border-radius: 50%; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
 
     </style>
 </head>
@@ -335,7 +337,7 @@
     <div id="dashboard">
         <div class="header-section">
             <div class="top-bar">
-                <div class="greeting"><p>Collaborating For Change, Empowering For Impact.</p><h1>English Check</h1></div>
+                <div class="greeting"><p>Collaborating For Change</p><h1>English Check</h1></div>
                 <div class="top-icons">
                     <div class="icon-btn" onclick="toggleModal('notif-modal')"><i class="far fa-bell"></i><div class="badge" id="notif-count">!</div></div>
                     <div class="icon-btn" onclick="toggleSound(this)"><i class="fas fa-headset" id="soundIcon"></i></div>
@@ -345,15 +347,33 @@
                 <div class="balance-label">Active Session</div>
                 <div class="student-name-display" id="cardNameDisplay">User</div>
                 <div class="daily-score-badge"><i class="fas fa-star" style="color: #f1c40f;"></i><span>Score Harian: <span class="score-val" id="dailyScoreDisplay">0</span></span></div>
-                <div class="balance-footer" onclick="playClick('Modul Check.html')"><span>Cek Progress Belajar</span><i class="fas fa-chart-line"></i></div>
+                <div class="balance-footer" onclick="handleMenuClick('Modul Check.html', 'modul')"><span>Cek Progress Belajar</span><i class="fas fa-chart-line"></i></div>
             </div>
+            
             <div class="quick-actions">
-                <a href="Modul Check.html" class="q-action" onclick="playClick('Modul Check.html'); return false;"><div class="q-icon-box"><i class="fas fa-scroll"></i></div><div class="q-text">Modul</div></a>
-                <a href="structure.html" class="q-action" onclick="playClick('structure.html'); return false;"><div class="q-icon-box"><i class="fas fa-pen-fancy"></i></div><div class="q-text">Practice</div></a>
-                <a href="Vocab Check.html" class="q-action" onclick="playClick('Vocab Check.html'); return false;"><div class="q-icon-box"><i class="fas fa-spell-check"></i></div><div class="q-text">Vocab</div></a>
-                <a href="all.html" class="q-action" onclick="playClick('all.html'); return false;"><div class="q-icon-box"><i class="fas fa-gamepad"></i></div><div class="q-text">Game</div></a>
+                <div class="q-action" id="qa-modul" onclick="handleMenuClick('Modul Check.html', 'modul')">
+                    <div class="tutor-lock-btn" onclick="event.stopPropagation(); toggleLock('modul')"><i class="fas fa-lock"></i></div>
+                    <div class="lock-overlay"><i class="fas fa-lock lock-icon-large"></i></div>
+                    <div class="q-icon-box"><i class="fas fa-scroll"></i></div><div class="q-text">Modul</div>
+                </div>
+                <div class="q-action" id="qa-structure" onclick="handleMenuClick('structure.html', 'structure')">
+                    <div class="tutor-lock-btn" onclick="event.stopPropagation(); toggleLock('structure')"><i class="fas fa-lock"></i></div>
+                    <div class="lock-overlay"><i class="fas fa-lock lock-icon-large"></i></div>
+                    <div class="q-icon-box"><i class="fas fa-pen-fancy"></i></div><div class="q-text">Practice</div>
+                </div>
+                <div class="q-action" id="qa-vocab" onclick="handleMenuClick('Vocab Check.html', 'vocab')">
+                    <div class="tutor-lock-btn" onclick="event.stopPropagation(); toggleLock('vocab')"><i class="fas fa-lock"></i></div>
+                    <div class="lock-overlay"><i class="fas fa-lock lock-icon-large"></i></div>
+                    <div class="q-icon-box"><i class="fas fa-spell-check"></i></div><div class="q-text">Vocab</div>
+                </div>
+                <div class="q-action" id="qa-game" onclick="handleMenuClick('all.html', 'game')">
+                    <div class="tutor-lock-btn" onclick="event.stopPropagation(); toggleLock('game')"><i class="fas fa-lock"></i></div>
+                    <div class="lock-overlay"><i class="fas fa-lock lock-icon-large"></i></div>
+                    <div class="q-icon-box"><i class="fas fa-gamepad"></i></div><div class="q-text">Game</div>
+                </div>
             </div>
         </div>
+
         <div class="content-section">
             <div class="daily-word-card">
                 <div class="dw-header"><i class="fas fa-calendar-day"></i> Daily Word</div>
@@ -364,16 +384,50 @@
                 </div>
             </div>
             <div class="search-box"><i class="fas fa-search" style="color: var(--bg-dark);"></i><input type="text" placeholder="Cari materi..."></div>
+            
             <div class="grid-menu">
-                <a href="Modul Check.html" class="grid-item" onclick="playClick('Modul Check.html'); return false;"><div class="grid-icon icon-lime"><i class="fas fa-scroll"></i></div><div class="grid-text">Modul</div></a>
-                <a href="structure.html" class="grid-item" onclick="playClick('structure.html'); return false;"><div class="grid-icon icon-green"><i class="fas fa-pen-fancy"></i></div><div class="grid-text">Practice</div></a>
-                <a href="Vocab Check.html" class="grid-item" onclick="playClick('Vocab Check.html'); return false;"><div class="grid-icon icon-blue"><i class="fas fa-spell-check"></i></div><div class="grid-text">Vocab</div></a>
-                <a href="all.html" class="grid-item" onclick="playClick('all.html'); return false;"><div class="grid-icon icon-orange"><i class="fas fa-gamepad"></i></div><div class="grid-text">Game</div></a>
-                <a href="Absensi.html" class="grid-item" onclick="playClick('Absensi.html'); return false;"><div class="grid-icon icon-teal"><i class="fas fa-calendar-check"></i></div><div class="grid-text">Absensi</div></a>
-                <a href="#" class="grid-item" onclick="playClick('#'); return false;"><div class="grid-icon icon-pink"><i class="fas fa-heart"></i></div><div class="grid-text">Support</div></a>
-                <div class="grid-item"><div class="grid-icon icon-blue"><i class="fas fa-certificate"></i></div><div class="grid-text">Certif</div></div>
-                <div class="grid-item"><div class="grid-icon" style="color: #777; background: #f1f2f6;"><i class="fas fa-th-large"></i></div><div class="grid-text">Lainnya</div></div>
+                <div class="grid-item" id="grid-modul" onclick="handleMenuClick('Modul Check.html', 'modul')">
+                    <div class="tutor-lock-btn" onclick="event.stopPropagation(); toggleLock('modul')"><i class="fas fa-lock"></i></div>
+                    <div class="lock-overlay"><i class="fas fa-lock lock-icon-large"></i></div>
+                    <div class="grid-icon icon-lime"><i class="fas fa-scroll"></i></div><div class="grid-text">Modul</div>
+                </div>
+                <div class="grid-item" id="grid-structure" onclick="handleMenuClick('structure.html', 'structure')">
+                    <div class="tutor-lock-btn" onclick="event.stopPropagation(); toggleLock('structure')"><i class="fas fa-lock"></i></div>
+                    <div class="lock-overlay"><i class="fas fa-lock lock-icon-large"></i></div>
+                    <div class="grid-icon icon-green"><i class="fas fa-pen-fancy"></i></div><div class="grid-text">Practice</div>
+                </div>
+                <div class="grid-item" id="grid-vocab" onclick="handleMenuClick('Vocab Check.html', 'vocab')">
+                    <div class="tutor-lock-btn" onclick="event.stopPropagation(); toggleLock('vocab')"><i class="fas fa-lock"></i></div>
+                    <div class="lock-overlay"><i class="fas fa-lock lock-icon-large"></i></div>
+                    <div class="grid-icon icon-blue"><i class="fas fa-spell-check"></i></div><div class="grid-text">Vocab</div>
+                </div>
+                <div class="grid-item" id="grid-game" onclick="handleMenuClick('all.html', 'game')">
+                    <div class="tutor-lock-btn" onclick="event.stopPropagation(); toggleLock('game')"><i class="fas fa-lock"></i></div>
+                    <div class="lock-overlay"><i class="fas fa-lock lock-icon-large"></i></div>
+                    <div class="grid-icon icon-orange"><i class="fas fa-gamepad"></i></div><div class="grid-text">Game</div>
+                </div>
+                <div class="grid-item" id="grid-absensi" onclick="handleMenuClick('Absensi.html', 'absensi')">
+                    <div class="tutor-lock-btn" onclick="event.stopPropagation(); toggleLock('absensi')"><i class="fas fa-lock"></i></div>
+                    <div class="lock-overlay"><i class="fas fa-lock lock-icon-large"></i></div>
+                    <div class="grid-icon icon-teal"><i class="fas fa-calendar-check"></i></div><div class="grid-text">Absensi</div>
+                </div>
+                <div class="grid-item" id="grid-support" onclick="handleMenuClick('#', 'support')">
+                    <div class="tutor-lock-btn" onclick="event.stopPropagation(); toggleLock('support')"><i class="fas fa-lock"></i></div>
+                    <div class="lock-overlay"><i class="fas fa-lock lock-icon-large"></i></div>
+                    <div class="grid-icon icon-pink"><i class="fas fa-heart"></i></div><div class="grid-text">Support</div>
+                </div>
+                <div class="grid-item" id="grid-certif" onclick="handleMenuClick('#', 'certif')">
+                    <div class="tutor-lock-btn" onclick="event.stopPropagation(); toggleLock('certif')"><i class="fas fa-lock"></i></div>
+                    <div class="lock-overlay"><i class="fas fa-lock lock-icon-large"></i></div>
+                    <div class="grid-icon icon-blue"><i class="fas fa-certificate"></i></div><div class="grid-text">Certif</div>
+                </div>
+                <div class="grid-item" id="grid-lainnya" onclick="handleMenuClick('#', 'lainnya')">
+                    <div class="tutor-lock-btn" onclick="event.stopPropagation(); toggleLock('lainnya')"><i class="fas fa-lock"></i></div>
+                    <div class="lock-overlay"><i class="fas fa-lock lock-icon-large"></i></div>
+                    <div class="grid-icon" style="color: #777; background: #f1f2f6;"><i class="fas fa-th-large"></i></div><div class="grid-text">Lainnya</div>
+                </div>
             </div>
+
             <div class="info-section">
                 <div class="section-header"><div class="section-title">Informasi & Update</div></div>
                 <div id="info-feed-container">
@@ -423,7 +477,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.1.3/firebase-app.js";
-        import { getDatabase, ref, push, onValue, query, limitToLast, remove, off } from "https://www.gstatic.com/firebasejs/9.1.3/firebase-database.js";
+        import { getDatabase, ref, push, onValue, query, limitToLast, remove, off, set, get } from "https://www.gstatic.com/firebasejs/9.1.3/firebase-database.js";
 
         // --- PASTE FIREBASE CONFIG ANDA DISINI ---
        const firebaseConfig = {
@@ -439,6 +493,80 @@
 
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
+
+        // --- LOCK SYSTEM (BARU) ---
+        let lockedFeatures = {};
+
+        // Fungsi Global untuk Toggle Lock (Tutor Only)
+        window.toggleLock = function(featureId) {
+            // Cek status saat ini, lalu balik (true -> false, false -> true)
+            const isLocked = lockedFeatures[featureId] || false;
+            set(ref(db, 'locks/' + featureId), !isLocked)
+            .then(() => {
+                // Feedback visual (opsional)
+            })
+            .catch((err) => console.error(err));
+        };
+
+        // Listen perubahan Lock dari Firebase Realtime
+        onValue(ref(db, 'locks'), (snapshot) => {
+            if (snapshot.exists()) {
+                lockedFeatures = snapshot.val();
+            } else {
+                lockedFeatures = {};
+            }
+            updateLockUI();
+        });
+
+        function updateLockUI() {
+            const isTutor = localStorage.getItem('ec_role') === 'tutor';
+            const features = ['modul', 'structure', 'vocab', 'game', 'absensi', 'support', 'certif', 'lainnya'];
+
+            features.forEach(id => {
+                const isLocked = lockedFeatures[id] === true;
+                
+                // Update tampilan Button Lock (Tutor)
+                const gridLockBtn = document.querySelector(`#grid-${id} .tutor-lock-btn`);
+                const qaLockBtn = document.querySelector(`#qa-${id} .tutor-lock-btn`);
+                
+                if(gridLockBtn) {
+                    if(isLocked) {
+                        gridLockBtn.innerHTML = '<i class="fas fa-lock"></i>';
+                        gridLockBtn.classList.add('locked');
+                    } else {
+                        gridLockBtn.innerHTML = '<i class="fas fa-lock-open"></i>';
+                        gridLockBtn.classList.remove('locked');
+                    }
+                }
+                if(qaLockBtn) {
+                    if(isLocked) {
+                        qaLockBtn.innerHTML = '<i class="fas fa-lock"></i>';
+                        qaLockBtn.classList.add('locked');
+                    } else {
+                        qaLockBtn.innerHTML = '<i class="fas fa-lock-open"></i>';
+                        qaLockBtn.classList.remove('locked');
+                    }
+                }
+
+                // Update tampilan Item (Student View)
+                const gridItem = document.getElementById(`grid-${id}`);
+                const qaItem = document.getElementById(`qa-${id}`);
+
+                if(isLocked && !isTutor) {
+                    // Jika terkunci & User = Student -> Tampilkan Overlay Gembok
+                    if(gridItem) gridItem.classList.add('item-locked');
+                    if(qaItem) qaItem.classList.add('item-locked');
+                } else {
+                    // Jika terbuka ATAU User = Tutor -> Normal
+                    if(gridItem) gridItem.classList.remove('item-locked');
+                    if(qaItem) qaItem.classList.remove('item-locked');
+                }
+            });
+        }
+
+        // Expose updateUI ke window agar bisa dipanggil saat login change
+        window.refreshLockUI = updateLockUI;
+
 
         // --- POSTING & DELETE ---
         window.saveNewPost = function() {
@@ -488,14 +616,11 @@
                     if(post.color === 'orange') iconClass = 'fa-fire';
                     if(post.color === 'green') iconClass = 'fa-bullhorn';
 
-                    // --- BAGIAN BARU: PREVIEW KOMENTAR ---
                     let commentsHtml = '';
                     let commentCount = 0;
                     if(post.comments) {
                         const commentsArr = Object.values(post.comments);
                         commentCount = commentsArr.length;
-                        
-                        // Ambil 3 Terakhir
                         const recentComments = commentsArr.slice(-3);
                         
                         commentsHtml = `<div class="card-comments-preview">`;
@@ -513,13 +638,9 @@
                         }
                         commentsHtml += `</div>`;
                     }
-                    // --------------------------------------
 
-                    // Tombol Tools
                     let toolsHtml = `<div class="card-tools">`;
-                    // Tombol Komentar (Semua bisa lihat)
                     toolsHtml += `<div class="tool-btn comment" onclick="event.stopPropagation(); window.openComments('${key}')"><i class="far fa-comment-dots"></i></div>`;
-                    // Tombol Hapus (Hanya Tutor)
                     if(isTutor) {
                         toolsHtml += `<div class="tool-btn delete" onclick="event.stopPropagation(); window.deletePost('${key}')"><i class="fas fa-trash"></i></div>`;
                     }
@@ -551,7 +672,7 @@
             }
         });
 
-        // --- COMMENT SYSTEM VARIABLES & FUNCTIONS ---
+        // --- COMMENT SYSTEM ---
         let currentPostId = null;
         let commentsListener = null;
 
@@ -618,6 +739,25 @@
             if (e.key === 'Enter') window.sendComment();
         });
 
+        // --- GLOBAL: HANDLE MENU CLICK (LOCK CHECK) ---
+        window.handleMenuClick = function(targetUrl, featureId) {
+            const isTutor = localStorage.getItem('ec_role') === 'tutor';
+            const isLocked = lockedFeatures[featureId] === true;
+
+            // Jika User = Tutor -> Selalu bisa akses
+            if (isTutor) {
+                window.playClick(targetUrl);
+                return;
+            }
+
+            // Jika User = Student
+            if (isLocked) {
+                alert("🔒 Maaf, materi ini sedang dikunci oleh Tutor.");
+            } else {
+                window.playClick(targetUrl);
+            }
+        };
+
     </script>
 
     <script>
@@ -676,7 +816,7 @@
             } else {
                 document.getElementById('loginTitle').innerText = "Tutor Login";
                 document.getElementById('loginSub').innerText = "Masukkan Kode Akses Tutor.";
-                document.getElementById('loginInput').placeholder = "Kode Akses";
+                document.getElementById('loginInput').placeholder = "Kode Akses (default: admin123)";
                 document.getElementById('loginInput').type = "password";
             }
         }
@@ -722,6 +862,13 @@
 
         function setupDashboard(name, isTutor) {
             document.getElementById('cardNameDisplay').innerText = name;
+            
+            // Show/Hide Lock Buttons for Tutor
+            const lockBtns = document.querySelectorAll('.tutor-lock-btn');
+            lockBtns.forEach(btn => {
+                btn.style.display = isTutor ? 'flex' : 'none';
+            });
+
             if(isTutor) {
                 document.getElementById('tutor-fab').style.display = "flex";
                 document.querySelector('.balance-label').innerText = "Mode Tutor";
@@ -729,6 +876,9 @@
                 document.getElementById('tutor-fab').style.display = "none";
                 document.querySelector('.balance-label').innerText = "Active Student ID";
             }
+
+            // Panggil update UI Lock agar status gembok sinkron
+            if(window.refreshLockUI) window.refreshLockUI();
 
             const randomIndex = Math.floor(Math.random() * dailyWords.length);
             const todayWord = dailyWords[randomIndex];
