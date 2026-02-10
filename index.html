@@ -9,7 +9,6 @@
     
     <style>
         :root {
-            /* WARNA TEMA UTAMA */
             --bg-dark: #0f3d3e;       
             --bg-darker: #0a2b2c;     
             --accent-lime: #d4e157;   
@@ -159,7 +158,7 @@
         }
         .q-text { font-size: 0.75rem; font-weight: 500; text-align: center; }
 
-        .content-section { flex: 1; padding: 25px 20px; margin-top: -10px; padding-bottom: 60px; /* Space for logout */ }
+        .content-section { flex: 1; padding: 25px 20px; margin-top: -10px; padding-bottom: 60px; }
         
         .daily-word-card {
             background: linear-gradient(135deg, #d4e157 0%, #afb42b 100%);
@@ -193,12 +192,15 @@
         .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
         .section-title { font-size: 1.1rem; font-weight: 700; color: var(--bg-dark); }
         .see-all { font-size: 0.8rem; color: var(--text-dark); text-decoration: none; font-weight: 600; }
+        
         .info-card {
             background: var(--white); border-radius: 16px; padding: 15px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05); display: flex; align-items: flex-start; gap: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05); display: flex; flex-direction: column; gap: 10px;
             margin-bottom: 15px; cursor: pointer; transition: transform 0.2s; position: relative;
         }
+        .info-card-top { display: flex; align-items: flex-start; gap: 15px; width: 100%; }
         .info-card:active { transform: scale(0.98); }
+        
         .info-icon-container { width: 50px; height: 50px; border-radius: 12px; flex-shrink: 0; display: flex; justify-content: center; align-items: center; font-size: 1.5rem; }
         .info-content { flex: 1; }
         .info-tag { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; padding: 2px 8px; border-radius: 4px; display: inline-block; margin-bottom: 5px; }
@@ -217,7 +219,7 @@
             background: #f4fcf7; width: 100%; max-width: 500px;
             border-top-left-radius: 25px; border-top-right-radius: 25px;
             padding: 25px; max-height: 80vh; overflow-y: auto;
-            animation: slideUp 0.3s ease-out;
+            animation: slideUp 0.3s ease-out; display: flex; flex-direction: column;
         }
         @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
         .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
@@ -251,14 +253,52 @@
         }
         .btn-logout:active { transform: scale(0.95); background: #ffcdd2; }
 
-        /* --- STYLE BARU: TOMBOL HAPUS (TUTOR) --- */
-        .delete-btn {
-            position: absolute; top: 10px; right: 10px;
-            color: #e57373; cursor: pointer; padding: 5px;
-            z-index: 10; font-size: 1rem;
-            transition: 0.2s;
+        .card-tools { position: absolute; top: 10px; right: 10px; display: flex; gap: 12px; z-index: 20; }
+        .tool-btn { cursor: pointer; font-size: 1rem; color: #aaa; transition: 0.2s; background: rgba(255,255,255,0.8); width: 25px; height: 25px; display: flex; justify-content: center; align-items: center; border-radius: 50%; }
+        .tool-btn:hover { transform: scale(1.1); }
+        .tool-btn.delete { color: #e57373; } .tool-btn.delete:hover { color: #c62828; background: #ffebee; }
+        .tool-btn.comment { color: #64b5f6; } .tool-btn.comment:hover { color: #1976d2; background: #e3f2fd; }
+
+        .comment-list { flex: 1; overflow-y: auto; margin-bottom: 15px; display: flex; flex-direction: column; gap: 10px; max-height: 400px; padding-right: 5px; }
+        .comment-item { background: #fff; padding: 10px 12px; border-radius: 12px; font-size: 0.85rem; border: 1px solid #eee; }
+        .comment-user { font-weight: 700; color: var(--bg-dark); font-size: 0.75rem; margin-bottom: 3px; display: block; }
+        .comment-text { color: var(--text-dark); line-height: 1.4; }
+        .comment-time { font-size: 0.6rem; color: #aaa; float: right; margin-top: 5px; }
+        
+        .comment-input-area { display: flex; gap: 10px; align-items: center; border-top: 1px solid #eee; padding-top: 15px; }
+        .comment-input-area input { flex: 1; padding: 10px 15px; border-radius: 50px; border: 1px solid #ddd; outline: none; font-family: 'Poppins'; font-size: 0.9rem; background: #f9f9f9; }
+        .btn-send-comment { background: var(--accent-lime); color: var(--bg-dark); border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; display: flex; justify-content: center; align-items: center; font-size: 1rem; transition: 0.2s; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .btn-send-comment:active { transform: scale(0.9); }
+
+        /* --- STYLES UNTUK PREVIEW KOMENTAR (BARU) --- */
+        .card-comments-preview {
+            border-top: 1px solid #f0f0f0;
+            margin-top: 5px;
+            padding-top: 10px;
+            width: 100%;
         }
-        .delete-btn:hover { color: #c62828; transform: scale(1.1); }
+        .preview-item {
+            font-size: 0.75rem;
+            margin-bottom: 6px;
+            color: #555;
+            display: flex;
+            gap: 5px;
+        }
+        .preview-user { font-weight: 700; color: var(--bg-dark); white-space: nowrap; }
+        .preview-text { text-overflow: ellipsis; overflow: hidden; white-space: nowrap; flex: 1; color: #777; }
+        .view-more-comments {
+            font-size: 0.75rem;
+            color: var(--text-dark); /* Ganti warna di sini */
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 5px;
+            display: inline-block;
+            text-decoration: none; /* Hilangkan garis bawah default jika ada */
+        }
+        .view-more-comments:hover {
+            text-decoration: underline; /* Tambahkan garis bawah saat di-hover */
+            color: var(--bg-dark); /* Warna saat hover */
+        }
 
     </style>
 </head>
@@ -295,7 +335,7 @@
     <div id="dashboard">
         <div class="header-section">
             <div class="top-bar">
-                <div class="greeting"><p>Collaborating For Change, Empowering For Impact</p><h1>English Check</h1></div>
+                <div class="greeting"><p>Collaborating For Change, Empowering For Impact.</p><h1>English Check</h1></div>
                 <div class="top-icons">
                     <div class="icon-btn" onclick="toggleModal('notif-modal')"><i class="far fa-bell"></i><div class="badge" id="notif-count">!</div></div>
                     <div class="icon-btn" onclick="toggleSound(this)"><i class="fas fa-headset" id="soundIcon"></i></div>
@@ -368,32 +408,43 @@
         </div>
     </div>
 
+    <div id="comment-modal" class="modal-overlay" onclick="closeModalOnOutside(event, 'comment-modal')">
+        <div class="modal-content">
+            <div class="modal-header"><h3>Komentar</h3><div class="close-btn" onclick="closeComments()">&times;</div></div>
+            <div class="comment-list" id="comment-list-container">
+                <p style="text-align:center; color:#aaa; margin-top:20px;">Belum ada komentar.</p>
+            </div>
+            <div class="comment-input-area">
+                <input type="text" id="comment-input" placeholder="Tulis komentar..." autocomplete="off">
+                <button class="btn-send-comment" onclick="sendComment()"><i class="fas fa-paper-plane"></i></button>
+            </div>
+        </div>
+    </div>
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.1.3/firebase-app.js";
-        // TAMBAHAN: import 'remove' untuk hapus data
-        import { getDatabase, ref, push, onValue, query, limitToLast, remove } from "https://www.gstatic.com/firebasejs/9.1.3/firebase-database.js";
+        import { getDatabase, ref, push, onValue, query, limitToLast, remove, off } from "https://www.gstatic.com/firebasejs/9.1.3/firebase-database.js";
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyAgYCaaoGMzZWVT2dRov7ALUnnMhHoqXmE",
-            authDomain: "english-check-db.firebaseapp.com",
-            databaseURL: "https://english-check-db-default-rtdb.asia-southeast1.firebasedatabase.app",
-            projectId: "english-check-db",
-            storageBucket: "english-check-db.firebasestorage.app",
-            messagingSenderId: "136352630898",
-            appId: "1:136352630898:web:dcaa103fa848ca38de9aeb"
-        };
+        // --- PASTE FIREBASE CONFIG ANDA DISINI ---
+       const firebaseConfig = {
+  apiKey: "AIzaSyAgYCaaoGMzZWVT2dRov7ALUnnMhHoqXmE",
+  authDomain: "english-check-db.firebaseapp.com",
+  databaseURL: "https://english-check-db-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "english-check-db",
+  storageBucket: "english-check-db.firebasestorage.app",
+  messagingSenderId: "136352630898",
+  appId: "1:136352630898:web:dcaa103fa848ca38de9aeb"
+};
+        // ----------------------------------------
 
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        // --- GLOBAL VARIABLES (Firebase Write & Delete) ---
-        
-        // 1. POSTING
+        // --- POSTING & DELETE ---
         window.saveNewPost = function() {
             const title = document.getElementById('post-title').value;
             const desc = document.getElementById('post-desc').value;
             const color = document.getElementById('post-tag').value;
-            
             if(!title || !desc) { alert("Mohon isi semua data"); return; }
 
             let tagText = "Umum";
@@ -408,25 +459,16 @@
                 document.getElementById('add-modal').style.display = 'none';
                 document.getElementById('post-title').value = "";
                 document.getElementById('post-desc').value = "";
-            }).catch((error) => {
-                alert("Gagal posting: " + error.message);
             });
         };
 
-        // 2. DELETE POST (BARU)
         window.deletePost = function(postId) {
-            if(confirm("Apakah Anda yakin ingin menghapus informasi ini secara permanen?")) {
-                remove(ref(db, 'posts/' + postId))
-                .then(() => {
-                    alert("Informasi berhasil dihapus.");
-                })
-                .catch((error) => {
-                    alert("Gagal menghapus: " + error.message);
-                });
+            if(confirm("Hapus informasi ini?")) {
+                remove(ref(db, 'posts/' + postId));
             }
         };
 
-        // --- LISTEN DATA REALTIME ---
+        // --- REALTIME FEED LISTENER ---
         const postsRef = query(ref(db, 'posts'), limitToLast(10));
         
         onValue(postsRef, (snapshot) => {
@@ -436,10 +478,7 @@
             
             if (snapshot.exists()) {
                 const data = snapshot.val();
-                // Ubah jadi Array of Entries [ [key, value], [key, value] ] agar kita punya ID-nya
                 const posts = Object.entries(data).reverse(); 
-                
-                // Cek Role (Untuk menampilkan tombol hapus)
                 const isTutor = localStorage.getItem('ec_role') === 'tutor';
 
                 let html = '';
@@ -449,23 +488,57 @@
                     if(post.color === 'orange') iconClass = 'fa-fire';
                     if(post.color === 'green') iconClass = 'fa-bullhorn';
 
-                    // Tombol Hapus (Hanya Tutor)
-                    let deleteBtn = '';
-                    if(isTutor) {
-                        deleteBtn = `<div class="delete-btn" onclick="event.stopPropagation(); window.deletePost('${key}')"><i class="fas fa-trash"></i></div>`;
+                    // --- BAGIAN BARU: PREVIEW KOMENTAR ---
+                    let commentsHtml = '';
+                    let commentCount = 0;
+                    if(post.comments) {
+                        const commentsArr = Object.values(post.comments);
+                        commentCount = commentsArr.length;
+                        
+                        // Ambil 3 Terakhir
+                        const recentComments = commentsArr.slice(-3);
+                        
+                        commentsHtml = `<div class="card-comments-preview">`;
+                        recentComments.forEach(c => {
+                            commentsHtml += `
+                                <div class="preview-item">
+                                    <span class="preview-user">${c.user}:</span>
+                                    <span class="preview-text">${c.text}</span>
+                                </div>
+                            `;
+                        });
+
+                        if(commentCount > 3) {
+                            commentsHtml += `<div class="view-more-comments" onclick="event.stopPropagation(); window.openComments('${key}')">Lihat semua ${commentCount} komentar...</div>`;
+                        }
+                        commentsHtml += `</div>`;
                     }
+                    // --------------------------------------
+
+                    // Tombol Tools
+                    let toolsHtml = `<div class="card-tools">`;
+                    // Tombol Komentar (Semua bisa lihat)
+                    toolsHtml += `<div class="tool-btn comment" onclick="event.stopPropagation(); window.openComments('${key}')"><i class="far fa-comment-dots"></i></div>`;
+                    // Tombol Hapus (Hanya Tutor)
+                    if(isTutor) {
+                        toolsHtml += `<div class="tool-btn delete" onclick="event.stopPropagation(); window.deletePost('${key}')"><i class="fas fa-trash"></i></div>`;
+                    }
+                    toolsHtml += `</div>`;
 
                     html += `
                         <div class="info-card" onclick="window.playClick('#')">
-                            ${deleteBtn}
-                            <div class="info-icon-container info-${post.color}">
-                                <i class="fas ${iconClass}"></i>
+                            ${toolsHtml}
+                            <div class="info-card-top">
+                                <div class="info-icon-container info-${post.color}">
+                                    <i class="fas ${iconClass}"></i>
+                                </div>
+                                <div class="info-content">
+                                    <span class="info-tag tag-${post.color}">${post.tag}</span>
+                                    <h4 class="info-title">${post.title}</h4>
+                                    <p class="info-desc">${post.desc}</p>
+                                </div>
                             </div>
-                            <div class="info-content">
-                                <span class="info-tag tag-${post.color}">${post.tag}</span>
-                                <h4 class="info-title">${post.title}</h4>
-                                <p class="info-desc">${post.desc}</p>
-                            </div>
+                            ${commentsHtml}
                         </div>
                     `;
                 });
@@ -477,6 +550,74 @@
                 container.innerHTML = '<p style="text-align:center; opacity:0.6;">Belum ada update terbaru.</p>';
             }
         });
+
+        // --- COMMENT SYSTEM VARIABLES & FUNCTIONS ---
+        let currentPostId = null;
+        let commentsListener = null;
+
+        window.openComments = function(postId) {
+            currentPostId = postId;
+            document.getElementById('comment-modal').style.display = 'flex';
+            document.getElementById('comment-list-container').innerHTML = '<p style="text-align:center; margin-top:20px;">Memuat komentar...</p>';
+            
+            const commentsRef = ref(db, 'posts/' + postId + '/comments');
+            if(commentsListener) { off(commentsRef); }
+
+            commentsListener = onValue(commentsRef, (snapshot) => {
+                const listDiv = document.getElementById('comment-list-container');
+                listDiv.innerHTML = ''; 
+
+                if (snapshot.exists()) {
+                    const commentsData = snapshot.val();
+                    const comments = Object.values(commentsData); 
+                    
+                    comments.forEach(c => {
+                        const date = new Date(c.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                        listDiv.innerHTML += `
+                            <div class="comment-item">
+                                <span class="comment-user">${c.user}</span>
+                                <span class="comment-text">${c.text}</span>
+                                <div class="comment-time">${date}</div>
+                            </div>
+                        `;
+                    });
+                    listDiv.scrollTop = listDiv.scrollHeight;
+                } else {
+                    listDiv.innerHTML = '<p style="text-align:center; color:#aaa; margin-top:20px;">Belum ada komentar.</p>';
+                }
+            });
+        };
+
+        window.closeComments = function() {
+            document.getElementById('comment-modal').style.display = 'none';
+            if(currentPostId) {
+                const commentsRef = ref(db, 'posts/' + currentPostId + '/comments');
+                off(commentsRef); 
+            }
+            currentPostId = null;
+        };
+
+        window.sendComment = function() {
+            const input = document.getElementById('comment-input');
+            const text = input.value.trim();
+            const username = localStorage.getItem('ec_username') || 'Anonymous';
+
+            if(!text) return;
+            if(!currentPostId) return;
+
+            push(ref(db, 'posts/' + currentPostId + '/comments'), {
+                user: username,
+                text: text,
+                timestamp: Date.now()
+            });
+
+            input.value = '';
+        };
+
+        document.getElementById('comment-input').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') window.sendComment();
+        });
+
     </script>
 
     <script>
@@ -490,7 +631,6 @@
         let isMuted = false;
         const clickSfx = document.getElementById('clickSound');
 
-        // --- 1. CEK SESI SAAT LOAD ---
         window.addEventListener('load', () => {
             const splash = document.getElementById('splash-screen');
             const login = document.getElementById('login-screen');
@@ -513,7 +653,6 @@
             }, 2500);
         });
 
-        // --- 2. FUNGSI LOGOUT ---
         window.confirmLogout = function() {
             let text = "Apakah Anda yakin ingin keluar?";
             if (confirm(text) == true) {
@@ -523,7 +662,6 @@
             }
         }
 
-        // LOGIN UI
         window.selectRole = function(role) {
             selectedRole = role;
             document.getElementById('roleSelection').style.display = 'none';
@@ -600,7 +738,6 @@
             document.getElementById('dailyScoreDisplay').innerText = Math.floor(Math.random() * 50) * 10;
         }
 
-        // Utils
         window.toggleModal = function(id) {
             const modal = document.getElementById(id);
             if(modal.style.display === 'flex') modal.style.display = 'none';
