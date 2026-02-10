@@ -84,6 +84,10 @@
         .grid-item:active .grid-icon { transform: scale(0.95); background: var(--accent-lime); }
         .grid-text { font-size: 0.7rem; text-align: center; font-weight: 600; color: #444; }
         .icon-lime { color: #afb42b; background: #f9fbe7; } .icon-green { color: #2e7d32; background: #e8f5e9; } .icon-blue { color: #0277bd; background: #e1f5fe; } .icon-orange { color: #ef6c00; background: #fff3e0; } .icon-teal { color: #00897b; background: #e0f2f1; } .icon-pink { color: #d81b60; background: #fce4ec; }
+        
+        /* NEW COLOR FOR INTERMEDIATE GAME */
+        .icon-red { color: #e53935; background: #ffebee; }
+
         .info-section { margin-top: 35px; margin-bottom: 20px; position: relative; }
         .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
         .section-title { font-size: 1.1rem; font-weight: 700; color: var(--bg-dark); }
@@ -337,6 +341,13 @@
                     <div class="lock-overlay"><i class="fas fa-lock lock-icon-large"></i></div>
                     <div class="grid-icon icon-blue"><i class="fas fa-certificate"></i></div><div class="grid-text">Certif</div>
                 </div>
+                
+                <div class="grid-item" id="grid-intermediate" onclick="handleMenuClick('intermediate game.html', 'intermediate')">
+                    <div class="tutor-lock-btn" onclick="event.stopPropagation(); toggleLock('intermediate')"><i class="fas fa-lock"></i></div>
+                    <div class="lock-overlay"><i class="fas fa-lock lock-icon-large"></i></div>
+                    <div class="grid-icon icon-red"><i class="fas fa-crosshairs"></i></div><div class="grid-text">Inter Game</div>
+                </div>
+                
                 <div class="grid-item" id="grid-lainnya" onclick="handleMenuClick('#', 'lainnya')">
                     <div class="tutor-lock-btn" onclick="event.stopPropagation(); toggleLock('lainnya')"><i class="fas fa-lock"></i></div>
                     <div class="lock-overlay"><i class="fas fa-lock lock-icon-large"></i></div>
@@ -801,7 +812,8 @@
         });
         function updateLockUI() {
             const isTutor = localStorage.getItem('ec_role') === 'tutor';
-            const features = ['modul', 'structure', 'vocab', 'game', 'absensi', 'support', 'certif', 'lainnya'];
+            // Added 'intermediate' to the features list
+            const features = ['modul', 'structure', 'vocab', 'game', 'absensi', 'support', 'certif', 'intermediate', 'lainnya'];
             features.forEach(id => {
                 const isLocked = lockedFeatures[id] === true;
                 const gridLockBtn = document.querySelector(`#grid-${id} .tutor-lock-btn`);
@@ -977,7 +989,7 @@
                         login.style.display = 'flex';
                     }
                 }, 500);
-            }, 2500);
+            }, 500);
         });
 
         window.confirmLogout = function() {
