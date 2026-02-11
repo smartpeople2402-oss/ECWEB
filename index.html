@@ -78,15 +78,25 @@
         .dw-sentence { font-size: 0.85rem; background: rgba(255,255,255,0.4); padding: 10px 12px; border-radius: 12px; font-weight: 500; }
         .search-box { background: #ffffff; border-radius: 50px; padding: 12px 20px; display: flex; align-items: center; gap: 12px; margin-bottom: 25px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
         .search-box input { border: none; background: transparent; outline: none; width: 100%; font-family: 'Poppins'; font-size: 0.9rem; }
+        
+        /* GRID MENU */
         .grid-menu { display: grid; grid-template-columns: repeat(4, 1fr); gap: 25px 10px; }
         .grid-item { display: flex; flex-direction: column; align-items: center; gap: 8px; text-decoration: none; color: var(--text-dark); cursor: pointer; position: relative; }
         .grid-icon { width: 50px; height: 50px; border-radius: 16px; display: flex; justify-content: center; align-items: center; font-size: 1.3rem; background: #ffffff; box-shadow: 0 4px 10px rgba(0,0,0,0.05); color: var(--bg-dark); transition: 0.2s; }
         .grid-item:active .grid-icon { transform: scale(0.95); background: var(--accent-lime); }
         .grid-text { font-size: 0.7rem; text-align: center; font-weight: 600; color: #444; }
-        .icon-lime { color: #afb42b; background: #f9fbe7; } .icon-green { color: #2e7d32; background: #e8f5e9; } .icon-blue { color: #0277bd; background: #e1f5fe; } .icon-orange { color: #ef6c00; background: #fff3e0; } .icon-teal { color: #00897b; background: #e0f2f1; } .icon-pink { color: #d81b60; background: #fce4ec; }
         
-        /* NEW COLOR FOR INTERMEDIATE GAME */
-        .icon-red { color: #e53935; background: #ffebee; }
+        /* EXPANDABLE ITEMS LOGIC */
+        .expanded-item { display: none; }
+        .grid-menu.show-all .expanded-item { display: flex; }
+
+        /* GAME CARDS IN MODAL */
+        .game-card { padding: 20px; border-radius: 15px; cursor: pointer; transition: 0.2s; display: flex; flex-direction: column; align-items: center; gap: 10px; border: 2px solid transparent; }
+        .game-card:active { transform: scale(0.95); }
+        .game-card i { font-size: 2.5rem; margin-bottom: 5px; }
+        .game-card span { font-weight: 700; font-size: 0.9rem; }
+
+        .icon-lime { color: #afb42b; background: #f9fbe7; } .icon-green { color: #2e7d32; background: #e8f5e9; } .icon-blue { color: #0277bd; background: #e1f5fe; } .icon-orange { color: #ef6c00; background: #fff3e0; } .icon-teal { color: #00897b; background: #e0f2f1; } .icon-pink { color: #d81b60; background: #fce4ec; } .icon-red { color: #e53935; background: #ffebee; } .icon-purple { color: #7e22ce; background: #f3e8ff; } 
 
         .info-section { margin-top: 35px; margin-bottom: 20px; position: relative; }
         .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
@@ -286,7 +296,7 @@
                     <div class="lock-overlay"><i class="fas fa-lock lock-icon-large"></i></div>
                     <div class="q-icon-box"><i class="fas fa-spell-check"></i></div><div class="q-text">Vocab</div>
                 </div>
-                <div class="q-action" id="qa-game" onclick="handleMenuClick('all.html', 'game')">
+                <div class="q-action" id="qa-game" onclick="openGameGroup()">
                     <div class="tutor-lock-btn" onclick="event.stopPropagation(); toggleLock('game')"><i class="fas fa-lock"></i></div>
                     <div class="lock-overlay"><i class="fas fa-lock lock-icon-large"></i></div>
                     <div class="q-icon-box"><i class="fas fa-gamepad"></i></div><div class="q-text">Game</div>
@@ -305,7 +315,7 @@
             </div>
             <div class="search-box"><i class="fas fa-search" style="color: var(--bg-dark);"></i><input type="text" placeholder="Cari materi..."></div>
             
-            <div class="grid-menu">
+            <div class="grid-menu" id="gridMenu">
                 <div class="grid-item" id="grid-modul" onclick="handleMenuClick('Modul Check.html', 'modul')">
                     <div class="tutor-lock-btn" onclick="event.stopPropagation(); toggleLock('modul')"><i class="fas fa-lock"></i></div>
                     <div class="lock-overlay"><i class="fas fa-lock lock-icon-large"></i></div>
@@ -321,37 +331,32 @@
                     <div class="lock-overlay"><i class="fas fa-lock lock-icon-large"></i></div>
                     <div class="grid-icon icon-blue"><i class="fas fa-spell-check"></i></div><div class="grid-text">Vocab</div>
                 </div>
-                <div class="grid-item" id="grid-game" onclick="handleMenuClick('all.html', 'game')">
+                
+                <div class="grid-item" id="grid-game" onclick="openGameGroup()">
                     <div class="tutor-lock-btn" onclick="event.stopPropagation(); toggleLock('game')"><i class="fas fa-lock"></i></div>
                     <div class="lock-overlay"><i class="fas fa-lock lock-icon-large"></i></div>
-                    <div class="grid-icon icon-orange"><i class="fas fa-gamepad"></i></div><div class="grid-text">Game</div>
+                    <div class="grid-icon icon-orange"><i class="fas fa-gamepad"></i></div><div class="grid-text">Game Zone</div>
                 </div>
+
                 <div class="grid-item" id="grid-absensi" onclick="handleMenuClick('Absensi.html', 'absensi')">
                     <div class="tutor-lock-btn" onclick="event.stopPropagation(); toggleLock('absensi')"><i class="fas fa-lock"></i></div>
                     <div class="lock-overlay"><i class="fas fa-lock lock-icon-large"></i></div>
                     <div class="grid-icon icon-teal"><i class="fas fa-calendar-check"></i></div><div class="grid-text">Absensi</div>
                 </div>
-                <div class="grid-item" id="grid-support" onclick="handleMenuClick('#', 'support')">
+                
+                <div class="grid-item" id="grid-lainnya" onclick="toggleLainnya()">
+                    <div class="grid-icon" style="color: #777; background: #f1f2f6;"><i class="fas fa-th-large"></i></div><div class="grid-text">Lainnya</div>
+                </div>
+
+                <div class="grid-item expanded-item" id="grid-support" onclick="handleMenuClick('#', 'support')">
                     <div class="tutor-lock-btn" onclick="event.stopPropagation(); toggleLock('support')"><i class="fas fa-lock"></i></div>
                     <div class="lock-overlay"><i class="fas fa-lock lock-icon-large"></i></div>
                     <div class="grid-icon icon-pink"><i class="fas fa-heart"></i></div><div class="grid-text">Support</div>
                 </div>
-                <div class="grid-item" id="grid-certif" onclick="handleMenuClick('#', 'certif')">
+                <div class="grid-item expanded-item" id="grid-certif" onclick="handleMenuClick('#', 'certif')">
                     <div class="tutor-lock-btn" onclick="event.stopPropagation(); toggleLock('certif')"><i class="fas fa-lock"></i></div>
                     <div class="lock-overlay"><i class="fas fa-lock lock-icon-large"></i></div>
                     <div class="grid-icon icon-blue"><i class="fas fa-certificate"></i></div><div class="grid-text">Certif</div>
-                </div>
-                
-                <div class="grid-item" id="grid-intermediate" onclick="handleMenuClick('intermediate game.html', 'intermediate')">
-                    <div class="tutor-lock-btn" onclick="event.stopPropagation(); toggleLock('intermediate')"><i class="fas fa-lock"></i></div>
-                    <div class="lock-overlay"><i class="fas fa-lock lock-icon-large"></i></div>
-                    <div class="grid-icon icon-red"><i class="fas fa-crosshairs"></i></div><div class="grid-text">Inter Game</div>
-                </div>
-                
-                <div class="grid-item" id="grid-lainnya" onclick="handleMenuClick('#', 'lainnya')">
-                    <div class="tutor-lock-btn" onclick="event.stopPropagation(); toggleLock('lainnya')"><i class="fas fa-lock"></i></div>
-                    <div class="lock-overlay"><i class="fas fa-lock lock-icon-large"></i></div>
-                    <div class="grid-icon" style="color: #777; background: #f1f2f6;"><i class="fas fa-th-large"></i></div><div class="grid-text">Lainnya</div>
                 </div>
             </div>
 
@@ -432,6 +437,26 @@
         <div class="modal-content">
             <div class="modal-header"><h3>Notifikasi</h3><div class="close-btn" onclick="toggleModal('notif-modal')">&times;</div></div>
             <div id="notif-content-body"></div>
+        </div>
+    </div>
+
+    <div id="game-selection-modal" class="modal-overlay" onclick="closeModalOnOutside(event, 'game-selection-modal')">
+        <div class="modal-content">
+            <div class="modal-header"><h3>Game Zone</h3><div class="close-btn" onclick="toggleModal('game-selection-modal')">&times;</div></div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                <div class="game-card" style="background:#fff3e0; border-color:#ffe0b2;" onclick="window.location.href='all.html'">
+                    <i class="fas fa-gamepad" style="color:#ef6c00;"></i>
+                    <span style="color:#ef6c00;">Classic</span>
+                </div>
+                <div class="game-card" style="background:#ffebee; border-color:#ffcdd2;" onclick="window.location.href='intermediate game.html'">
+                    <i class="fas fa-crosshairs" style="color:#e53935;"></i>
+                    <span style="color:#e53935;">Sniper/Inter</span>
+                </div>
+                <div class="game-card" style="background:#f3e8ff; border-color:#d8b4fe;" onclick="window.location.href='word_bomb_pro.html'">
+                    <i class="fas fa-bomb" style="color:#7e22ce;"></i>
+                    <span style="color:#7e22ce;">Word Bomb</span>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -812,8 +837,8 @@
         });
         function updateLockUI() {
             const isTutor = localStorage.getItem('ec_role') === 'tutor';
-            // Added 'intermediate' to the features list
-            const features = ['modul', 'structure', 'vocab', 'game', 'absensi', 'support', 'certif', 'intermediate', 'lainnya'];
+            // Added 'intermediate' and 'wordbomb' to features
+            const features = ['modul', 'structure', 'vocab', 'game', 'absensi', 'support', 'certif', 'intermediate', 'wordbomb', 'lainnya'];
             features.forEach(id => {
                 const isLocked = lockedFeatures[id] === true;
                 const gridLockBtn = document.querySelector(`#grid-${id} .tutor-lock-btn`);
@@ -958,6 +983,23 @@
             const isLocked = lockedFeatures[featureId] === true;
             if (isTutor) { window.playClick(targetUrl); return; }
             if (isLocked) { alert("🔒 Maaf, materi ini sedang dikunci oleh Tutor."); } else { window.playClick(targetUrl); }
+        };
+        
+        // --- NEW FUNCTION FOR EXPANDABLE MENU ---
+        window.toggleLainnya = function() {
+            const menu = document.getElementById('gridMenu');
+            menu.classList.toggle('show-all');
+        };
+        
+        // --- OPEN GAME GROUP MODAL ---
+        window.openGameGroup = function() {
+            const isTutor = localStorage.getItem('ec_role') === 'tutor';
+            const isLocked = lockedFeatures['game'] === true; // Check if "Game" group is locked
+            if (!isTutor && isLocked) {
+                alert("🔒 Maaf, Menu Game sedang dikunci oleh Tutor.");
+                return;
+            }
+            toggleModal('game-selection-modal');
         };
     </script>
 
