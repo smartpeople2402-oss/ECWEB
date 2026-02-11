@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Word Bomb: Chat Edition</title>
+    <title>Word Bomb: Mobile Fix</title>
     <style>
         /* BASE STYLES */
         :root { --bg: #0f172a; --card: #1e293b; --primary: #38bdf8; --text: #f8fafc; --danger: #ef4444; --success: #4ade80; --warning: #fbbf24; }
@@ -29,23 +29,23 @@
         .life-input { padding: 5px; border-radius: 5px; border: 1px solid var(--primary); background: #0f172a; color: white; width: 60px; text-align: center; font-weight: bold; }
 
         /* GAME HEADER */
-        .game-header { padding: 15px; display: flex; justify-content: space-between; align-items: center; background: rgba(30, 41, 59, 0.5); border-bottom: 1px solid #334155; height: 60px; }
+        .game-header { padding: 15px; display: flex; justify-content: space-between; align-items: center; background: rgba(30, 41, 59, 0.5); border-bottom: 1px solid #334155; height: 60px; transition: height 0.3s; }
         .room-badge { background: #334155; padding: 5px 10px; border-radius: 5px; font-size: 0.8rem; font-weight: bold; }
 
         /* BOMB AREA */
-        .gameplay-area { flex: 1; display: flex; flex-direction: column; width: 100%; position: relative; }
-        .bomb-area { flex: 1; position: relative; }
-        .bomb-circle { width: 200px; height: 200px; border-radius: 50%; background: radial-gradient(circle, #334155 0%, #0f172a 80%); border: 5px solid var(--primary); display: flex; align-items: center; justify-content: center; box-shadow: 0 0 40px rgba(56, 189, 248, 0.2); position: relative; z-index: 2; transition: border-color 0.3s; }
+        .gameplay-area { flex: 1; display: flex; flex-direction: column; width: 100%; position: relative; transition: all 0.3s; }
+        .bomb-area { flex: 1; position: relative; transition: all 0.3s; }
+        .bomb-circle { width: 200px; height: 200px; border-radius: 50%; background: radial-gradient(circle, #334155 0%, #0f172a 80%); border: 5px solid var(--primary); display: flex; align-items: center; justify-content: center; box-shadow: 0 0 40px rgba(56, 189, 248, 0.2); position: relative; z-index: 2; transition: all 0.3s; }
         .bomb-circle.explode { border-color: var(--danger); box-shadow: 0 0 50px var(--danger); animation: shake 0.5s; }
-        .letter-display { font-size: 3.5rem; font-weight: 900; text-transform: uppercase; text-shadow: 0 0 15px var(--primary); }
+        .letter-display { font-size: 3.5rem; font-weight: 900; text-transform: uppercase; text-shadow: 0 0 15px var(--primary); transition: font-size 0.3s; }
         
         /* TIMER */
-        .timer-info { margin-top: 20px; font-weight: bold; color: var(--warning); font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; }
+        .timer-info { margin-top: 20px; font-weight: bold; color: var(--warning); font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; transition: margin 0.3s; }
         .timer-bar-container { width: 80%; max-width: 300px; height: 10px; background: #334155; border-radius: 10px; margin-top: 5px; overflow: hidden; }
         .timer-fill { height: 100%; width: 100%; background: var(--success); transition: width 0.1s linear, background-color 0.3s; }
 
         /* INPUT AREA */
-        .input-container { padding: 20px; width: 100%; max-width: 500px; margin: 0 auto; position: relative; }
+        .input-container { padding: 20px; width: 100%; max-width: 500px; margin: 0 auto; position: relative; transition: padding 0.3s; }
         .word-input { width: 100%; padding: 20px; background: var(--card); border: 2px solid #475569; border-radius: 15px; color: white; font-size: 1.5rem; text-align: center; text-transform: uppercase; outline: none; transition: 0.3s; }
         .word-input:focus { border-color: var(--primary); box-shadow: 0 0 20px rgba(56, 189, 248, 0.1); }
         .word-input.error { border-color: var(--danger); animation: shake 0.3s; color: var(--danger); }
@@ -53,7 +53,7 @@
         .turn-indicator { text-align: center; margin-bottom: 10px; font-weight: bold; color: var(--warning); text-transform: uppercase; letter-spacing: 1px; font-size: 0.9rem; }
 
         /* PLAYERS BAR */
-        .players-bar { display: flex; padding: 10px; gap: 10px; background: #0f172a; border-top: 1px solid #334155; height: 120px; }
+        .players-bar { display: flex; padding: 10px; gap: 10px; background: #0f172a; border-top: 1px solid #334155; height: 120px; transition: height 0.3s; }
         .player-card { flex: 1; background: var(--card); padding: 10px; border-radius: 12px; text-align: center; border: 2px solid transparent; opacity: 0.5; transition: 0.3s; display: flex; flex-direction: column; justify-content: center; }
         .player-card.active { border-color: var(--primary); opacity: 1; background: rgba(56, 189, 248, 0.05); transform: translateY(-5px); }
         .p-name { font-weight: bold; font-size: 0.9rem; margin-bottom: 5px; color: #cbd5e1; }
@@ -63,18 +63,20 @@
         /* LOBBY ELEMENTS */
         .lobby-card { background: var(--card); padding: 30px; border-radius: 20px; border: 1px solid #334155; width: 90%; max-width: 400px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
         .title { font-size: 2.5rem; font-weight: 900; color: var(--primary); margin-bottom: 5px; text-transform: uppercase; letter-spacing: 2px; }
+        .subtitle { color: #94a3b8; margin-bottom: 30px; font-size: 0.9rem; }
         .input-code { width: 100%; padding: 15px; background: #0f172a; border: 2px solid #334155; border-radius: 10px; color: white; font-size: 1.5rem; text-align: center; margin-bottom: 15px; letter-spacing: 5px; text-transform: uppercase; font-weight: bold; }
         
         .btn { width: 100%; padding: 15px; border: none; border-radius: 10px; font-weight: bold; font-size: 1.1rem; cursor: pointer; transition: 0.2s; margin-bottom: 10px; }
         .btn-primary { background: var(--primary); color: #0f172a; }
         .btn-success { background: var(--success); color: #0f172a; }
         .btn:disabled { background: #334155; color: #94a3b8; cursor: not-allowed; }
+        .btn:active { transform: scale(0.98); }
 
         /* OVERLAYS & COUNTDOWN */
         .countdown-overlay { font-size: 8rem; font-weight: 900; color: var(--warning); text-shadow: 0 0 30px rgba(251, 191, 36, 0.5); z-index: 50; animation: pulse 0.5s ease-in-out; }
         .game-over { background: rgba(15, 23, 42, 0.98); }
         .winner-text { font-size: 3rem; font-weight: 900; color: var(--warning); margin-bottom: 10px; }
-        .retry-alert { font-size: 1.1rem; font-weight: bold; color: var(--warning); animation: pulse 1s infinite; display: none; margin-bottom: 5px;}
+        .steal-alert { font-size: 1.2rem; font-weight: bold; color: var(--danger); animation: pulse 1s infinite; display: none; margin-bottom: 5px;}
         
         /* CHAT SYSTEM STYLES */
         .chat-fab { position: fixed; bottom: 130px; right: 20px; width: 60px; height: 60px; background: var(--card); border: 2px solid var(--primary); border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 1.8rem; cursor: pointer; box-shadow: 0 5px 20px rgba(0,0,0,0.3); z-index: 990; transition: transform 0.2s; }
@@ -93,6 +95,41 @@
         .chat-input-area { padding: 10px; border-top: 1px solid #334155; display: flex; gap: 5px; background: #0f172a; }
         .chat-input-area input { flex: 1; padding: 8px; border-radius: 5px; border: 1px solid #444; background: #1e293b; color: white; outline: none; }
         .chat-input-area button { background: var(--success); color: #0f172a; border: none; padding: 0 12px; border-radius: 5px; cursor: pointer; font-weight: bold; }
+
+        /* --- MOBILE KEYBOARD FOCUS MODE (THE FIX) --- */
+        /* Ketika class 'keyboard-active' ditambahkan ke body */
+        body.keyboard-active .game-header,
+        body.keyboard-active .players-bar,
+        body.keyboard-active .chat-fab {
+            display: none !important;
+        }
+        body.keyboard-active .gameplay-area {
+            justify-content: flex-start;
+            padding-top: 10px;
+        }
+        body.keyboard-active .bomb-area {
+            flex: 0 0 auto;
+            margin-bottom: 10px;
+        }
+        body.keyboard-active .bomb-circle {
+            width: 100px;
+            height: 100px;
+            border-width: 3px;
+        }
+        body.keyboard-active .letter-display {
+            font-size: 2rem;
+        }
+        body.keyboard-active .timer-info {
+            margin-top: 5px;
+            font-size: 0.8rem;
+        }
+        body.keyboard-active .input-container {
+            padding: 5px 20px;
+        }
+        body.keyboard-active .turn-indicator {
+            margin-bottom: 5px;
+            font-size: 0.8rem;
+        }
 
         @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
         @keyframes pulse { 0% { transform: scale(0.95); opacity: 0.8; } 50% { transform: scale(1.05); opacity: 1; } 100% { transform: scale(0.95); opacity: 0.8; } }
@@ -138,6 +175,14 @@
         <div id="setup-area" class="center" style="flex:1;">
             <div class="setup-card">
                 <h2 style="color:var(--primary); margin-bottom:20px;">GAME LOBBY</h2>
+                
+                <div style="background:rgba(255,255,255,0.1); padding:10px; border-radius:10px; margin-bottom:15px; font-size:0.85rem; color:#cbd5e1; text-align:left; border: 1px solid #475569;">
+                    <div style="color:var(--warning); font-weight:bold; margin-bottom:5px;">📋 Cara Bermain:</div>
+                    1. Bom menampilkan huruf acak (Contoh: "ING").<br>
+                    2. Ketik kata bahasa Inggris yang mengandung huruf tersebut (Contoh: "KING").<br>
+                    3. Jawab sebelum waktu habis agar bom tidak meledak!
+                </div>
+
                 <div class="player-status-row">
                     <div class="p-status-box connected">
                         <span class="p-badge">HOST (YOU)</span>
@@ -228,7 +273,7 @@
             <span class="close-chat" onclick="toggleChat()">×</span>
         </div>
         <div id="chat-messages" class="chat-messages">
-            </div>
+        </div>
         <div class="chat-input-area">
             <input type="text" id="chat-input" placeholder="Say something...">
             <button onclick="sendChatMessage()">➤</button>
@@ -254,7 +299,6 @@
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
 
-   
     // --- GAME STATE ---
     let myRole = 0; 
     let currentRoom = "";
@@ -327,6 +371,11 @@
         document.getElementById('chat-fab').classList.remove('hidden');
         listenToRoom();
         listenToChat();
+        
+        // Input Listener for Focus (Keyboard Mode)
+        const wordInput = document.getElementById('word-input');
+        wordInput.addEventListener('focus', () => document.body.classList.add('keyboard-active'));
+        wordInput.addEventListener('blur', () => document.body.classList.remove('keyboard-active'));
     }
 
     // --- SETTINGS ---
@@ -447,6 +496,7 @@
         document.getElementById('p1-card').classList.toggle('active', data.turn === 1);
         document.getElementById('p2-card').classList.toggle('active', data.turn === 2);
 
+        // STEAL/RETRY UI (REMOVED STEAL, KEPT RETRY)
         const retryAlert = document.getElementById('retry-alert');
         if (data.isRetry) {
             retryAlert.style.display = 'block';
@@ -503,10 +553,16 @@
             const data = snap.val();
             
             if (!isRetry) {
-                const word = dictionary[Math.floor(Math.random() * dictionary.length)];
-                const len = Math.random() < 0.5 ? 2 : 3;
-                const start = Math.floor(Math.random() * (word.length - len));
-                newPrompt = word.substring(start, start + len).toUpperCase();
+                // GENERATE PROMPT (NO HYPHEN LOGIC)
+                let validPrompt = false;
+                while (!validPrompt) {
+                    const word = dictionary[Math.floor(Math.random() * dictionary.length)];
+                    if(word.length < 3) continue; 
+                    const len = Math.random() < 0.5 ? 2 : 3;
+                    const start = Math.floor(Math.random() * (word.length - len));
+                    newPrompt = word.substring(start, start + len).toUpperCase();
+                    if (!newPrompt.includes("-")) validPrompt = true;
+                }
             } else {
                 newPrompt = data.prompt;
             }
@@ -539,7 +595,7 @@
             if(data.status !== 'playing') return;
 
             let lives = data.lives;
-            lives[player]--; 
+            lives[player]--; // Current player loses life immediately
             
             update(ref(db, 'rooms/' + currentRoom), {
                 lives: lives,
@@ -570,6 +626,7 @@
         if (!word) return;
         const prompt = document.getElementById('prompt-display').innerText.toLowerCase();
         
+        // CHECK IF USED
         if (usedWords.includes(word)) {
             input.value = "";
             input.placeholder = "SUDAH DIPAKAI!";
@@ -578,6 +635,7 @@
             return;
         }
 
+        // FLEXIBLE VALIDATION (HYPHEN ALLOWED IN INPUT)
         if (!word.includes(prompt) || !dictionary.includes(word)) {
             input.classList.add('error');
             setTimeout(() => input.classList.remove('error'), 300);
@@ -631,6 +689,7 @@
         });
     }
 
+    // --- VISUAL TIMER ---
     function startVisualTimer(durationSec) {
         const bar = document.getElementById('timer-bar');
         bar.style.width = "100%";
@@ -669,8 +728,10 @@
 
     window.resetGameByHost = function() {
         if (myRole !== 1) return;
+        
         get(ref(db, 'rooms/' + currentRoom + '/config')).then((snap) => {
             const config = snap.val() || { maxLives: 3, maxTime: 10 };
+            
             update(ref(db, 'rooms/' + currentRoom), {
                 status: 'waiting',
                 scores: { 1: 0, 2: 0 },
