@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Word Sandwich: Blitz Mode</title>
+    <style>
+        /* BASE STYLES */
+        :root { --bg: #0f172a; --card: #1e293b; --primary: #f59e0b; --text: #f8fafc; --danger: #ef4444; --success: #4ade80; --warning: #fbbf24; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body { font-family: 'Segoe UI', sans-serif; background-color: var(--bg); color: var(--text); margin: 0; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+
+        .hidden { display: none !important; }
+        .center { display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .full-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 100; background: var(--bg); }
+
+        /* LOBBY */
+        .setup-card { background: var(--card); padding: 25px; border-radius: 20px; border: 1px solid #334155; width: 90%; max-width: 450px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .title { font-size: 2.5rem; font-weight: 900; color: var(--primary); margin-bottom: 5px; text-transform: uppercase; letter-spacing: 2px; }
+        .input-code { width: 100%; padding: 15px; background: #0f172a; border: 2px solid #334155; border-radius: 10px; color: white; font-size: 1.5rem; text-align: center; margin-bottom: 15px; letter-spacing: 5px; font-weight: bold; text-transform: uppercase; }
+        .btn { width: 100%; padding: 15px; border: none; border-radius: 10px; font-weight: bold; font-size: 1.1rem; cursor: pointer; transition: 0.2s; margin-bottom: 10px; }
+        .btn-primary { background: var(--primary); color: #0f172a; }
+        .btn-success { background: var(--success); color: #0f172a; }
+        
+        /* GAME HEADER */
+        .game-header { padding: 15px; display: flex; justify-content: space-between; align-items: center; background: rgba(30, 41, 59, 0.5); border-bottom: 1px solid #334155; height: 60px; }
+        .room-badge { background: #334155; padding: 5px 10px; border-radius: 5px; font-size: 0.8rem; font-weight: bold; }
+
+        /* GAMEPLAY AREA */
+        .game-area { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; }
+        
+        /* SANDWICH DISPLAY */
+        .sandwich-container { display: flex; gap: 15px; align-items: center; margin-bottom: 20px; transition: 0.3s; }
+        .letter-box { width: 80px; height: 100px; background: #334155; border: 3px solid var(--primary); border-radius: 15px; display: flex; justify-content: center; align-items: center; font-size: 3rem; font-weight: 900; text-transform: uppercase; box-shadow: 0 5px 15px rgba(0,0,0,0.3); transition: 0.3s; position: relative; }
+        .letter-box.empty { border-style: dashed; color: #555; }
+        .letter-box.filled { background: var(--primary); color: #0f172a; border-style: solid; }
+        .letter-label { position: absolute; top: -25px; font-size: 0.7rem; color: #aaa; font-weight: bold; width: 150%; text-align: center; }
+
+        /* INPUT AREA */
+        .input-container { padding: 20px; width: 100%; max-width: 500px; margin: 0 auto; position: relative; }
+        .word-input { width: 100%; padding: 20px; background: var(--card); border: 2px solid #475569; border-radius: 15px; color: white; font-size: 1.5rem; text-align: center; text-transform: uppercase; outline: none; transition: 0.3s; }
+        .word-input:focus { border-color: var(--primary); box-shadow: 0 0 20px rgba(245, 158, 11, 0.2); }
+        .word-input.error { border-color: var(--danger); animation: shake 0.3s; }
+
+        /* TIMER BAR */
+        .timer-container { width: 80%; max-width: 300px; height: 8px; background: #334155; border-radius: 10px; margin-bottom: 20px; overflow: hidden; opacity: 0; transition: opacity 0.3s; }
+        .timer-fill { height: 100%; width: 100%; background: var(--success); transition: width 0.1s linear; }
+        .timer-container.visible { opacity: 1; }
+
+        /* PLAYERS */
+        .players-bar { display: flex; padding: 10px; gap: 10px; background: #0f172a; border-top: 1px solid #334155; height: 100px; }
+        .player-card { flex: 1; background: var(--card); padding: 10px; border-radius: 12px; text-align: center; border: 2px solid transparent; opacity: 0.5; transition: 0.3s; display: flex; flex-direction: column; justify-content: center; }
+        .player-card.active { border-color: var(--primary); opacity: 1; background: rgba(245, 158, 11, 0.1); transform: translateY(-5px); }
+        .p-score { font-size: 1.5rem; font-weight: 800; color: var(--primary); }
+
+        /* COUNTDOWN OVERLAY */
+        .countdown-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.9); z-index: 500; display: flex; justify-content: center; align-items: center; font-size: 8rem; font-weight: 900; color: var(--primary); text-shadow: 0 0 30px var(--primary); animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        
+        .phase-text { font-size: 1rem; font-weight: bold; color: var(--warning); margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px; min-height: 24px; }
+
+        /* Mobile Fix */
+        @media (max-width: 768px) {
+            body.keyboard-active .game-header, body.keyboard-active .players-bar { display: none !important; }
+            body.keyboard-active .game-area { justify-content: flex-start; padding-top: 20px; }
+            body.keyboard-active .sandwich-container { transform: scale(0.8); margin-bottom: 10px; }
+        }
+
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+        @keyframes popIn { 0% { transform: scale(0); opacity: 0; } 80% { transform: scale(1.1); opacity: 1; } 100% { transform: scale(1); } }
+    </style>
+</head>
+<body>
+
+    <audio id="sfx-correct" src="https://assets.mixkit.co/active_storage/sfx/2000/2000-preview.mp3"></audio>
+    <audio id="sfx-beep" src="https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3"></audio>
+    <audio id="sfx-bomb" src="bomb.mp3"></audio> <div id="lobby-screen" class="full-screen center">
+        <div class="setup-card">
+            <div class="title">WORD<br>SANDWICH 🥪</div>
+            <div class="subtitle" style="margin-bottom: 20px;">6 Seconds Blitz</div>
+            <input type="text" id="room-input" class="input-code" placeholder="CODE" maxlength="4">
+            <button class="btn btn-primary" id="btn-create" onclick="createRoom()">CREATE ROOM (P1)</button>
+            <button class="btn btn-success" id="btn-join" onclick="joinRoom()">JOIN ROOM (P2)</button>
+            <div id="lobby-status" style="margin-top:10px; color:#aaa; font-size:0.9rem;">Enter code to join</div>
+        </div>
+    </div>
+
+    <div id="game-screen" class="hidden" style="height: 100vh; display: flex; flex-direction: column;">
+        <div class="game-header">
+            <div class="room-badge">ROOM: <span id="display-room-code" style="color:var(--warning)">----</span></div>
+            <div id="role-display" style="font-size:0.8rem; font-weight:bold; color:#aaa;">PLAYER</div>
+        </div>
+
+        <div class="game-area">
+            <div class="phase-text" id="phase-indicator">WAITING FOR PLAYERS...</div>
+
+            <div id="countdown-overlay" class="countdown-overlay hidden">3</div>
+
+            <div class="sandwich-container">
+                <div class="letter-box" id="box-start">
+                    <span class="letter-label">STARTS WITH (P1)</span>
+                    <span id="char-start">?</span>
+                </div>
+                
+                <div style="font-size: 2rem; color: #475569;">...</div>
+
+                <div class="letter-box" id="box-end">
+                    <span class="letter-label">ENDS WITH (P2)</span>
+                    <span id="char-end">?</span>
+                </div>
+            </div>
+
+            <div class="timer-container" id="timer-container">
+                <div class="timer-fill" id="timer-bar"></div>
+            </div>
+
+            <div class="input-container">
+                <input type="text" id="main-input" class="word-input" placeholder="..." autocomplete="off" disabled>
+            </div>
+        </div>
+
+        <div class="players-bar">
+            <div id="p1-card" class="player-card">
+                <div class="p-name">PLAYER 1</div>
+                <div class="p-score" id="p1-score">0</div>
+            </div>
+            <div id="p2-card" class="player-card">
+                <div class="p-name">PLAYER 2</div>
+                <div class="p-score" id="p2-score">0</div>
+            </div>
+        </div>
+    </div>
+
+<script src="word sandwich.js"></script>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+    import { getDatabase, ref, set, onValue, update, get } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js";
+
+   const firebaseConfig = {
+  apiKey: "AIzaSyAgYCaaoGMzZWVT2dRov7ALUnnMhHoqXmE",
+  authDomain: "english-check-db.firebaseapp.com",
+  databaseURL: "https://english-check-db-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "english-check-db",
+  storageBucket: "english-check-db.firebasestorage.app",
+  messagingSenderId: "136352630898",
+  appId: "1:136352630898:web:dcaa103fa848ca38de9aeb"
+};
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+ 
+    // GAME STATE
+    let myRole = 0;
+    let currentRoom = "";
+    let currentPhase = "";
+    
+    // --- LOBBY LOGIC ---
+    window.createRoom = function() {
+        const code = Math.floor(1000 + Math.random() * 9000).toString();
+        const btn = document.getElementById('btn-create');
+        btn.disabled = true;
+
+        set(ref(db, 'sandwich/' + code), {
+            phase: 'waiting',
+            players: { p1: 'connected' },
+            scores: { 1: 0, 2: 0 },
+            inputs: { p1: '', p2: '' },
+            startLetter: '',
+            endLetter: '',
+            msg: '',
+            lastAction: 'created'
+        }).then(() => { enterGame(code, 1); });
+    };
+
+    window.joinRoom = function() {
+        const code = document.getElementById('room-input').value.trim();
+        const btn = document.getElementById('btn-join');
+        if (code.length !== 4) return alert("Enter Code!");
+        btn.disabled = true;
+
+        get(ref(db, 'sandwich/' + code)).then((snap) => {
+            if (snap.exists()) {
+                update(ref(db, 'sandwich/' + code + '/players'), { p2: 'connected' });
+                update(ref(db, 'sandwich/' + code), { phase: 'input' });
+                enterGame(code, 2);
+            } else {
+                alert("Room not found");
+                btn.disabled = false;
+            }
+        });
+    };
+
+    function enterGame(code, role) {
+        currentRoom = code;
+        myRole = role;
+        document.getElementById('lobby-screen').classList.add('hidden');
+        document.getElementById('game-screen').classList.remove('hidden');
+        document.getElementById('display-room-code').innerText = code;
+        document.getElementById('role-display').innerText = role === 1 ? "YOU ARE PLAYER 1" : "YOU ARE PLAYER 2";
+        
+        const input = document.getElementById('main-input');
+        input.addEventListener('focus', () => document.body.classList.add('keyboard-active'));
+        input.addEventListener('blur', () => document.body.classList.remove('keyboard-active'));
+        input.addEventListener('keypress', (e) => { if(e.key === 'Enter') handleInputSubmit(); });
+
+        listenToRoom();
+    }
+
+    // --- GAME LOOP ---
+    function listenToRoom() {
+        onValue(ref(db, 'sandwich/' + currentRoom), (snap) => {
+            const data = snap.val();
+            if (!data) return;
+
+            currentPhase = data.phase;
+
+            // Scores
+            document.getElementById('p1-score').innerText = data.scores[1];
+            document.getElementById('p2-score').innerText = data.scores[2];
+
+            // 1. WAITING
+            if (data.phase === 'waiting') {
+                updateUI("WAITING FOR PLAYER 2...", "?", "?", true, "Waiting...");
+            }
+            
+            // 2. INPUT PHASE
+            else if (data.phase === 'input') {
+                const myInput = myRole === 1 ? data.inputs.p1 : data.inputs.p2;
+                const startBox = document.getElementById('box-start');
+                const endBox = document.getElementById('box-end');
+                
+                // Show visuals
+                if (myRole === 1) {
+                    document.getElementById('char-start').innerText = data.inputs.p1 || "?";
+                    startBox.classList.toggle('filled', !!data.inputs.p1);
+                    document.getElementById('char-end').innerText = data.inputs.p2 ? "🔒" : "?";
+                    endBox.classList.toggle('filled', !!data.inputs.p2);
+                } else {
+                    document.getElementById('char-end').innerText = data.inputs.p2 || "?";
+                    endBox.classList.toggle('filled', !!data.inputs.p2);
+                    document.getElementById('char-start').innerText = data.inputs.p1 ? "🔒" : "?";
+                    startBox.classList.toggle('filled', !!data.inputs.p1);
+                }
+
+                const msg = myRole === 1 ? "ENTER START LETTER (A-Z)" : "ENTER END LETTER (A-Z)";
+                const ph = "Type 1 Letter...";
+                
+                if (!myInput) {
+                    updateUI(msg, null, null, false, ph, 1);
+                } else {
+                    updateUI("WAITING FOR OPPONENT...", null, null, true, "Sent!");
+                }
+
+                // Check Both Ready -> Switch to Prep
+                if (myRole === 1 && data.inputs.p1 && data.inputs.p2) {
+                    setTimeout(() => {
+                        update(ref(db, 'sandwich/' + currentRoom), { phase: 'prep', msg: '3' });
+                        startCountdownLogic(); 
+                    }, 500);
+                }
+            }
+
+            // 3. PREP (COUNTDOWN)
+            else if (data.phase === 'prep') {
+                // Show countdown overlay
+                const cdOverlay = document.getElementById('countdown-overlay');
+                cdOverlay.classList.remove('hidden');
+                cdOverlay.innerText = data.msg;
+                
+                document.getElementById('sfx-beep').play().catch(()=>{});
+
+                // Set Letters
+                document.getElementById('char-start').innerText = data.inputs.p1;
+                document.getElementById('char-end').innerText = data.inputs.p2;
+                document.getElementById('box-start').classList.add('filled');
+                document.getElementById('box-end').classList.add('filled');
+            }
+
+            // 4. RACE PHASE (6 Seconds)
+            else if (data.phase === 'race') {
+                document.getElementById('countdown-overlay').classList.add('hidden');
+                updateUI("RACE! TYPE THE WORD!", null, null, false, `Starts with ${data.startLetter}, Ends with ${data.endLetter}`);
+                
+                // Show Timer
+                startVisualTimer();
+                
+                // Host handles Time's Up
+                if (myRole === 1 && !window.raceTimeout) {
+                    window.raceTimeout = setTimeout(() => {
+                         update(ref(db, 'sandwich/' + currentRoom), {
+                            phase: 'round_end',
+                            winner: 0,
+                            winningWord: "TIME'S UP"
+                        });
+                        window.raceTimeout = null;
+                    }, 6000); // 6 Seconds
+                }
+            }
+
+            // 5. ROUND END
+            else if (data.phase === 'round_end') {
+                document.getElementById('countdown-overlay').classList.add('hidden');
+                clearInterval(window.visualInterval);
+                
+                let winnerText = "DRAW!";
+                let color = "white";
+                
+                if(data.winner === 0) {
+                    winnerText = "TIME'S UP! (NO WINNER)";
+                    color = "var(--danger)";
+                    document.getElementById('sfx-bomb').play().catch(()=>{});
+                } else {
+                    winnerText = data.winner === myRole ? "YOU WON!" : "OPPONENT WON!";
+                    color = data.winner === myRole ? "var(--success)" : "var(--danger)";
+                    if(data.winner === myRole) document.getElementById('sfx-correct').play().catch(()=>{});
+                }
+
+                const indicator = document.getElementById('phase-indicator');
+                indicator.innerText = `${winnerText} (${data.winningWord})`;
+                indicator.style.color = color;
+                
+                document.getElementById('main-input').disabled = true;
+
+                if (myRole === 1 && !window.resetTimeout) {
+                    window.resetTimeout = setTimeout(() => {
+                        update(ref(db, 'sandwich/' + currentRoom), {
+                            phase: 'input',
+                            inputs: { p1: '', p2: '' },
+                            winner: null,
+                            winningWord: null
+                        });
+                        window.resetTimeout = null;
+                    }, 3000);
+                }
+            }
+        });
+    }
+
+    // --- HOST LOGIC: COUNTDOWN ---
+    function startCountdownLogic() {
+        // Only host runs the DB update loop
+        if(myRole !== 1) return;
+        
+        let count = 3;
+        const int = setInterval(() => {
+            count--;
+            if(count > 0) {
+                update(ref(db, 'sandwich/' + currentRoom), { msg: count });
+            } else if (count === 0) {
+                update(ref(db, 'sandwich/' + currentRoom), { phase: 'race' }); // Start Race
+                clearInterval(int);
+            }
+        }, 1000);
+    }
+
+    // --- UI HELPER ---
+    function updateUI(msg, charS, charE, inputDisabled, placeholder, maxLength = 20) {
+        document.getElementById('phase-indicator').innerText = msg;
+        document.getElementById('phase-indicator').style.color = "var(--warning)";
+        
+        const input = document.getElementById('main-input');
+        input.disabled = inputDisabled;
+        input.placeholder = placeholder;
+        input.maxLength = maxLength;
+        if (!inputDisabled && document.activeElement !== input) input.focus();
+        
+        if (inputDisabled) input.value = "";
+    }
+
+    function startVisualTimer() {
+        const barContainer = document.getElementById('timer-container');
+        const bar = document.getElementById('timer-bar');
+        barContainer.classList.add('visible');
+        bar.style.width = "100%";
+        bar.style.backgroundColor = "var(--success)";
+        
+        if(window.visualInterval) clearInterval(window.visualInterval);
+        
+        // 6 Seconds = 6000ms. Step 100ms. 60 steps.
+        let pct = 100;
+        const step = 100 / 60; 
+
+        window.visualInterval = setInterval(() => {
+            pct -= step;
+            bar.style.width = pct + "%";
+            
+            if(pct < 40) bar.style.backgroundColor = "var(--warning)";
+            if(pct < 20) bar.style.backgroundColor = "var(--danger)";
+            
+            if(pct <= 0) {
+                clearInterval(window.visualInterval);
+                barContainer.classList.remove('visible');
+            }
+        }, 100);
+    }
+
+    // --- INPUT HANDLER ---
+    window.handleInputSubmit = function() {
+        const input = document.getElementById('main-input');
+        const val = input.value.trim().toUpperCase();
+        if (!val) return;
+
+        if (currentPhase === 'input') {
+            if (val.length !== 1 || !/[A-Z]/.test(val)) {
+                input.classList.add('error');
+                setTimeout(() => input.classList.remove('error'), 300);
+                return;
+            }
+            const path = 'sandwich/' + currentRoom + '/inputs/p' + myRole;
+            set(ref(db, path), val);
+            input.value = "";
+        } 
+        else if (currentPhase === 'race') {
+            const s = document.getElementById('char-start').innerText;
+            const e = document.getElementById('char-end').innerText;
+
+            if (val.startsWith(s) && val.endsWith(e) && dictionary.includes(val.toLowerCase())) {
+                get(ref(db, 'sandwich/' + currentRoom + '/scores')).then(snap => {
+                    let scores = snap.val();
+                    scores[myRole]++;
+                    
+                    update(ref(db, 'sandwich/' + currentRoom), {
+                        phase: 'round_end',
+                        winner: myRole,
+                        winningWord: val,
+                        scores: scores
+                    });
+                });
+            } else {
+                input.classList.add('error');
+                setTimeout(() => input.classList.remove('error'), 300);
+                input.value = "";
+            }
+        }
+    }
+
+</script>
+</body>
+</html>
