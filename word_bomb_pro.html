@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Word Bomb: Live Typing</title>
+    <title>Word Bomb: Final Sound FX</title>
     <style>
         /* BASE STYLES */
         :root { --bg: #0f172a; --card: #1e293b; --primary: #38bdf8; --text: #f8fafc; --danger: #ef4444; --success: #4ade80; --warning: #fbbf24; }
@@ -72,7 +72,7 @@
 
         .turn-indicator { text-align: center; margin-bottom: 10px; font-weight: bold; color: var(--warning); text-transform: uppercase; letter-spacing: 1px; font-size: 0.9rem; }
 
-        /* PLAYERS BAR */
+        /* PLAYERS BAR & TYPING BUBBLES */
         .players-bar { display: flex; padding: 10px; gap: 10px; background: #0f172a; border-top: 1px solid #334155; height: 130px; transition: height 0.3s; overflow-x: auto; }
         .player-card { flex: 1; min-width: 100px; background: var(--card); padding: 10px; border-radius: 12px; text-align: center; border: 2px solid transparent; opacity: 0.5; transition: 0.3s; display: flex; flex-direction: column; justify-content: center; position: relative; }
         .player-card.active { border-color: var(--primary); opacity: 1; background: rgba(56, 189, 248, 0.05); transform: translateY(-5px); }
@@ -81,7 +81,7 @@
         .p-lives { font-size: 1rem; margin-bottom: 5px; }
         .p-score { font-size: 1.2rem; font-weight: 800; color: var(--primary); line-height: 1; }
 
-        /* TYPING BUBBLE (NEW) */
+        /* TYPING BUBBLE */
         .typing-bubble {
             position: absolute;
             top: -45px; left: 50%; transform: translateX(-50%);
@@ -162,7 +162,7 @@
 <body>
 
     <audio id="sfx-tick" src="https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3"></audio>
-    <audio id="sfx-explode" src="bomb.mp3"></audio>
+    <audio id="sfx-explode" src="bomb.mp3"></audio> 
     <audio id="sfx-correct" src="https://assets.mixkit.co/active_storage/sfx/2000/2000-preview.mp3"></audio>
     <audio id="sfx-beep" src="https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3"></audio>
     <audio id="sfx-go" src="https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3"></audio>
@@ -339,7 +339,6 @@
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
 
-  
     // --- GAME STATE ---
     let myRole = 0; 
     let currentRoom = "";
@@ -347,7 +346,9 @@
     let usedWords = [];
     let currentTurnDuration = 10; 
     let lastActionProcessed = ""; 
+    let lastHostTimerAction = ""; // New tracker for Host Timer
     let currentPrompt = ""; // Local prompt for highlighting
+    let currentGameState = null; // Cache state for optimization
     
     // --- LOBBY LOGIC ---
     window.createRoom = function() {
@@ -551,6 +552,9 @@
             const data = snapshot.val();
             if (!data) return;
 
+            // Cache data locally for immediate Host logic
+            currentGameState = data;
+
             usedWords = data.usedWords || [];
             currentTurnDuration = data.config.maxTime || 10;
             currentPrompt = data.prompt; 
@@ -712,14 +716,19 @@
             document.getElementById('sfx-correct').play().catch(()=>{});
         }
         
-        // Timer Logic Fix: Only reset if action changed
+        // --- KEY FIX FOR TIMER RESET ---
+        // Only restart visual timer if action CHANGED and is a 'start_turn'
         if (data.lastAction !== lastActionProcessed && data.lastAction.includes('start_turn')) {
             startVisualTimer(data.config.maxTime); 
             lastActionProcessed = data.lastAction;
         }
         
-        if (myRole === 1 && !localTimer && data.status === 'playing') {
-            startHostTimer(data.turn, data.isRetry, data.config.maxTime);
+        // Only start host timer if action CHANGED (Prevents restart on every typing update)
+        if (myRole === 1 && data.status === 'playing') {
+             if (data.lastAction !== lastHostTimerAction) {
+                 startHostTimer(data.turn, data.isRetry, data.config.maxTime);
+                 lastHostTimerAction = data.lastAction;
+             }
         }
     }
 
@@ -730,32 +739,31 @@
         if (myRole !== 1) return;
 
         let newPrompt = null; 
-        get(ref(db, 'rooms/' + currentRoom)).then((snap) => {
-            const data = snap.val();
-            let failCount = data.promptFailCount || 0;
-
-            if (!isRetry) {
-                // GENERATE PROMPT (NO HYPHEN LOGIC)
-                let validPrompt = false;
-                while (!validPrompt) {
-                    const word = dictionary[Math.floor(Math.random() * dictionary.length)];
-                    if(word.length < 3) continue; 
-                    const len = Math.random() < 0.5 ? 2 : 3;
-                    const start = Math.floor(Math.random() * (word.length - len));
-                    newPrompt = word.substring(start, start + len).toUpperCase();
-                    if (!newPrompt.includes("-")) validPrompt = true;
-                }
-                failCount = 0; 
-            } else {
-                newPrompt = data.prompt;
+        
+        // OPTIMIZATION: Use cached state
+        const data = currentGameState; 
+        
+        if (!isRetry) {
+            let validPrompt = false;
+            while (!validPrompt) {
+                const word = dictionary[Math.floor(Math.random() * dictionary.length)];
+                if(word.length < 3) continue; 
+                const len = Math.random() < 0.5 ? 2 : 3;
+                const start = Math.floor(Math.random() * (word.length - len));
+                newPrompt = word.substring(start, start + len).toUpperCase();
+                if (!newPrompt.includes("-")) validPrompt = true;
             }
+            if(data) data.promptFailCount = 0;
+        } else {
+            newPrompt = data.prompt;
+        }
 
-            update(ref(db, 'rooms/' + currentRoom), {
-                turn: nextPlayer,
-                prompt: newPrompt,
-                promptFailCount: failCount,
-                lastAction: 'start_turn_' + Date.now()
-            });
+        update(ref(db, 'rooms/' + currentRoom), {
+            turn: nextPlayer,
+            prompt: newPrompt,
+            promptFailCount: (data ? data.promptFailCount : 0),
+            isRetry: isRetry,
+            lastAction: 'start_turn_' + Date.now()
         });
     }
 
@@ -773,43 +781,43 @@
     }
 
     function handleTimeUp(player) {
-        get(ref(db, 'rooms/' + currentRoom)).then((snap) => {
-            const data = snap.val();
-            if(data.status !== 'playing') return;
+        if (!currentGameState || currentGameState.status !== 'playing') return;
 
-            let lives = data.lives;
-            lives[player]--; 
-            
-            // Next Turn Logic
-            let failCount = data.promptFailCount + 1;
-            let nextPlayer = (player % data.config.maxPlayers) + 1;
-            
-            let attempts = 0;
-            while(lives[nextPlayer] <= 0 && attempts < 3) {
-                nextPlayer = (nextPlayer % data.config.maxPlayers) + 1;
-                attempts++;
-            }
+        let lives = currentGameState.lives;
+        lives[player]--; 
+        
+        let failCount = (currentGameState.promptFailCount || 0) + 1;
+        let nextPlayer = (player % currentGameState.config.maxPlayers) + 1;
+        
+        let attempts = 0;
+        while(lives[nextPlayer] <= 0 && attempts < 3) {
+            nextPlayer = (nextPlayer % currentGameState.config.maxPlayers) + 1;
+            attempts++;
+        }
 
-            let aliveCount = 0;
-            for(let i=1; i<=data.config.maxPlayers; i++) { if(lives[i]>0) aliveCount++; }
-            
-            let isRetry = true;
-            if (failCount >= aliveCount) {
-                isRetry = false; 
-            } else if (data.config.maxPlayers === 1) {
-                isRetry = false; 
-            }
+        let aliveCount = 0;
+        for(let i=1; i<=currentGameState.config.maxPlayers; i++) { 
+            if(lives[i] > 0) aliveCount++; 
+        }
+        
+        let isRetry = true;
+        if (failCount >= aliveCount) {
+            isRetry = false; 
+        } else if (currentGameState.config.maxPlayers === 1) {
+            isRetry = false; 
+        }
 
-            update(ref(db, 'rooms/' + currentRoom), {
-                lives: lives,
-                promptFailCount: failCount,
-                lastAction: 'explode_' + Date.now()
-            });
-
-            if ((data.config.maxPlayers > 1 && aliveCount > 1) || (data.config.maxPlayers === 1 && lives[1] > 0)) {
-                setTimeout(() => startTurn(nextPlayer, isRetry), 1000);
-            }
+        // Update DB
+        update(ref(db, 'rooms/' + currentRoom), {
+            lives: lives,
+            promptFailCount: failCount,
+            lastAction: 'explode_' + Date.now()
         });
+
+        // FAST SWITCH (200ms delay)
+        if ((currentGameState.config.maxPlayers > 1 && aliveCount > 1) || (currentGameState.config.maxPlayers === 1 && lives[1] > 0)) {
+            setTimeout(() => startTurn(nextPlayer, isRetry), 200); 
+        }
     }
 
     // --- CLIENT INPUT ---
@@ -869,31 +877,30 @@
     }, 1000);
 
     function processValidMove(player, word) {
-        get(ref(db, 'rooms/' + currentRoom)).then((snap) => {
-            const data = snap.val();
-            let used = data.usedWords || [];
-            if (used.includes(word)) return; 
-            
-            let scores = data.scores;
-            scores[player]++;
-            used.push(word);
-            
-            let nextPlayer = (player % data.config.maxPlayers) + 1;
-            let attempts = 0;
-            while(data.lives[nextPlayer] <= 0 && attempts < 3) {
-                nextPlayer = (nextPlayer % data.config.maxPlayers) + 1;
-                attempts++;
-            }
+        if (!currentGameState) return;
 
-            update(ref(db, 'rooms/' + currentRoom), {
-                scores: scores,
-                usedWords: used,
-                lastAction: 'correct_' + Date.now()
-            });
+        let used = currentGameState.usedWords || [];
+        if (used.includes(word)) return; 
+        
+        let scores = currentGameState.scores;
+        scores[player]++;
+        used.push(word);
+        
+        let nextPlayer = (player % currentGameState.config.maxPlayers) + 1;
+        let attempts = 0;
+        while(currentGameState.lives[nextPlayer] <= 0 && attempts < 3) {
+            nextPlayer = (nextPlayer % currentGameState.config.maxPlayers) + 1;
+            attempts++;
+        }
 
-            clearInterval(hostTimerInterval);
-            startTurn(nextPlayer, false); // New prompt on success
+        update(ref(db, 'rooms/' + currentRoom), {
+            scores: scores,
+            usedWords: used,
+            lastAction: 'correct_' + Date.now()
         });
+
+        clearInterval(hostTimerInterval);
+        startTurn(nextPlayer, false); 
     }
 
     // --- VISUAL TIMER ---
