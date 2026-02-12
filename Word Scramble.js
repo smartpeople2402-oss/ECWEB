@@ -758,6 +758,7 @@ const commonWords = [
   "want",
   "warm",
   "wash",
+  "was",
   "wave",
   "ways",
   "weak",
