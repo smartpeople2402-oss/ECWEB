@@ -17,6 +17,10 @@
             --p1-bg: rgba(14, 165, 233, 0.15);
             --p2-color: #f472b6; /* Pink */
             --p2-bg: rgba(244, 114, 182, 0.15);
+            --p3-color: #fbbf24; /* Amber */
+            --p3-bg: rgba(251, 191, 36, 0.15);
+            --p4-color: #a78bfa; /* Purple */
+            --p4-bg: rgba(167, 139, 250, 0.15);
 
             --danger: #f87171;
             --success: #4ade80;
@@ -70,8 +74,6 @@
         
         /* SETTINGS GRID */
         .settings-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 5px; }
-        /* Full width setting for timer */
-        .setting-box-full { grid-column: span 2; background: rgba(0,0,0,0.3); padding: 8px; border-radius: 12px; text-align: center; border: 1px solid var(--glass-border); }
         .setting-box { background: rgba(0,0,0,0.3); padding: 8px; border-radius: 12px; text-align: center; border: 1px solid var(--glass-border); }
         
         .setting-val { background: transparent; border: none; color: var(--p1-color); font-size: 1.2rem; font-weight: 900; width: 100%; text-align: center; font-family: 'Outfit', sans-serif; }
@@ -109,6 +111,8 @@
         }
         .tag-p1 { border-color: var(--p1-color); color: var(--p1-color); background: var(--p1-bg); }
         .tag-p2 { border-color: var(--p2-color); color: var(--p2-color); background: var(--p2-bg); }
+        .tag-p3 { border-color: var(--p3-color); color: var(--p3-color); background: var(--p3-bg); }
+        .tag-p4 { border-color: var(--p4-color); color: var(--p4-color); background: var(--p4-bg); }
 
         /* INPUT */
         .input-zone { padding: 20px; background: var(--bg-dark); border-top: 1px solid var(--glass-border); }
@@ -120,10 +124,12 @@
         .game-input:focus { border-color: var(--p1-color); background: #0f172a; }
         .game-input.error { border-color: var(--danger); animation: shake 0.4s; }
         
-        .footer-stats { display: flex; gap: 10px; margin-top: 15px; }
-        .stat-card { flex: 1; background: #1e293b; padding: 10px; border-radius: 12px; text-align: center; border: 1px solid transparent; }
+        .footer-stats { display: flex; gap: 10px; margin-top: 15px; flex-wrap: nowrap; }
+        .stat-card { flex: 1; background: #1e293b; padding: 10px; border-radius: 12px; text-align: center; border: 1px solid transparent; min-width: 0; }
         .stat-p1 { border-color: var(--p1-color); }
         .stat-p2 { border-color: var(--p2-color); }
+        .stat-p3 { border-color: var(--p3-color); }
+        .stat-p4 { border-color: var(--p4-color); }
         .sc-val { font-size: 1.5rem; font-weight: 800; line-height: 1; color: white; }
         .sc-lbl { font-size: 0.7rem; font-weight: 700; color: var(--text-muted); }
 
@@ -152,6 +158,8 @@
         @media (max-width: 768px) {
             body.keyboard-active .top-nav, body.keyboard-active .footer-stats { display: none; }
             body.keyboard-active .found-area { height: 100px; flex: none; }
+            .sc-val { font-size: 1.2rem; }
+            .sc-lbl { font-size: 0.6rem; }
         }
         
         @keyframes popIn { 0% { transform: scale(0); } 70% { transform: scale(1.1); } 100% { transform: scale(1); } }
@@ -187,10 +195,8 @@
             <div id="lobby-room-code" class="room-code-display">----</div>
             
             <div class="lobby-section-title">PLAYERS</div>
-            <div class="player-list">
-                <div class="p-item"><div><span class="status-dot dot-green"></span> HOST (P1)</div></div>
-                <div class="p-item"><div id="p2-status-div"><span class="status-dot dot-gray" id="p2-dot"></span> <span id="p2-text">WAITING...</span></div></div>
-            </div>
+            <div class="player-list" id="lobby-players-list">
+                </div>
 
             <div class="lobby-section-title">GAME SETTINGS</div>
             <div class="settings-grid">
@@ -207,14 +213,22 @@
                     </select>
                     <div class="setting-lbl">DIFFICULTY</div>
                 </div>
-                <div class="setting-box-full">
+                <div class="setting-box">
+                    <select id="max-players-input" class="setting-val" style="background:#0f172a; border-radius:8px;" disabled onchange="updateSettings()">
+                        <option value="2" selected>2 PLAYERS</option>
+                        <option value="3">3 PLAYERS</option>
+                        <option value="4">4 PLAYERS</option>
+                    </select>
+                    <div class="setting-lbl">MAX PLAYERS</div>
+                </div>
+                <div class="setting-box">
                     <select id="shuffle-time-input" class="setting-val" style="background:#0f172a; border-radius:8px;" disabled onchange="updateSettings()">
                         <option value="15">15 SECONDS</option>
                         <option value="20" selected>20 SECONDS</option>
                         <option value="30">30 SECONDS</option>
                         <option value="60">60 SECONDS</option>
                     </select>
-                    <div class="setting-lbl">AUTO-SHUFFLE TIMER</div>
+                    <div class="setting-lbl">AUTO-SHUFFLE</div>
                 </div>
             </div>
 
@@ -271,17 +285,25 @@
 
             <div class="input-zone">
                 <input type="text" id="main-input" class="game-input" placeholder="TYPE WORD HERE..." autocomplete="off" enterkeyhint="go">
-                <div class="footer-stats">
-                    <div class="stat-card stat-p1">
-                        <div class="sc-lbl">PLAYER 1</div>
+                <div class="footer-stats" id="footer-stats-container">
+                    <div class="stat-card stat-p1" id="stat-card-p1">
+                        <div class="sc-lbl">P1</div>
                         <div class="sc-val" id="score-p1">0</div>
                     </div>
-                    <div style="display:flex; align-items:center; font-size:0.8rem; color:#64748b; flex-direction: column; justify-content: center;">
-                        TARGET<span id="target-display" style="color:white; font-weight:bold; font-size:1.2rem;">200</span>
-                    </div>
-                    <div class="stat-card stat-p2">
-                        <div class="sc-lbl">PLAYER 2</div>
+                    <div class="stat-card stat-p2" id="stat-card-p2">
+                        <div class="sc-lbl">P2</div>
                         <div class="sc-val" id="score-p2">0</div>
+                    </div>
+                    <div class="stat-card stat-p3 hidden" id="stat-card-p3">
+                        <div class="sc-lbl">P3</div>
+                        <div class="sc-val" id="score-p3">0</div>
+                    </div>
+                    <div class="stat-card stat-p4 hidden" id="stat-card-p4">
+                        <div class="sc-lbl">P4</div>
+                        <div class="sc-val" id="score-p4">0</div>
+                    </div>
+                    <div style="display:flex; align-items:center; font-size:0.8rem; color:#64748b; flex-direction: column; justify-content: center; padding-left:5px;">
+                        TARGET<br><span id="target-display" style="color:white; font-weight:bold; font-size:1.1rem;">200</span>
                     </div>
                 </div>
             </div>
@@ -341,8 +363,6 @@
         "COURAGE","ACCOUNT","UPGRADE","MANAGER","SUPPORT","PUBLISH","ABILITY","DESTINY","PATTERN","QUALITY"
     ]
 };
-    
-    // Variabel commonWords diambil secara otomatis dari file "Word Scramble.js".
 
     let myRole = 0;
     let currentRoom = "";
@@ -354,12 +374,13 @@
         const code = Math.floor(1000 + Math.random() * 9000).toString();
         document.getElementById('btn-create').innerText = "Creating...";
         
-        // Config with new shuffleTime param (default 20)
+        const maxP = parseInt(document.getElementById('max-players-input').value) || 2;
+        
         set(ref(db, 'scramble/' + code), {
-            config: { targetScore: 200, letterCount: 6, shuffleTime: 20 },
+            config: { targetScore: 200, letterCount: 6, shuffleTime: 20, maxPlayers: maxP },
             status: 'waiting',
-            players: { p1: 'connected' },
-            scores: { 1: 0, 2: 0 },
+            players: { 1: 'connected' },
+            scores: { 1: 0, 2: 0, 3: 0, 4: 0 },
             foundWords: {},
             lastAction: 'created'
         }).then(() => { enterGame(code, 1); });
@@ -373,8 +394,26 @@
 
         get(ref(db, 'scramble/' + code)).then((snap) => {
             if (snap.exists()) {
-                update(ref(db, 'scramble/' + code + '/players'), { p2: 'connected' });
-                enterGame(code, 2);
+                const data = snap.val();
+                const maxP = data.config.maxPlayers || 2;
+                const players = data.players || {};
+                
+                let assignedRole = null;
+                // Cari slot pemain yang kosong sesuai batas maxPlayers
+                for(let i = 2; i <= maxP; i++) {
+                    if(!players[i] && !players['p'+i]) {
+                        assignedRole = i;
+                        break;
+                    }
+                }
+                
+                if(assignedRole) {
+                    update(ref(db, 'scramble/' + code + '/players'), { [assignedRole]: 'connected' });
+                    enterGame(code, assignedRole);
+                } else {
+                    alert("Room is full!");
+                    btn.innerText = "JOIN ROOM";
+                }
             } else {
                 alert("Room not found");
                 btn.innerText = "JOIN ROOM";
@@ -387,11 +426,13 @@
         const score = parseInt(document.getElementById('target-score-input').value);
         const letters = parseInt(document.getElementById('letter-count-input').value);
         const time = parseInt(document.getElementById('shuffle-time-input').value);
+        const maxP = parseInt(document.getElementById('max-players-input').value);
         
         update(ref(db, 'scramble/' + currentRoom + '/config'), {
             targetScore: score,
             letterCount: letters,
-            shuffleTime: time
+            shuffleTime: time,
+            maxPlayers: maxP
         });
     }
 
@@ -408,7 +449,6 @@
     function startShuffleTimer() {
         if(shuffleInterval) clearInterval(shuffleInterval);
         
-        // Fetch current time setting from DB/UI to be sure
         const shuffleSeconds = parseInt(document.getElementById('shuffle-time-input').value) || 20;
         
         shuffleInterval = setInterval(() => {
@@ -444,10 +484,11 @@
             document.getElementById('target-score-input').disabled = false;
             document.getElementById('letter-count-input').disabled = false;
             document.getElementById('shuffle-time-input').disabled = false;
-            document.getElementById('waiting-msg').innerText = "WAITING FOR P2...";
+            document.getElementById('max-players-input').disabled = false;
+            document.getElementById('waiting-msg').innerText = "WAITING FOR PLAYERS...";
             document.getElementById('waiting-msg').classList.remove('hidden');
         } else {
-            document.getElementById('waiting-msg').innerText = "WAITING FOR HOST...";
+            document.getElementById('waiting-msg').innerText = "WAITING FOR HOST TO START...";
             document.getElementById('waiting-msg').classList.remove('hidden');
         }
 
@@ -467,27 +508,50 @@
 
             // Sync Config Settings in Lobby & Game
             if (data.config) {
-                if (myRole === 2) {
+                if (myRole !== 1) {
                     document.getElementById('target-score-input').value = data.config.targetScore;
                     document.getElementById('letter-count-input').value = data.config.letterCount;
                     document.getElementById('shuffle-time-input').value = data.config.shuffleTime;
+                    document.getElementById('max-players-input').value = data.config.maxPlayers || 2;
                 }
                 document.getElementById('target-display').innerText = data.config.targetScore;
                 document.getElementById('timer-display').innerText = `CHANGES IN ${data.config.shuffleTime}s`;
             }
 
             if (data.status === 'waiting') {
-                if (data.players.p2 === 'connected') {
-                    document.getElementById('p2-dot').className = "status-dot dot-green";
-                    document.getElementById('p2-text').innerText = "PLAYER 2 (CONNECTED)";
-                    document.getElementById('p2-text').style.color = "var(--success)";
+                const pList = document.getElementById('lobby-players-list');
+                pList.innerHTML = '';
+                const maxP = data.config.maxPlayers || 2;
+                let pCount = 0;
+                
+                // Render daftar pemain secara dinamis
+                for(let i=1; i<=maxP; i++) {
+                    const isConnected = data.players && (data.players[i] || data.players['p'+i]);
+                    if(isConnected) pCount++;
                     
-                    if(myRole === 1) {
+                    const dotClass = isConnected ? 'dot-green' : 'dot-gray';
+                    let textStr = `WAITING...`;
+                    if (isConnected) {
+                        if (i === 1) textStr = `HOST (P1)`;
+                        else textStr = `PLAYER ${i} (READY)`;
+                    }
+                    const color = isConnected ? (i===1 ? 'white' : 'var(--success)') : 'inherit';
+                    
+                    pList.innerHTML += `<div class="p-item"><div><span class="status-dot ${dotClass}"></span> <span style="color:${color}">${textStr}</span></div></div>`;
+                }
+                
+                if(myRole === 1) {
+                    if(pCount > 1) {
                         document.getElementById('btn-start-game').classList.remove('hidden');
                         document.getElementById('waiting-msg').classList.add('hidden');
                     } else {
-                        document.getElementById('waiting-msg').innerText = "HOST IS STARTING GAME...";
+                        document.getElementById('btn-start-game').classList.add('hidden');
+                        document.getElementById('waiting-msg').innerText = "WAITING FOR PLAYERS...";
+                        document.getElementById('waiting-msg').classList.remove('hidden');
                     }
+                } else {
+                    document.getElementById('waiting-msg').innerText = "WAITING FOR HOST TO START...";
+                    document.getElementById('waiting-msg').classList.remove('hidden');
                 }
             } 
             else if (data.status === 'playing') {
@@ -504,8 +568,18 @@
                 showWinOverlay(data.winner);
             }
 
-            document.getElementById('score-p1').innerText = data.scores[1];
-            document.getElementById('score-p2').innerText = data.scores[2];
+            // Update Stats Display secara dinamis
+            for(let i=1; i<=4; i++) {
+                const statCard = document.getElementById(`stat-card-p${i}`);
+                if(statCard) {
+                    if(i <= (data.config.maxPlayers || 2)) {
+                        statCard.classList.remove('hidden');
+                        document.getElementById(`score-p${i}`).innerText = (data.scores && data.scores[i]) ? data.scores[i] : 0;
+                    } else {
+                        statCard.classList.add('hidden');
+                    }
+                }
+            }
 
             renderFoundWords(data.foundWords);
         });
@@ -534,7 +608,7 @@
         }
         Object.values(foundObj).forEach(item => {
             const tag = document.createElement('div');
-            tag.className = `found-tag ${item.by === 1 ? 'tag-p1' : 'tag-p2'}`;
+            tag.className = `found-tag tag-p${item.by}`; // Dinamis hingga player 4
             tag.innerHTML = `<span>${item.word}</span>`;
             container.appendChild(tag);
         });
@@ -543,7 +617,6 @@
 
     window.checkWord = function() {
         const input = document.getElementById('main-input');
-        // Tetap menggunakan toUpperCase() di sisi antarmuka supaya input terlihat rapi
         const word = input.value.trim().toUpperCase();
         
         if (word.length < 2) return; 
@@ -571,9 +644,6 @@
     }
 
     function validateAndSubmit(word, roomData) {
-        // PERUBAHAN DI SINI:
-        // Pengecekan case-insensitive menggunakan fungsi .some()
-        // Ini akan mengubah kata dari database menjadi huruf besar sementara untuk dicocokkan dengan input
         const isWordValid = commonWords.some(dictWord => dictWord.toUpperCase() === word);
 
         if (!isWordValid) {
@@ -625,7 +695,7 @@
             if(myRole === 1) {
                 update(ref(db, 'scramble/' + currentRoom), {
                     status: 'waiting',
-                    scores: { 1: 0, 2: 0 },
+                    scores: { 1: 0, 2: 0, 3: 0, 4: 0 },
                     foundWords: null,
                     winner: null,
                     letters: null
