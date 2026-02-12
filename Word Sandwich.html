@@ -3,129 +3,390 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Word Sandwich: Blitz Mode</title>
+    <title>Word Sandwich: Chat & Sound Update</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
-        /* BASE STYLES */
-        :root { --bg: #0f172a; --card: #1e293b; --primary: #f59e0b; --text: #f8fafc; --danger: #ef4444; --success: #4ade80; --warning: #fbbf24; }
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { font-family: 'Segoe UI', sans-serif; background-color: var(--bg); color: var(--text); margin: 0; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
-
-        .hidden { display: none !important; }
-        .center { display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        .full-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 100; background: var(--bg); }
-
-        /* LOBBY */
-        .setup-card { background: var(--card); padding: 25px; border-radius: 20px; border: 1px solid #334155; width: 90%; max-width: 450px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        .title { font-size: 2.5rem; font-weight: 900; color: var(--primary); margin-bottom: 5px; text-transform: uppercase; letter-spacing: 2px; }
-        .input-code { width: 100%; padding: 15px; background: #0f172a; border: 2px solid #334155; border-radius: 10px; color: white; font-size: 1.5rem; text-align: center; margin-bottom: 15px; letter-spacing: 5px; font-weight: bold; text-transform: uppercase; }
-        .btn { width: 100%; padding: 15px; border: none; border-radius: 10px; font-weight: bold; font-size: 1.1rem; cursor: pointer; transition: 0.2s; margin-bottom: 10px; }
-        .btn-primary { background: var(--primary); color: #0f172a; }
-        .btn-success { background: var(--success); color: #0f172a; }
-        
-        /* GAME HEADER */
-        .game-header { padding: 15px; display: flex; justify-content: space-between; align-items: center; background: rgba(30, 41, 59, 0.5); border-bottom: 1px solid #334155; height: 60px; }
-        .room-badge { background: #334155; padding: 5px 10px; border-radius: 5px; font-size: 0.8rem; font-weight: bold; }
-
-        /* GAMEPLAY AREA */
-        .game-area { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; }
-        
-        /* SANDWICH DISPLAY */
-        .sandwich-container { display: flex; gap: 15px; align-items: center; margin-bottom: 20px; transition: 0.3s; }
-        .letter-box { width: 80px; height: 100px; background: #334155; border: 3px solid var(--primary); border-radius: 15px; display: flex; justify-content: center; align-items: center; font-size: 3rem; font-weight: 900; text-transform: uppercase; box-shadow: 0 5px 15px rgba(0,0,0,0.3); transition: 0.3s; position: relative; }
-        .letter-box.empty { border-style: dashed; color: #555; }
-        .letter-box.filled { background: var(--primary); color: #0f172a; border-style: solid; }
-        .letter-label { position: absolute; top: -25px; font-size: 0.7rem; color: #aaa; font-weight: bold; width: 150%; text-align: center; }
-
-        /* INPUT AREA */
-        .input-container { padding: 20px; width: 100%; max-width: 500px; margin: 0 auto; position: relative; }
-        .word-input { width: 100%; padding: 20px; background: var(--card); border: 2px solid #475569; border-radius: 15px; color: white; font-size: 1.5rem; text-align: center; text-transform: uppercase; outline: none; transition: 0.3s; }
-        .word-input:focus { border-color: var(--primary); box-shadow: 0 0 20px rgba(245, 158, 11, 0.2); }
-        .word-input.error { border-color: var(--danger); animation: shake 0.3s; }
-
-        /* TIMER BAR */
-        .timer-container { width: 80%; max-width: 300px; height: 8px; background: #334155; border-radius: 10px; margin-bottom: 20px; overflow: hidden; opacity: 0; transition: opacity 0.3s; }
-        .timer-fill { height: 100%; width: 100%; background: var(--success); transition: width 0.1s linear; }
-        .timer-container.visible { opacity: 1; }
-
-        /* PLAYERS */
-        .players-bar { display: flex; padding: 10px; gap: 10px; background: #0f172a; border-top: 1px solid #334155; height: 100px; }
-        .player-card { flex: 1; background: var(--card); padding: 10px; border-radius: 12px; text-align: center; border: 2px solid transparent; opacity: 0.5; transition: 0.3s; display: flex; flex-direction: column; justify-content: center; }
-        .player-card.active { border-color: var(--primary); opacity: 1; background: rgba(245, 158, 11, 0.1); transform: translateY(-5px); }
-        .p-score { font-size: 1.5rem; font-weight: 800; color: var(--primary); }
-
-        /* COUNTDOWN OVERLAY */
-        .countdown-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.9); z-index: 500; display: flex; justify-content: center; align-items: center; font-size: 8rem; font-weight: 900; color: var(--primary); text-shadow: 0 0 30px var(--primary); animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        
-        .phase-text { font-size: 1rem; font-weight: bold; color: var(--warning); margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px; min-height: 24px; }
-
-        /* Mobile Fix */
-        @media (max-width: 768px) {
-            body.keyboard-active .game-header, body.keyboard-active .players-bar { display: none !important; }
-            body.keyboard-active .game-area { justify-content: flex-start; padding-top: 20px; }
-            body.keyboard-active .sandwich-container { transform: scale(0.8); margin-bottom: 10px; }
+        /* --- 1. THEME & VARIABLES --- */
+        :root {
+            --bg-dark: #0f172a;
+            --glass-bg: rgba(30, 41, 59, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --accent-bread: #fbbf24;
+            --accent-lettuce: #4ade80;
+            --danger: #f87171;
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+            --radius-lg: 24px;
+            --radius-md: 16px;
         }
 
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
+        
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            margin: 0;
+            height: 100vh; /* Fallback */
+            height: 100dvh; 
+            overflow: hidden;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(251, 191, 36, 0.15) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(74, 222, 128, 0.15) 0px, transparent 50%);
+            display: flex; flex-direction: column;
+        }
+
+        /* --- 2. UTILITIES --- */
+        .hidden { display: none !important; }
+        .full-screen { 
+            position: absolute; top: 0; left: 0; 
+            width: 100%; height: 100%; 
+            display: flex; flex-direction: column;
+            z-index: 10;
+        }
+
+        /* --- 3. MAIN MENU --- */
+        .lobby-wrapper {
+            flex: 1; display: flex; flex-direction: column;
+            justify-content: center; align-items: center; padding: 20px;
+        }
+
+        .card-glass {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            padding: 30px;
+            border-radius: var(--radius-lg);
+            width: 100%; max-width: 400px;
+            text-align: center;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            animation: slideUp 0.5s ease-out;
+            display: flex; flex-direction: column; gap: 15px;
+        }
+
+        .logo-emoji { font-size: 3.5rem; margin-bottom: 5px; display: inline-block; animation: float 3s infinite ease-in-out; }
+        .game-title {
+            font-size: 2rem; font-weight: 900; margin: 0;
+            background: linear-gradient(135deg, #fbbf24, #f59e0b);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .game-subtitle { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 10px; }
+
+        .code-input {
+            width: 100%; padding: 16px;
+            background: rgba(15, 23, 42, 0.6);
+            border: 2px solid var(--glass-border);
+            border-radius: var(--radius-md);
+            color: white; font-size: 1.5rem; text-align: center;
+            font-weight: 700; letter-spacing: 5px; text-transform: uppercase;
+        }
+        .code-input:focus { border-color: var(--accent-bread); }
+
+        .btn-main {
+            width: 100%; padding: 18px; border: none; border-radius: var(--radius-md);
+            font-size: 1rem; font-weight: 800; cursor: pointer;
+            transition: transform 0.1s; font-family: 'Outfit', sans-serif;
+        }
+        .btn-main:active { transform: scale(0.98); }
+        .btn-create { background: var(--accent-bread); color: #451a03; }
+        .btn-join { background: #334155; color: white; border: 1px solid var(--glass-border); }
+
+        /* --- 4. ROOM LOBBY & VOLUME --- */
+        #room-lobby-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.95); z-index: 50;
+            display: flex; justify-content: center; align-items: center;
+            padding: 20px;
+        }
+
+        .lobby-section-title {
+            font-size: 0.75rem; color: var(--text-muted); font-weight: 700; 
+            text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; text-align: left;
+        }
+
+        .settings-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
+        .setting-box {
+            background: rgba(0,0,0,0.3); padding: 12px; border-radius: 12px;
+            text-align: center; border: 1px solid var(--glass-border);
+        }
+        .setting-val {
+            background: transparent; border: none; color: var(--accent-bread);
+            font-size: 1.5rem; font-weight: 900; width: 100%; text-align: center;
+            font-family: 'Outfit', sans-serif;
+        }
+        
+        /* Volume Slider Styling */
+        .vol-slider-container { display: flex; align-items: center; gap: 10px; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 10px; margin-bottom: 15px; }
+        input[type=range] { flex: 1; accent-color: var(--accent-lettuce); height: 6px; border-radius: 5px; }
+
+        .tutorial-list { text-align: left; background: rgba(255,255,255,0.05); padding: 15px; border-radius: 16px; margin-bottom: 20px; }
+        .tutorial-item { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; font-size: 0.9rem; color: #e2e8f0; }
+        .t-icon { font-size: 1.2rem; min-width: 25px; text-align: center; }
+
+        .lobby-status-text { font-size: 1rem; font-weight: 700; color: var(--accent-lettuce); animation: pulse 1.5s infinite; margin-top: 10px; }
+        .room-code-display { font-size: 3rem; font-weight: 900; color: var(--accent-bread); letter-spacing: 5px; line-height: 1; margin: 10px 0 20px 0; }
+
+        /* --- 5. GAMEPLAY UI & CHAT --- */
+        .game-layout {
+            display: flex; flex-direction: column; height: 100%;
+            max-width: 600px; margin: 0 auto; width: 100%; position: relative;
+        }
+
+        .top-nav {
+            padding: 15px 20px; display: flex; justify-content: space-between; align-items: center;
+            background: rgba(15, 23, 42, 0.5); backdrop-filter: blur(5px);
+            border-bottom: 1px solid var(--glass-border);
+            z-index: 20;
+        }
+        .room-pill {
+            font-size: 0.8rem; font-weight: 700; color: var(--text-muted);
+            background: rgba(255,255,255,0.05); padding: 5px 12px; border-radius: 20px;
+        }
+
+        /* Chat Button */
+        .chat-btn-wrapper { position: relative; }
+        .btn-chat-toggle {
+            background: rgba(255,255,255,0.1); border: 1px solid var(--glass-border);
+            color: white; border-radius: 50%; width: 40px; height: 40px;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; font-size: 1.2rem; transition: 0.2s;
+        }
+        .btn-chat-toggle:active { transform: scale(0.9); background: var(--accent-bread); color: black; }
+        .chat-badge {
+            position: absolute; top: -2px; right: -2px; width: 12px; height: 12px;
+            background: var(--danger); border-radius: 50%; border: 2px solid var(--bg-dark);
+        }
+
+        /* Chat Overlay */
+        #chat-modal {
+            position: absolute; top: 60px; right: 10px; left: 10px; bottom: 80px;
+            background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(15px);
+            border: 1px solid var(--glass-border); border-radius: 20px;
+            z-index: 100; display: flex; flex-direction: column;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+            transform-origin: top right; transition: all 0.2s ease-out;
+        }
+        #chat-modal.hidden { opacity: 0; transform: scale(0.9); pointer-events: none; display: flex !important; visibility: hidden; }
+
+        .chat-header {
+            padding: 15px; border-bottom: 1px solid var(--glass-border);
+            font-weight: 700; display: flex; justify-content: space-between; align-items: center;
+        }
+        .chat-messages {
+            flex: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 10px;
+        }
+        .chat-bubble {
+            max-width: 80%; padding: 10px 14px; border-radius: 14px; font-size: 0.9rem;
+            line-height: 1.4; position: relative; word-wrap: break-word;
+        }
+        .chat-bubble.mine { align-self: flex-end; background: var(--accent-bread); color: #451a03; border-bottom-right-radius: 4px; }
+        .chat-bubble.theirs { align-self: flex-start; background: #334155; color: white; border-bottom-left-radius: 4px; }
+        
+        .chat-input-area { padding: 10px; border-top: 1px solid var(--glass-border); display: flex; gap: 10px; }
+        .chat-input {
+            flex: 1; padding: 12px; border-radius: 20px; border: none;
+            background: #1e293b; color: white; font-family: inherit;
+        }
+        .btn-send {
+            background: var(--accent-lettuce); border: none; border-radius: 50%;
+            width: 44px; height: 44px; display: flex; align-items: center; justify-content: center;
+            color: #064e3b; font-size: 1.2rem; cursor: pointer;
+        }
+
+        /* Arena */
+        .arena {
+            flex: 1; display: flex; flex-direction: column;
+            justify-content: center; align-items: center; padding: 20px; position: relative;
+        }
+        .status-pill {
+            margin-bottom: 30px; padding: 8px 24px; border-radius: 30px;
+            font-size: 0.85rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px;
+            background: rgba(251, 191, 36, 0.1); color: var(--accent-bread);
+            border: 1px solid rgba(251, 191, 36, 0.2); transition: 0.3s;
+        }
+        .sandwich-wrapper {
+            display: flex; align-items: center; justify-content: center;
+            gap: 15px; margin-bottom: 40px; transition: 0.4s;
+        }
+        .bread-slice {
+            width: 80px; height: 100px; background: #1e293b;
+            border: 2px dashed #475569; border-radius: 18px;
+            display: flex; justify-content: center; align-items: center;
+            font-size: 3rem; font-weight: 900; color: #475569; position: relative; transition: 0.3s;
+        }
+        .bread-slice.active {
+            background: linear-gradient(135deg, #fbbf24, #f59e0b);
+            border-style: solid; border-color: #fcd34d; color: #78350f;
+            transform: translateY(-8px); box-shadow: 0 15px 30px -5px rgba(245, 158, 11, 0.4);
+        }
+        .bread-label {
+            position: absolute; top: -12px; background: #0f172a; color: white;
+            font-size: 0.6rem; font-weight: 700; padding: 2px 8px; border-radius: 10px;
+            border: 1px solid #334155;
+        }
+        .filler-dots { font-size: 2rem; color: #475569; letter-spacing: 4px; font-weight: 900; }
+
+        .input-zone { width: 100%; position: relative; margin-top: auto; margin-bottom: 20px;}
+        .game-input {
+            width: 100%; padding: 20px; background: #1e293b; border: 2px solid #334155;
+            border-radius: 20px; color: white; font-size: 1.5rem; font-weight: 700;
+            text-align: center; text-transform: uppercase; font-family: 'Outfit', sans-serif; transition: 0.3s;
+        }
+        .game-input:focus { background: #0f172a; border-color: var(--accent-lettuce); box-shadow: 0 0 0 4px rgba(74, 222, 128, 0.1); }
+        .game-input.error { border-color: var(--danger); animation: shake 0.4s; }
+        
+        .timer-track { height: 4px; width: 100%; background: #334155; border-radius: 4px; margin-top: 15px; overflow: hidden; opacity: 0; }
+        .timer-fill { height: 100%; background: var(--accent-lettuce); width: 100%; }
+
+        .footer-stats {
+            background: #1e293b; padding: 20px 20px 30px 20px;
+            border-top-left-radius: 24px; border-top-right-radius: 24px;
+            display: flex; gap: 15px; border-top: 1px solid #334155;
+        }
+        .stat-card {
+            flex: 1; background: #0f172a; padding: 12px; border-radius: 16px;
+            text-align: center; border: 1px solid transparent; opacity: 0.6;
+        }
+        .stat-card.active { border-color: var(--accent-bread); opacity: 1; background: rgba(251, 191, 36, 0.05); }
+        .p-name { font-size: 0.7rem; color: #94a3b8; font-weight: 700; margin-bottom: 2px; }
+        .p-score { font-size: 1.8rem; color: white; font-weight: 800; line-height: 1; }
+
+        /* Keyboard Focus */
+        body.keyboard-active .top-nav, body.keyboard-active .footer-stats { display: none; }
+        body.keyboard-active .arena { justify-content: flex-start; padding-top: 10vh; }
+        body.keyboard-active .sandwich-wrapper { transform: scale(0.9); margin-bottom: 15px; }
+
+        .overlay-count {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.9); backdrop-filter: blur(5px);
+            z-index: 100; display: flex; justify-content: center; align-items: center;
+            font-size: 8rem; font-weight: 900; color: var(--accent-bread);
+            animation: popIn 0.4s;
+        }
+
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        @keyframes popIn { from { transform: scale(0); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
         @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
-        @keyframes popIn { 0% { transform: scale(0); opacity: 0; } 80% { transform: scale(1.1); opacity: 1; } 100% { transform: scale(1); } }
+
     </style>
 </head>
 <body>
 
     <audio id="sfx-correct" src="https://assets.mixkit.co/active_storage/sfx/2000/2000-preview.mp3"></audio>
     <audio id="sfx-beep" src="https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3"></audio>
-    <audio id="sfx-bomb" src="bomb.mp3"></audio> <div id="lobby-screen" class="full-screen center">
-        <div class="setup-card">
-            <div class="title">WORD<br>SANDWICH 🥪</div>
-            <div class="subtitle" style="margin-bottom: 20px;">6 Seconds Blitz</div>
-            <input type="text" id="room-input" class="input-code" placeholder="CODE" maxlength="4">
-            <button class="btn btn-primary" id="btn-create" onclick="createRoom()">CREATE ROOM (P1)</button>
-            <button class="btn btn-success" id="btn-join" onclick="joinRoom()">JOIN ROOM (P2)</button>
-            <div id="lobby-status" style="margin-top:10px; color:#aaa; font-size:0.9rem;">Enter code to join</div>
+    <audio id="sfx-bomb" src="bomb.mp3"></audio>
+
+    <div id="lobby-screen" class="full-screen lobby-wrapper">
+        <div class="card-glass">
+            <div class="logo-emoji">🥪</div>
+            <div>
+                <h1 class="game-title">Word Sandwich</h1>
+                <div class="game-subtitle">Fast-Paced Word Battle</div>
+            </div>
+            
+            <button class="btn-main btn-create" id="btn-create" onclick="createRoom()">CREATE ROOM</button>
+            <div style="width:100%; height:1px; background:var(--glass-border); margin: 5px 0;"></div>
+            <div class="input-group">
+                <input type="text" id="room-input" class="code-input" placeholder="CODE" maxlength="4">
+            </div>
+            <button class="btn-main btn-join" id="btn-join" onclick="joinRoom()">JOIN ROOM</button>
         </div>
     </div>
 
-    <div id="game-screen" class="hidden" style="height: 100vh; display: flex; flex-direction: column;">
-        <div class="game-header">
-            <div class="room-badge">ROOM: <span id="display-room-code" style="color:var(--warning)">----</span></div>
-            <div id="role-display" style="font-size:0.8rem; font-weight:bold; color:#aaa;">PLAYER</div>
+    <div id="game-screen" class="hidden full-screen" style="background: var(--bg-dark);">
+        
+        <div id="room-lobby-overlay">
+            <div class="card-glass" style="max-width: 380px;">
+                <div style="font-size:0.8rem; color:#94a3b8; letter-spacing:2px; font-weight:700;">ROOM CODE</div>
+                <div id="lobby-room-code" class="room-code-display">----</div>
+                
+                <div class="lobby-section-title">GAME SETTINGS</div>
+                <div class="settings-grid">
+                    <div class="setting-box">
+                        <input type="number" id="time-input" class="setting-val" value="6" min="3" max="60" disabled onchange="updateSettings()">
+                        <div style="font-size:0.7rem; color:#94a3b8; margin-top:5px;">SECONDS</div>
+                    </div>
+                    <div class="setting-box">
+                        <input type="number" id="score-input" class="setting-val" value="5" min="1" max="50" disabled onchange="updateSettings()">
+                        <div style="font-size:0.7rem; color:#94a3b8; margin-top:5px;">TARGET WIN</div>
+                    </div>
+                </div>
+
+                <div class="lobby-section-title">SOUND VOLUME</div>
+                <div class="vol-slider-container">
+                    <span>🔊</span>
+                    <input type="range" min="0" max="1" step="0.1" value="1" oninput="setVolume(this.value)">
+                </div>
+
+                <div class="lobby-section-title">HOW TO PLAY</div>
+                <div class="tutorial-list">
+                    <div class="tutorial-item"><div class="t-icon">🍞</div><div><b>Host</b> chooses Start Letter.</div></div>
+                    <div class="tutorial-item"><div class="t-icon">🔒</div><div><b>Opponent</b> chooses End Letter.</div></div>
+                    <div class="tutorial-item"><div class="t-icon">⚡</div><div>Race to type a word that fits!</div></div>
+                </div>
+
+                <div id="lobby-msg" class="lobby-status-text">WAITING FOR PLAYER 2...</div>
+            </div>
         </div>
 
-        <div class="game-area">
-            <div class="phase-text" id="phase-indicator">WAITING FOR PLAYERS...</div>
-
-            <div id="countdown-overlay" class="countdown-overlay hidden">3</div>
-
-            <div class="sandwich-container">
-                <div class="letter-box" id="box-start">
-                    <span class="letter-label">STARTS WITH (P1)</span>
-                    <span id="char-start">?</span>
+        <div class="game-layout">
+            <div class="top-nav">
+                <div class="room-pill">ROOM <span id="display-room-code" style="color:var(--accent-bread)">----</span></div>
+                
+                <div class="chat-btn-wrapper">
+                    <button class="btn-chat-toggle" onclick="toggleChat()">💬</button>
+                    <div id="chat-badge" class="chat-badge hidden"></div>
                 </div>
                 
-                <div style="font-size: 2rem; color: #475569;">...</div>
+                <div class="room-pill" id="role-display">SPECTATOR</div>
+            </div>
 
-                <div class="letter-box" id="box-end">
-                    <span class="letter-label">ENDS WITH (P2)</span>
-                    <span id="char-end">?</span>
+            <div id="chat-modal" class="hidden">
+                <div class="chat-header">
+                    <span>Chat Room</span>
+                    <span style="cursor:pointer;" onclick="toggleChat()">✕</span>
+                </div>
+                <div class="chat-messages" id="chat-messages">
+                    </div>
+                <div class="chat-input-area">
+                    <input type="text" id="chat-input" class="chat-input" placeholder="Say hello..." autocomplete="off">
+                    <button class="btn-send" onclick="sendChat()">➤</button>
                 </div>
             </div>
 
-            <div class="timer-container" id="timer-container">
-                <div class="timer-fill" id="timer-bar"></div>
+            <div class="arena">
+                <div class="status-pill" id="phase-indicator">WAITING...</div>
+                <div id="countdown-overlay" class="overlay-count hidden">3</div>
+
+                <div class="sandwich-wrapper">
+                    <div class="bread-slice" id="box-start">
+                        <div class="bread-label">START</div>
+                        <span id="char-start">?</span>
+                    </div>
+                    <div class="filler-dots">...</div>
+                    <div class="bread-slice" id="box-end">
+                        <div class="bread-label">END</div>
+                        <span id="char-end">?</span>
+                    </div>
+                </div>
+
+                <div class="input-zone">
+                    <input type="text" id="main-input" class="game-input" placeholder="WAITING..." autocomplete="off" disabled enterkeyhint="go">
+                    <div class="timer-track" id="timer-container"><div class="timer-fill" id="timer-bar"></div></div>
+                </div>
             </div>
 
-            <div class="input-container">
-                <input type="text" id="main-input" class="word-input" placeholder="..." autocomplete="off" disabled>
-            </div>
-        </div>
-
-        <div class="players-bar">
-            <div id="p1-card" class="player-card">
-                <div class="p-name">PLAYER 1</div>
-                <div class="p-score" id="p1-score">0</div>
-            </div>
-            <div id="p2-card" class="player-card">
-                <div class="p-name">PLAYER 2</div>
-                <div class="p-score" id="p2-score">0</div>
+            <div class="footer-stats">
+                <div id="p1-card" class="stat-card">
+                    <div class="p-name">PLAYER 1</div>
+                    <div class="p-score" id="p1-score">0</div>
+                </div>
+                <div id="p2-card" class="stat-card">
+                    <div class="p-name">PLAYER 2</div>
+                    <div class="p-score" id="p2-score">0</div>
+                </div>
             </div>
         </div>
     </div>
@@ -134,7 +395,7 @@
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
-    import { getDatabase, ref, set, onValue, update, get } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js";
+    import { getDatabase, ref, set, onValue, update, get, push, onChildAdded } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js";
 
    const firebaseConfig = {
   apiKey: "AIzaSyAgYCaaoGMzZWVT2dRov7ALUnnMhHoqXmE",
@@ -149,26 +410,35 @@
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
 
- 
-    // GAME STATE
+   
     let myRole = 0;
     let currentRoom = "";
     let currentPhase = "";
+    let volumeLevel = 1.0;
+
+    // --- VOLUME LOGIC ---
+    window.setVolume = function(val) {
+        volumeLevel = parseFloat(val);
+        document.getElementById('sfx-correct').volume = volumeLevel;
+        document.getElementById('sfx-beep').volume = volumeLevel;
+        document.getElementById('sfx-bomb').volume = volumeLevel;
+    };
     
     // --- LOBBY LOGIC ---
     window.createRoom = function() {
         const code = Math.floor(1000 + Math.random() * 9000).toString();
         const btn = document.getElementById('btn-create');
-        btn.disabled = true;
+        const timeLimit = 6; const targetScore = 5;
+
+        btn.disabled = true; btn.innerText = "Creating...";
 
         set(ref(db, 'sandwich/' + code), {
+            config: { timeLimit: timeLimit, targetScore: targetScore },
             phase: 'waiting',
             players: { p1: 'connected' },
             scores: { 1: 0, 2: 0 },
             inputs: { p1: '', p2: '' },
-            startLetter: '',
-            endLetter: '',
-            msg: '',
+            startLetter: '', endLetter: '', msg: '',
             lastAction: 'created'
         }).then(() => { enterGame(code, 1); });
     };
@@ -177,16 +447,15 @@
         const code = document.getElementById('room-input').value.trim();
         const btn = document.getElementById('btn-join');
         if (code.length !== 4) return alert("Enter Code!");
-        btn.disabled = true;
+        btn.disabled = true; btn.innerText = "Joining...";
 
         get(ref(db, 'sandwich/' + code)).then((snap) => {
             if (snap.exists()) {
                 update(ref(db, 'sandwich/' + code + '/players'), { p2: 'connected' });
-                update(ref(db, 'sandwich/' + code), { phase: 'input' });
                 enterGame(code, 2);
             } else {
                 alert("Room not found");
-                btn.disabled = false;
+                btn.disabled = false; btn.innerText = "JOIN ROOM";
             }
         });
     };
@@ -194,98 +463,184 @@
     function enterGame(code, role) {
         currentRoom = code;
         myRole = role;
+        
         document.getElementById('lobby-screen').classList.add('hidden');
         document.getElementById('game-screen').classList.remove('hidden');
         document.getElementById('display-room-code').innerText = code;
-        document.getElementById('role-display').innerText = role === 1 ? "YOU ARE PLAYER 1" : "YOU ARE PLAYER 2";
+        document.getElementById('lobby-room-code').innerText = code;
+        document.getElementById('role-display').innerText = role === 1 ? "PLAYER 1" : "PLAYER 2";
         
+        if (role === 1) {
+            document.getElementById('time-input').disabled = false;
+            document.getElementById('score-input').disabled = false;
+            document.getElementById('lobby-msg').innerText = "WAITING FOR PLAYER 2...";
+        } else {
+            document.getElementById('lobby-msg').innerText = "CONNECTED! WAITING HOST...";
+        }
+
         const input = document.getElementById('main-input');
         input.addEventListener('focus', () => document.body.classList.add('keyboard-active'));
         input.addEventListener('blur', () => document.body.classList.remove('keyboard-active'));
         input.addEventListener('keypress', (e) => { if(e.key === 'Enter') handleInputSubmit(); });
 
+        // Initialize Chat Listener
+        initChatListener();
         listenToRoom();
     }
 
+    // --- CHAT LOGIC ---
+    let isChatOpen = false;
+
+    window.toggleChat = function() {
+        const modal = document.getElementById('chat-modal');
+        const badge = document.getElementById('chat-badge');
+        
+        isChatOpen = !isChatOpen;
+        
+        if(isChatOpen) {
+            modal.classList.remove('hidden');
+            badge.classList.add('hidden'); // Hide badge when opened
+            document.getElementById('chat-input').focus();
+        } else {
+            modal.classList.add('hidden');
+        }
+    }
+
+    window.sendChat = function() {
+        const input = document.getElementById('chat-input');
+        const msg = input.value.trim();
+        if(!msg) return;
+
+        push(ref(db, 'sandwich/' + currentRoom + '/chat'), {
+            sender: myRole,
+            text: msg,
+            time: Date.now()
+        });
+        input.value = "";
+    }
+
+    function initChatListener() {
+        // Submit on Enter
+        document.getElementById('chat-input').addEventListener('keypress', (e) => {
+            if(e.key === 'Enter') window.sendChat();
+        });
+
+        onChildAdded(ref(db, 'sandwich/' + currentRoom + '/chat'), (snapshot) => {
+            const data = snapshot.val();
+            const container = document.getElementById('chat-messages');
+            
+            const div = document.createElement('div');
+            div.className = `chat-bubble ${data.sender === myRole ? 'mine' : 'theirs'}`;
+            div.innerText = data.text;
+            
+            container.appendChild(div);
+            container.scrollTop = container.scrollHeight;
+
+            // Notification Logic
+            if (!isChatOpen && data.sender !== myRole) {
+                const badge = document.getElementById('chat-badge');
+                badge.classList.remove('hidden');
+                // Optional: Play soft sound for chat?
+            }
+        });
+    }
+
     // --- GAME LOOP ---
+    window.updateSettings = function() {
+        if(myRole !== 1) return;
+        const timeLimit = parseInt(document.getElementById('time-input').value);
+        const targetScore = parseInt(document.getElementById('score-input').value);
+        update(ref(db, 'sandwich/' + currentRoom + '/config'), { timeLimit: timeLimit, targetScore: targetScore });
+    }
+
     function listenToRoom() {
         onValue(ref(db, 'sandwich/' + currentRoom), (snap) => {
             const data = snap.val();
             if (!data) return;
 
             currentPhase = data.phase;
-
-            // Scores
+            
+            if (data.config) {
+                if(myRole === 2) {
+                    document.getElementById('time-input').value = data.config.timeLimit;
+                    document.getElementById('score-input').value = data.config.targetScore;
+                }
+            }
             document.getElementById('p1-score').innerText = data.scores[1];
             document.getElementById('p2-score').innerText = data.scores[2];
+            document.getElementById('p1-card').className = "stat-card" + (myRole === 1 ? " active" : "");
+            document.getElementById('p2-card').className = "stat-card" + (myRole === 2 ? " active" : "");
 
-            // 1. WAITING
+            // LOBBY VISIBILITY
             if (data.phase === 'waiting') {
-                updateUI("WAITING FOR PLAYER 2...", "?", "?", true, "Waiting...");
+                document.getElementById('room-lobby-overlay').classList.remove('hidden');
+                if (myRole === 1 && data.players.p2 === 'connected' && !window.startTimeout) {
+                    document.getElementById('lobby-msg').innerText = "PLAYER 2 JOINED! STARTING IN 3...";
+                    window.startTimeout = setTimeout(() => {
+                        update(ref(db, 'sandwich/' + currentRoom), { phase: 'input' });
+                    }, 3000);
+                }
+                if (myRole === 2 && data.players.p2 === 'connected') {
+                     document.getElementById('lobby-msg').innerText = "CONNECTED! GAME STARTING...";
+                }
+            } else {
+                document.getElementById('room-lobby-overlay').classList.add('hidden');
             }
-            
-            // 2. INPUT PHASE
-            else if (data.phase === 'input') {
+
+            // PHASES
+            if (data.phase === 'input') {
                 const myInput = myRole === 1 ? data.inputs.p1 : data.inputs.p2;
-                const startBox = document.getElementById('box-start');
-                const endBox = document.getElementById('box-end');
+                const sBox = document.getElementById('box-start');
+                const eBox = document.getElementById('box-end');
                 
-                // Show visuals
                 if (myRole === 1) {
                     document.getElementById('char-start').innerText = data.inputs.p1 || "?";
-                    startBox.classList.toggle('filled', !!data.inputs.p1);
+                    sBox.className = data.inputs.p1 ? "bread-slice active" : "bread-slice";
                     document.getElementById('char-end').innerText = data.inputs.p2 ? "🔒" : "?";
-                    endBox.classList.toggle('filled', !!data.inputs.p2);
+                    eBox.className = data.inputs.p2 ? "bread-slice active" : "bread-slice";
                 } else {
                     document.getElementById('char-end').innerText = data.inputs.p2 || "?";
-                    endBox.classList.toggle('filled', !!data.inputs.p2);
+                    eBox.className = data.inputs.p2 ? "bread-slice active" : "bread-slice";
                     document.getElementById('char-start').innerText = data.inputs.p1 ? "🔒" : "?";
-                    startBox.classList.toggle('filled', !!data.inputs.p1);
+                    sBox.className = data.inputs.p1 ? "bread-slice active" : "bread-slice";
                 }
 
-                const msg = myRole === 1 ? "ENTER START LETTER (A-Z)" : "ENTER END LETTER (A-Z)";
-                const ph = "Type 1 Letter...";
-                
+                const msg = myRole === 1 ? "ENTER START LETTER" : "ENTER END LETTER";
                 if (!myInput) {
-                    updateUI(msg, null, null, false, ph, 1);
+                    updateUI(msg, null, null, false, "Type 1 Letter...", 1);
                 } else {
-                    updateUI("WAITING FOR OPPONENT...", null, null, true, "Sent!");
+                    updateUI("WAITING OPPONENT...", null, null, true, "Ready!");
                 }
 
-                // Check Both Ready -> Switch to Prep
                 if (myRole === 1 && data.inputs.p1 && data.inputs.p2) {
                     setTimeout(() => {
                         update(ref(db, 'sandwich/' + currentRoom), { phase: 'prep', msg: '3' });
                         startCountdownLogic(); 
-                    }, 500);
+                    }, 600);
                 }
             }
 
-            // 3. PREP (COUNTDOWN)
             else if (data.phase === 'prep') {
-                // Show countdown overlay
-                const cdOverlay = document.getElementById('countdown-overlay');
-                cdOverlay.classList.remove('hidden');
-                cdOverlay.innerText = data.msg;
-                
+                document.getElementById('countdown-overlay').classList.remove('hidden');
+                document.getElementById('countdown-overlay').innerText = data.msg;
                 document.getElementById('sfx-beep').play().catch(()=>{});
 
-                // Set Letters
                 document.getElementById('char-start').innerText = data.inputs.p1;
                 document.getElementById('char-end').innerText = data.inputs.p2;
-                document.getElementById('box-start').classList.add('filled');
-                document.getElementById('box-end').classList.add('filled');
+                document.getElementById('box-start').className = "bread-slice active";
+                document.getElementById('box-end').className = "bread-slice active";
+                document.getElementById('main-input').value = "";
             }
 
-            // 4. RACE PHASE (6 Seconds)
             else if (data.phase === 'race') {
                 document.getElementById('countdown-overlay').classList.add('hidden');
-                updateUI("RACE! TYPE THE WORD!", null, null, false, `Starts with ${data.startLetter}, Ends with ${data.endLetter}`);
+                updateUI("GO! TYPE THE WORD!", null, null, false, `${data.startLetter}...${data.endLetter}`);
+                const inp = document.getElementById('main-input');
+                // Only auto-focus if chat is closed to avoid jumping
+                if(!isChatOpen && document.activeElement !== inp) inp.focus();
+
+                startVisualTimer(data.config.timeLimit);
                 
-                // Show Timer
-                startVisualTimer();
-                
-                // Host handles Time's Up
                 if (myRole === 1 && !window.raceTimeout) {
                     window.raceTimeout = setTimeout(() => {
                          update(ref(db, 'sandwich/' + currentRoom), {
@@ -294,108 +649,118 @@
                             winningWord: "TIME'S UP"
                         });
                         window.raceTimeout = null;
-                    }, 6000); // 6 Seconds
+                    }, data.config.timeLimit * 1000); 
                 }
             }
 
-            // 5. ROUND END
             else if (data.phase === 'round_end') {
                 document.getElementById('countdown-overlay').classList.add('hidden');
                 clearInterval(window.visualInterval);
+                document.getElementById('timer-container').style.opacity = '0';
                 
                 let winnerText = "DRAW!";
                 let color = "white";
                 
                 if(data.winner === 0) {
-                    winnerText = "TIME'S UP! (NO WINNER)";
+                    winnerText = "TIME'S UP!";
                     color = "var(--danger)";
                     document.getElementById('sfx-bomb').play().catch(()=>{});
                 } else {
-                    winnerText = data.winner === myRole ? "YOU WON!" : "OPPONENT WON!";
-                    color = data.winner === myRole ? "var(--success)" : "var(--danger)";
-                    if(data.winner === myRole) document.getElementById('sfx-correct').play().catch(()=>{});
+                    if (data.scores[data.winner] >= data.config.targetScore) {
+                         winnerText = (data.winner === myRole ? "MATCH WIN!" : "MATCH LOST!");
+                         color = "var(--accent-bread)";
+                         if(data.winner === myRole) document.getElementById('sfx-correct').play().catch(()=>{});
+                    } else {
+                        winnerText = (data.winner === myRole ? "YOU WON!" : "LOST!");
+                        color = data.winner === myRole ? "var(--accent-lettuce)" : "var(--danger)";
+                        if(data.winner === myRole) document.getElementById('sfx-correct').play().catch(()=>{});
+                    }
                 }
 
                 const indicator = document.getElementById('phase-indicator');
                 indicator.innerText = `${winnerText} (${data.winningWord})`;
                 indicator.style.color = color;
+                indicator.style.borderColor = color;
                 
                 document.getElementById('main-input').disabled = true;
 
                 if (myRole === 1 && !window.resetTimeout) {
                     window.resetTimeout = setTimeout(() => {
+                        let nextScores = data.scores;
+                        if (data.winner !== 0 && data.scores[data.winner] >= data.config.targetScore) {
+                             nextScores = { 1: 0, 2: 0 };
+                        }
                         update(ref(db, 'sandwich/' + currentRoom), {
                             phase: 'input',
                             inputs: { p1: '', p2: '' },
                             winner: null,
-                            winningWord: null
+                            winningWord: null,
+                            scores: nextScores
                         });
                         window.resetTimeout = null;
-                    }, 3000);
+                    }, 3500);
                 }
             }
         });
     }
 
-    // --- HOST LOGIC: COUNTDOWN ---
     function startCountdownLogic() {
-        // Only host runs the DB update loop
         if(myRole !== 1) return;
-        
         let count = 3;
         const int = setInterval(() => {
             count--;
             if(count > 0) {
                 update(ref(db, 'sandwich/' + currentRoom), { msg: count });
             } else if (count === 0) {
-                update(ref(db, 'sandwich/' + currentRoom), { phase: 'race' }); // Start Race
+                get(ref(db, 'sandwich/' + currentRoom)).then(snap => {
+                     const d = snap.val();
+                     update(ref(db, 'sandwich/' + currentRoom), { 
+                         phase: 'race',
+                         startLetter: d.inputs.p1,
+                         endLetter: d.inputs.p2
+                     }); 
+                });
                 clearInterval(int);
             }
         }, 1000);
     }
 
-    // --- UI HELPER ---
     function updateUI(msg, charS, charE, inputDisabled, placeholder, maxLength = 20) {
         document.getElementById('phase-indicator').innerText = msg;
-        document.getElementById('phase-indicator').style.color = "var(--warning)";
-        
         const input = document.getElementById('main-input');
         input.disabled = inputDisabled;
         input.placeholder = placeholder;
         input.maxLength = maxLength;
-        if (!inputDisabled && document.activeElement !== input) input.focus();
-        
+        // Focus logic handled in loop to avoid conflict with chat
         if (inputDisabled) input.value = "";
     }
 
-    function startVisualTimer() {
+    function startVisualTimer(duration) {
         const barContainer = document.getElementById('timer-container');
         const bar = document.getElementById('timer-bar');
-        barContainer.classList.add('visible');
+        barContainer.style.opacity = '1';
         bar.style.width = "100%";
-        bar.style.backgroundColor = "var(--success)";
+        bar.style.backgroundColor = "var(--accent-lettuce)";
         
         if(window.visualInterval) clearInterval(window.visualInterval);
         
-        // 6 Seconds = 6000ms. Step 100ms. 60 steps.
+        const totalMs = duration * 1000;
+        const stepTime = 50; 
+        const step = 100 / (totalMs / stepTime); 
         let pct = 100;
-        const step = 100 / 60; 
 
         window.visualInterval = setInterval(() => {
             pct -= step;
             bar.style.width = pct + "%";
-            
-            if(pct < 40) bar.style.backgroundColor = "var(--warning)";
+            if(pct < 40) bar.style.backgroundColor = "var(--accent-bread)";
             if(pct < 20) bar.style.backgroundColor = "var(--danger)";
-            
             if(pct <= 0) {
                 clearInterval(window.visualInterval);
-                barContainer.classList.remove('visible');
+                barContainer.style.opacity = '0';
             }
-        }, 100);
+        }, stepTime);
     }
 
-    // --- INPUT HANDLER ---
     window.handleInputSubmit = function() {
         const input = document.getElementById('main-input');
         const val = input.value.trim().toUpperCase();
@@ -419,7 +784,6 @@
                 get(ref(db, 'sandwich/' + currentRoom + '/scores')).then(snap => {
                     let scores = snap.val();
                     scores[myRole]++;
-                    
                     update(ref(db, 'sandwich/' + currentRoom), {
                         phase: 'round_end',
                         winner: myRole,
@@ -434,7 +798,6 @@
             }
         }
     }
-
 </script>
 </body>
 </html>
