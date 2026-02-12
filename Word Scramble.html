@@ -141,6 +141,17 @@
         }
         .win-title { font-size: 3rem; font-weight: 900; color: var(--p1-color); animation: popIn 0.5s; }
 
+        /* COUNTDOWN OVERLAY (NEW) */
+        #countdown-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.95); z-index: 200;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+        }
+        .countdown-text {
+            font-size: 8rem; font-weight: 900; color: var(--p1-color);
+            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
         /* CHAT */
         #chat-modal {
             position: absolute; top: 60px; right: 10px; left: 10px; bottom: 80px;
@@ -247,6 +258,10 @@
 
     <div id="game-screen" class="hidden full-screen">
         
+        <div id="countdown-overlay" class="hidden">
+            <div id="countdown-text" class="countdown-text">3</div>
+        </div>
+
         <div id="win-overlay" class="hidden">
             <div style="font-size:5rem;">🏆</div>
             <div class="win-title" id="win-title">YOU WIN!</div>
@@ -368,6 +383,7 @@
     let currentRoom = "";
     let isChatOpen = false;
     let shuffleInterval = null;
+    let lastRoomStatus = 'waiting'; // Track status changes for countdown
 
     // --- LOBBY FUNCTIONS ---
     window.createRoom = function() {
@@ -439,11 +455,9 @@
     // --- GAME LOGIC ---
     window.startGame = function() {
         generateNewLetters(); 
+        // NOTE: We do NOT start the shuffle timer here anymore.
+        // It starts after the visual countdown in listenToRoom finishes.
         update(ref(db, 'scramble/' + currentRoom), { status: 'playing' });
-
-        if (myRole === 1) {
-            startShuffleTimer();
-        }
     }
 
     function startShuffleTimer() {
@@ -474,6 +488,7 @@
     function enterGame(code, role) {
         currentRoom = code;
         myRole = role;
+        lastRoomStatus = 'waiting'; // Reset
         
         document.getElementById('lobby-screen').classList.add('hidden');
         document.getElementById('room-lobby-overlay').classList.remove('hidden'); 
@@ -501,6 +516,36 @@
         listenToRoom();
     }
 
+    // --- COUNTDOWN FUNCTION ---
+    function runCountdownAnimation(callback) {
+        const overlay = document.getElementById('countdown-overlay');
+        const txt = document.getElementById('countdown-text');
+        overlay.classList.remove('hidden');
+        
+        let count = 3;
+        txt.innerText = count;
+
+        const interval = setInterval(() => {
+            count--;
+            if (count > 0) {
+                // Reset animation to replay popIn
+                txt.style.animation = 'none';
+                txt.offsetHeight; /* trigger reflow */
+                txt.style.animation = 'popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+                txt.innerText = count;
+            } else if (count === 0) {
+                txt.style.animation = 'none';
+                txt.offsetHeight; 
+                txt.style.animation = 'popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+                txt.innerText = "GO!";
+            } else {
+                clearInterval(interval);
+                overlay.classList.add('hidden');
+                if (callback) callback();
+            }
+        }, 1000);
+    }
+
     function listenToRoom() {
         onValue(ref(db, 'scramble/' + currentRoom), (snap) => {
             const data = snap.val();
@@ -519,6 +564,7 @@
             }
 
             if (data.status === 'waiting') {
+                lastRoomStatus = 'waiting';
                 const pList = document.getElementById('lobby-players-list');
                 pList.innerHTML = '';
                 const maxP = data.config.maxPlayers || 2;
@@ -557,13 +603,26 @@
             else if (data.status === 'playing') {
                 document.getElementById('room-lobby-overlay').classList.add('hidden');
                 document.getElementById('game-screen').classList.remove('hidden');
-                renderLetters(data.letters);
                 
-                if (myRole === 1 && !shuffleInterval) {
-                     startShuffleTimer();
+                // Check transition from 'waiting' to 'playing' to trigger countdown
+                if (lastRoomStatus === 'waiting') {
+                    lastRoomStatus = 'playing';
+                    renderLetters(data.letters); // Render awal
+                    
+                    // Run visual countdown
+                    runCountdownAnimation(() => {
+                        // After countdown finishes:
+                        if (myRole === 1 && !shuffleInterval) {
+                            startShuffleTimer();
+                        }
+                    });
+                } else {
+                    // Just update letters without countdown (e.g. mid-game shuffle)
+                    renderLetters(data.letters);
                 }
             }
             else if (data.status === 'finished') {
+                lastRoomStatus = 'finished';
                 if(shuffleInterval) clearInterval(shuffleInterval);
                 showWinOverlay(data.winner);
             }
@@ -586,6 +645,7 @@
     }
 
     function renderLetters(letters) {
+        if (!letters) return;
         const container = document.getElementById('tiles-area');
         if(container.getAttribute('data-rendered') === JSON.stringify(letters)) return;
         
@@ -704,6 +764,7 @@
             overlay.classList.add('hidden');
             document.getElementById('game-screen').classList.add('hidden');
             document.getElementById('room-lobby-overlay').classList.remove('hidden');
+            lastRoomStatus = 'waiting'; // Reset for next game
         }, 4000);
     }
 
