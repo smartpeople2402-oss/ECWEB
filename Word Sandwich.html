@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Word Sandwich: Chat & Sound Update</title>
+    <title>Word Sandwich: Manual Start</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
         /* --- 1. THEME & VARIABLES --- */
         :root {
             --bg-dark: #0f172a;
-            --glass-bg: rgba(30, 41, 59, 0.7);
+            --glass-bg: rgba(30, 41, 59, 0.85); /* Sedikit lebih gelap agar tulisan jelas */
             --glass-border: rgba(255, 255, 255, 0.1);
             --accent-bread: #fbbf24;
             --accent-lettuce: #4ade80;
@@ -86,12 +86,14 @@
             width: 100%; padding: 18px; border: none; border-radius: var(--radius-md);
             font-size: 1rem; font-weight: 800; cursor: pointer;
             transition: transform 0.1s; font-family: 'Outfit', sans-serif;
+            margin-top: 5px;
         }
         .btn-main:active { transform: scale(0.98); }
         .btn-create { background: var(--accent-bread); color: #451a03; }
         .btn-join { background: #334155; color: white; border: 1px solid var(--glass-border); }
+        .btn-disabled { opacity: 0.5; cursor: not-allowed; filter: grayscale(1); }
 
-        /* --- 4. ROOM LOBBY & VOLUME --- */
+        /* --- 4. ROOM LOBBY & PLAYERS --- */
         #room-lobby-overlay {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(15, 23, 42, 0.95); z-index: 50;
@@ -104,27 +106,38 @@
             text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; text-align: left;
         }
 
-        .settings-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
+        /* Player List Style */
+        .player-list {
+            width: 100%; background: rgba(0,0,0,0.3); 
+            border-radius: 12px; margin-bottom: 15px;
+            border: 1px solid var(--glass-border);
+        }
+        .p-item {
+            padding: 12px 15px; border-bottom: 1px solid var(--glass-border);
+            display: flex; align-items: center; justify-content: space-between;
+            font-size: 0.9rem; font-weight: 700; color: white;
+        }
+        .p-item:last-child { border-bottom: none; }
+        .status-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; margin-right: 8px; }
+        .dot-green { background: var(--accent-lettuce); box-shadow: 0 0 8px var(--accent-lettuce); }
+        .dot-gray { background: #475569; }
+
+        .settings-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
         .setting-box {
-            background: rgba(0,0,0,0.3); padding: 12px; border-radius: 12px;
+            background: rgba(0,0,0,0.3); padding: 10px; border-radius: 12px;
             text-align: center; border: 1px solid var(--glass-border);
         }
         .setting-val {
             background: transparent; border: none; color: var(--accent-bread);
-            font-size: 1.5rem; font-weight: 900; width: 100%; text-align: center;
+            font-size: 1.2rem; font-weight: 900; width: 100%; text-align: center;
             font-family: 'Outfit', sans-serif;
         }
         
-        /* Volume Slider Styling */
         .vol-slider-container { display: flex; align-items: center; gap: 10px; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 10px; margin-bottom: 15px; }
         input[type=range] { flex: 1; accent-color: var(--accent-lettuce); height: 6px; border-radius: 5px; }
 
-        .tutorial-list { text-align: left; background: rgba(255,255,255,0.05); padding: 15px; border-radius: 16px; margin-bottom: 20px; }
-        .tutorial-item { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; font-size: 0.9rem; color: #e2e8f0; }
-        .t-icon { font-size: 1.2rem; min-width: 25px; text-align: center; }
-
-        .lobby-status-text { font-size: 1rem; font-weight: 700; color: var(--accent-lettuce); animation: pulse 1.5s infinite; margin-top: 10px; }
-        .room-code-display { font-size: 3rem; font-weight: 900; color: var(--accent-bread); letter-spacing: 5px; line-height: 1; margin: 10px 0 20px 0; }
+        .room-code-display { font-size: 2.5rem; font-weight: 900; color: var(--accent-bread); letter-spacing: 5px; line-height: 1; margin: 5px 0 15px 0; }
+        .waiting-text { font-size: 0.9rem; color: var(--text-muted); font-style: italic; animation: pulse 1.5s infinite; }
 
         /* --- 5. GAMEPLAY UI & CHAT --- */
         .game-layout {
@@ -143,7 +156,6 @@
             background: rgba(255,255,255,0.05); padding: 5px 12px; border-radius: 20px;
         }
 
-        /* Chat Button */
         .chat-btn-wrapper { position: relative; }
         .btn-chat-toggle {
             background: rgba(255,255,255,0.1); border: 1px solid var(--glass-border);
@@ -157,7 +169,6 @@
             background: var(--danger); border-radius: 50%; border: 2px solid var(--bg-dark);
         }
 
-        /* Chat Overlay */
         #chat-modal {
             position: absolute; top: 60px; right: 10px; left: 10px; bottom: 80px;
             background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(15px);
@@ -193,7 +204,6 @@
             color: #064e3b; font-size: 1.2rem; cursor: pointer;
         }
 
-        /* Arena */
         .arena {
             flex: 1; display: flex; flex-direction: column;
             justify-content: center; align-items: center; padding: 20px; position: relative;
@@ -251,7 +261,6 @@
         .p-name { font-size: 0.7rem; color: #94a3b8; font-weight: 700; margin-bottom: 2px; }
         .p-score { font-size: 1.8rem; color: white; font-weight: 800; line-height: 1; }
 
-        /* Keyboard Focus */
         body.keyboard-active .top-nav, body.keyboard-active .footer-stats { display: none; }
         body.keyboard-active .arena { justify-content: flex-start; padding-top: 10vh; }
         body.keyboard-active .sandwich-wrapper { transform: scale(0.9); margin-bottom: 15px; }
@@ -302,6 +311,16 @@
                 <div style="font-size:0.8rem; color:#94a3b8; letter-spacing:2px; font-weight:700;">ROOM CODE</div>
                 <div id="lobby-room-code" class="room-code-display">----</div>
                 
+                <div class="lobby-section-title">PLAYERS</div>
+                <div class="player-list">
+                    <div class="p-item">
+                        <div><span class="status-dot dot-green"></span> HOST (P1)</div>
+                    </div>
+                    <div class="p-item">
+                        <div id="p2-status-div"><span class="status-dot dot-gray" id="p2-dot"></span> <span id="p2-text">WAITING...</span></div>
+                    </div>
+                </div>
+
                 <div class="lobby-section-title">GAME SETTINGS</div>
                 <div class="settings-grid">
                     <div class="setting-box">
@@ -320,14 +339,9 @@
                     <input type="range" min="0" max="1" step="0.1" value="1" oninput="setVolume(this.value)">
                 </div>
 
-                <div class="lobby-section-title">HOW TO PLAY</div>
-                <div class="tutorial-list">
-                    <div class="tutorial-item"><div class="t-icon">🍞</div><div><b>Host</b> chooses Start Letter.</div></div>
-                    <div class="tutorial-item"><div class="t-icon">🔒</div><div><b>Opponent</b> chooses End Letter.</div></div>
-                    <div class="tutorial-item"><div class="t-icon">⚡</div><div>Race to type a word that fits!</div></div>
-                </div>
+                <button id="btn-start-game" class="btn-main btn-create hidden" onclick="startGame()">START GAME</button>
+                <div id="waiting-msg" class="waiting-text hidden">WAITING FOR HOST TO START...</div>
 
-                <div id="lobby-msg" class="lobby-status-text">WAITING FOR PLAYER 2...</div>
             </div>
         </div>
 
@@ -348,8 +362,7 @@
                     <span>Chat Room</span>
                     <span style="cursor:pointer;" onclick="toggleChat()">✕</span>
                 </div>
-                <div class="chat-messages" id="chat-messages">
-                    </div>
+                <div class="chat-messages" id="chat-messages"></div>
                 <div class="chat-input-area">
                     <input type="text" id="chat-input" class="chat-input" placeholder="Say hello..." autocomplete="off">
                     <button class="btn-send" onclick="sendChat()">➤</button>
@@ -410,13 +423,12 @@
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
 
-   
+    
     let myRole = 0;
     let currentRoom = "";
     let currentPhase = "";
     let volumeLevel = 1.0;
 
-    // --- VOLUME LOGIC ---
     window.setVolume = function(val) {
         volumeLevel = parseFloat(val);
         document.getElementById('sfx-correct').volume = volumeLevel;
@@ -424,7 +436,6 @@
         document.getElementById('sfx-bomb').volume = volumeLevel;
     };
     
-    // --- LOBBY LOGIC ---
     window.createRoom = function() {
         const code = Math.floor(1000 + Math.random() * 9000).toString();
         const btn = document.getElementById('btn-create');
@@ -460,6 +471,11 @@
         });
     };
 
+    // --- NEW START GAME FUNCTION ---
+    window.startGame = function() {
+        update(ref(db, 'sandwich/' + currentRoom), { phase: 'input' });
+    }
+
     function enterGame(code, role) {
         currentRoom = code;
         myRole = role;
@@ -473,9 +489,6 @@
         if (role === 1) {
             document.getElementById('time-input').disabled = false;
             document.getElementById('score-input').disabled = false;
-            document.getElementById('lobby-msg').innerText = "WAITING FOR PLAYER 2...";
-        } else {
-            document.getElementById('lobby-msg').innerText = "CONNECTED! WAITING HOST...";
         }
 
         const input = document.getElementById('main-input');
@@ -483,23 +496,20 @@
         input.addEventListener('blur', () => document.body.classList.remove('keyboard-active'));
         input.addEventListener('keypress', (e) => { if(e.key === 'Enter') handleInputSubmit(); });
 
-        // Initialize Chat Listener
         initChatListener();
         listenToRoom();
     }
 
-    // --- CHAT LOGIC ---
     let isChatOpen = false;
 
     window.toggleChat = function() {
         const modal = document.getElementById('chat-modal');
         const badge = document.getElementById('chat-badge');
-        
         isChatOpen = !isChatOpen;
         
         if(isChatOpen) {
             modal.classList.remove('hidden');
-            badge.classList.add('hidden'); // Hide badge when opened
+            badge.classList.add('hidden'); 
             document.getElementById('chat-input').focus();
         } else {
             modal.classList.add('hidden');
@@ -512,15 +522,12 @@
         if(!msg) return;
 
         push(ref(db, 'sandwich/' + currentRoom + '/chat'), {
-            sender: myRole,
-            text: msg,
-            time: Date.now()
+            sender: myRole, text: msg, time: Date.now()
         });
         input.value = "";
     }
 
     function initChatListener() {
-        // Submit on Enter
         document.getElementById('chat-input').addEventListener('keypress', (e) => {
             if(e.key === 'Enter') window.sendChat();
         });
@@ -536,16 +543,13 @@
             container.appendChild(div);
             container.scrollTop = container.scrollHeight;
 
-            // Notification Logic
             if (!isChatOpen && data.sender !== myRole) {
                 const badge = document.getElementById('chat-badge');
                 badge.classList.remove('hidden');
-                // Optional: Play soft sound for chat?
             }
         });
     }
 
-    // --- GAME LOOP ---
     window.updateSettings = function() {
         if(myRole !== 1) return;
         const timeLimit = parseInt(document.getElementById('time-input').value);
@@ -571,23 +575,41 @@
             document.getElementById('p1-card').className = "stat-card" + (myRole === 1 ? " active" : "");
             document.getElementById('p2-card').className = "stat-card" + (myRole === 2 ? " active" : "");
 
-            // LOBBY VISIBILITY
+            // --- LOBBY LOGIC (UPDATED) ---
             if (data.phase === 'waiting') {
                 document.getElementById('room-lobby-overlay').classList.remove('hidden');
-                if (myRole === 1 && data.players.p2 === 'connected' && !window.startTimeout) {
-                    document.getElementById('lobby-msg').innerText = "PLAYER 2 JOINED! STARTING IN 3...";
-                    window.startTimeout = setTimeout(() => {
-                        update(ref(db, 'sandwich/' + currentRoom), { phase: 'input' });
-                    }, 3000);
+                
+                // Visual Logic for Player 2 Status
+                if (data.players.p2 === 'connected') {
+                    // Update P2 List Item
+                    document.getElementById('p2-dot').className = "status-dot dot-green";
+                    document.getElementById('p2-text').innerText = "PLAYER 2 (CONNECTED)";
+                    document.getElementById('p2-text').style.color = "var(--accent-lettuce)";
+
+                    // Logic for Start Button
+                    if (myRole === 1) {
+                         document.getElementById('btn-start-game').classList.remove('hidden');
+                         document.getElementById('waiting-msg').classList.add('hidden');
+                    } else {
+                         document.getElementById('waiting-msg').classList.remove('hidden');
+                         document.getElementById('btn-start-game').classList.add('hidden');
+                    }
+                } else {
+                    // Reset to Waiting if disconnected (optional safety)
+                    document.getElementById('p2-dot').className = "status-dot dot-gray";
+                    document.getElementById('p2-text').innerText = "WAITING...";
+                    document.getElementById('p2-text').style.color = "white";
+                    document.getElementById('btn-start-game').classList.add('hidden');
+                    
+                    if(myRole === 2) { // Just joined
+                       document.getElementById('waiting-msg').classList.remove('hidden');
+                    }
                 }
-                if (myRole === 2 && data.players.p2 === 'connected') {
-                     document.getElementById('lobby-msg').innerText = "CONNECTED! GAME STARTING...";
-                }
+
             } else {
                 document.getElementById('room-lobby-overlay').classList.add('hidden');
             }
 
-            // PHASES
             if (data.phase === 'input') {
                 const myInput = myRole === 1 ? data.inputs.p1 : data.inputs.p2;
                 const sBox = document.getElementById('box-start');
@@ -636,7 +658,6 @@
                 document.getElementById('countdown-overlay').classList.add('hidden');
                 updateUI("GO! TYPE THE WORD!", null, null, false, `${data.startLetter}...${data.endLetter}`);
                 const inp = document.getElementById('main-input');
-                // Only auto-focus if chat is closed to avoid jumping
                 if(!isChatOpen && document.activeElement !== inp) inp.focus();
 
                 startVisualTimer(data.config.timeLimit);
@@ -654,6 +675,8 @@
             }
 
             else if (data.phase === 'round_end') {
+                if (window.raceTimeout) { clearTimeout(window.raceTimeout); window.raceTimeout = null; }
+
                 document.getElementById('countdown-overlay').classList.add('hidden');
                 clearInterval(window.visualInterval);
                 document.getElementById('timer-container').style.opacity = '0';
@@ -698,7 +721,7 @@
                             scores: nextScores
                         });
                         window.resetTimeout = null;
-                    }, 3500);
+                    }, 1500); 
                 }
             }
         });
@@ -731,7 +754,6 @@
         input.disabled = inputDisabled;
         input.placeholder = placeholder;
         input.maxLength = maxLength;
-        // Focus logic handled in loop to avoid conflict with chat
         if (inputDisabled) input.value = "";
     }
 
