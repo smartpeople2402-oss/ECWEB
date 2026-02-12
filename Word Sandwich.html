@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Word Sandwich: Manual Start</title>
+    <title>Word Sandwich: Student Rules</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
         /* --- 1. THEME & VARIABLES --- */
         :root {
             --bg-dark: #0f172a;
-            --glass-bg: rgba(30, 41, 59, 0.85); /* Sedikit lebih gelap agar tulisan jelas */
+            --glass-bg: rgba(30, 41, 59, 0.9);
             --glass-border: rgba(255, 255, 255, 0.1);
             --accent-bread: #fbbf24;
             --accent-lettuce: #4ade80;
@@ -27,7 +27,7 @@
             background-color: var(--bg-dark);
             color: var(--text-main);
             margin: 0;
-            height: 100vh; /* Fallback */
+            height: 100vh;
             height: 100dvh; 
             overflow: hidden;
             background-image: 
@@ -57,11 +57,13 @@
             border: 1px solid var(--glass-border);
             padding: 30px;
             border-radius: var(--radius-lg);
-            width: 100%; max-width: 400px;
+            width: 100%; max-width: 420px;
             text-align: center;
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
             animation: slideUp 0.5s ease-out;
             display: flex; flex-direction: column; gap: 15px;
+            max-height: 90vh;
+            overflow-y: auto;
         }
 
         .logo-emoji { font-size: 3.5rem; margin-bottom: 5px; display: inline-block; animation: float 3s infinite ease-in-out; }
@@ -91,9 +93,8 @@
         .btn-main:active { transform: scale(0.98); }
         .btn-create { background: var(--accent-bread); color: #451a03; }
         .btn-join { background: #334155; color: white; border: 1px solid var(--glass-border); }
-        .btn-disabled { opacity: 0.5; cursor: not-allowed; filter: grayscale(1); }
 
-        /* --- 4. ROOM LOBBY & PLAYERS --- */
+        /* --- 4. ROOM LOBBY & RULES --- */
         #room-lobby-overlay {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(15, 23, 42, 0.95); z-index: 50;
@@ -103,40 +104,53 @@
 
         .lobby-section-title {
             font-size: 0.75rem; color: var(--text-muted); font-weight: 700; 
-            text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; text-align: left;
+            text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; text-align: left; margin-top: 10px;
         }
 
-        /* Player List Style */
         .player-list {
             width: 100%; background: rgba(0,0,0,0.3); 
-            border-radius: 12px; margin-bottom: 15px;
+            border-radius: 12px; margin-bottom: 10px;
             border: 1px solid var(--glass-border);
         }
         .p-item {
-            padding: 12px 15px; border-bottom: 1px solid var(--glass-border);
+            padding: 10px 15px; border-bottom: 1px solid var(--glass-border);
             display: flex; align-items: center; justify-content: space-between;
-            font-size: 0.9rem; font-weight: 700; color: white;
+            font-size: 0.85rem; font-weight: 700; color: white;
         }
         .p-item:last-child { border-bottom: none; }
-        .status-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; margin-right: 8px; }
+        .status-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 8px; }
         .dot-green { background: var(--accent-lettuce); box-shadow: 0 0 8px var(--accent-lettuce); }
         .dot-gray { background: #475569; }
 
-        .settings-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
+        .settings-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
         .setting-box {
-            background: rgba(0,0,0,0.3); padding: 10px; border-radius: 12px;
+            background: rgba(0,0,0,0.3); padding: 8px; border-radius: 12px;
             text-align: center; border: 1px solid var(--glass-border);
         }
         .setting-val {
             background: transparent; border: none; color: var(--accent-bread);
-            font-size: 1.2rem; font-weight: 900; width: 100%; text-align: center;
+            font-size: 1.1rem; font-weight: 900; width: 100%; text-align: center;
             font-family: 'Outfit', sans-serif;
         }
         
-        .vol-slider-container { display: flex; align-items: center; gap: 10px; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 10px; margin-bottom: 15px; }
+        .vol-slider-container { display: flex; align-items: center; gap: 10px; background: rgba(0,0,0,0.2); padding: 8px; border-radius: 10px; margin-bottom: 10px; }
         input[type=range] { flex: 1; accent-color: var(--accent-lettuce); height: 6px; border-radius: 5px; }
 
-        .room-code-display { font-size: 2.5rem; font-weight: 900; color: var(--accent-bread); letter-spacing: 5px; line-height: 1; margin: 5px 0 15px 0; }
+        .tutorial-list { 
+            text-align: left; background: rgba(255,255,255,0.05); 
+            padding: 12px; border-radius: 16px; margin-bottom: 15px; border: 1px solid var(--glass-border);
+        }
+        .tutorial-item { 
+            display: flex; align-items: flex-start; gap: 10px; margin-bottom: 8px; 
+            font-size: 0.85rem; color: #e2e8f0; line-height: 1.4;
+        }
+        .tutorial-item:last-child { margin-bottom: 0; }
+        .t-icon { font-size: 1rem; min-width: 20px; text-align: center; margin-top: 2px; }
+        .example-text {
+            font-size: 0.75rem; color: var(--accent-bread); margin-top: 2px; display: block; font-weight: 600;
+        }
+
+        .room-code-display { font-size: 2.2rem; font-weight: 900; color: var(--accent-bread); letter-spacing: 5px; line-height: 1; margin: 5px 0 15px 0; }
         .waiting-text { font-size: 0.9rem; color: var(--text-muted); font-style: italic; animation: pulse 1.5s infinite; }
 
         /* --- 5. GAMEPLAY UI & CHAT --- */
@@ -273,6 +287,41 @@
             animation: popIn 0.4s;
         }
 
+        /* --- NEW: VICTORY SCREEN STYLES --- */
+        #victory-screen {
+            background: rgba(15, 23, 42, 0.98);
+            backdrop-filter: blur(20px);
+            z-index: 200;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+        .victory-card {
+            background: linear-gradient(135deg, rgba(251, 191, 36, 0.1), rgba(0,0,0,0));
+            border: 2px solid var(--accent-bread);
+            padding: 40px; border-radius: 30px;
+            box-shadow: 0 0 50px rgba(251, 191, 36, 0.2);
+            animation: popIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            max-width: 90%;
+        }
+        .trophy { font-size: 5rem; margin-bottom: 10px; display: block; animation: float 3s infinite ease-in-out; }
+        .win-title { font-size: 1.5rem; font-weight: 800; color: var(--text-muted); letter-spacing: 2px; text-transform: uppercase; }
+        .winner-name { 
+            font-size: 3.5rem; font-weight: 900; margin: 10px 0 30px 0; line-height: 1;
+            background: linear-gradient(to right, #fbbf24, #fcd34d);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .btn-restart {
+            background: var(--accent-lettuce); color: #064e3b;
+            font-size: 1.2rem; padding: 15px 40px; border-radius: 50px;
+            box-shadow: 0 10px 20px -5px rgba(74, 222, 128, 0.5);
+            border: none; font-weight: 800; cursor: pointer;
+            transition: 0.2s; font-family: 'Outfit', sans-serif;
+        }
+        .btn-restart:active { transform: scale(0.95); }
+        .waiting-host-text { color: var(--text-muted); margin-top: 20px; font-weight: 700; display: none; }
+
         @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
         @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
         @keyframes popIn { from { transform: scale(0); opacity: 0; } to { transform: scale(1); opacity: 1; } }
@@ -304,10 +353,21 @@
         </div>
     </div>
 
+    <div id="victory-screen" class="hidden full-screen">
+        <div class="victory-card">
+            <span class="trophy">🏆</span>
+            <div class="win-title">MATCH WINNER</div>
+            <div class="winner-name" id="winner-display">PLAYER 1</div>
+            
+            <button id="btn-restart-match" class="btn-restart" onclick="resetMatch()">PLAY AGAIN</button>
+            <div id="victory-wait-msg" class="waiting-host-text">WAITING FOR HOST...</div>
+        </div>
+    </div>
+
     <div id="game-screen" class="hidden full-screen" style="background: var(--bg-dark);">
         
         <div id="room-lobby-overlay">
-            <div class="card-glass" style="max-width: 380px;">
+            <div class="card-glass" style="max-width: 400px;">
                 <div style="font-size:0.8rem; color:#94a3b8; letter-spacing:2px; font-weight:700;">ROOM CODE</div>
                 <div id="lobby-room-code" class="room-code-display">----</div>
                 
@@ -321,7 +381,7 @@
                     </div>
                 </div>
 
-                <div class="lobby-section-title">GAME SETTINGS</div>
+                <div class="lobby-section-title">SETTINGS</div>
                 <div class="settings-grid">
                     <div class="setting-box">
                         <input type="number" id="time-input" class="setting-val" value="6" min="3" max="60" disabled onchange="updateSettings()">
@@ -333,10 +393,29 @@
                     </div>
                 </div>
 
-                <div class="lobby-section-title">SOUND VOLUME</div>
+                <div class="lobby-section-title">SOUND</div>
                 <div class="vol-slider-container">
                     <span>🔊</span>
                     <input type="range" min="0" max="1" step="0.1" value="1" oninput="setVolume(this.value)">
+                </div>
+                
+                <div class="lobby-section-title">HOW TO PLAY</div>
+                <div class="tutorial-list">
+                    <div class="tutorial-item">
+                        <div class="t-icon">1️⃣</div>
+                        <div><b>Host</b> picks the <u>START</u> letter.</div>
+                    </div>
+                    <div class="tutorial-item">
+                        <div class="t-icon">2️⃣</div>
+                        <div><b>Player 2</b> picks the <u>END</u> letter.</div>
+                    </div>
+                    <div class="tutorial-item">
+                        <div class="t-icon">🚀</div>
+                        <div>
+                            <b>RACE!</b> Type a word starting with start-letter and ending with end-letter.<br>
+                            <span class="example-text">Ex: Start "B", End "K" -> "BOOK"</span>
+                        </div>
+                    </div>
                 </div>
 
                 <button id="btn-start-game" class="btn-main btn-create hidden" onclick="startGame()">START GAME</button>
@@ -423,7 +502,7 @@
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
 
-    
+  
     let myRole = 0;
     let currentRoom = "";
     let currentPhase = "";
@@ -471,9 +550,21 @@
         });
     };
 
-    // --- NEW START GAME FUNCTION ---
     window.startGame = function() {
         update(ref(db, 'sandwich/' + currentRoom), { phase: 'input' });
+    }
+
+    // --- NEW: Reset Match Function ---
+    window.resetMatch = function() {
+        if (myRole === 1) {
+            update(ref(db, 'sandwich/' + currentRoom), {
+                phase: 'input',
+                inputs: { p1: '', p2: '' },
+                winner: null,
+                winningWord: null,
+                scores: { 1: 0, 2: 0 }
+            });
+        }
     }
 
     function enterGame(code, role) {
@@ -486,9 +577,15 @@
         document.getElementById('lobby-room-code').innerText = code;
         document.getElementById('role-display').innerText = role === 1 ? "PLAYER 1" : "PLAYER 2";
         
+        // Setup Victory Screen Buttons based on Role
         if (role === 1) {
             document.getElementById('time-input').disabled = false;
             document.getElementById('score-input').disabled = false;
+            document.getElementById('btn-restart-match').style.display = 'inline-block';
+            document.getElementById('victory-wait-msg').style.display = 'none';
+        } else {
+            document.getElementById('btn-restart-match').style.display = 'none';
+            document.getElementById('victory-wait-msg').style.display = 'block';
         }
 
         const input = document.getElementById('main-input');
@@ -575,18 +672,19 @@
             document.getElementById('p1-card').className = "stat-card" + (myRole === 1 ? " active" : "");
             document.getElementById('p2-card').className = "stat-card" + (myRole === 2 ? " active" : "");
 
-            // --- LOBBY LOGIC (UPDATED) ---
+            // Hide victory screen if not in round_end or if scores reset
+            if (data.phase !== 'round_end') {
+                document.getElementById('victory-screen').classList.add('hidden');
+            }
+
             if (data.phase === 'waiting') {
                 document.getElementById('room-lobby-overlay').classList.remove('hidden');
                 
-                // Visual Logic for Player 2 Status
                 if (data.players.p2 === 'connected') {
-                    // Update P2 List Item
                     document.getElementById('p2-dot').className = "status-dot dot-green";
                     document.getElementById('p2-text').innerText = "PLAYER 2 (CONNECTED)";
                     document.getElementById('p2-text').style.color = "var(--accent-lettuce)";
 
-                    // Logic for Start Button
                     if (myRole === 1) {
                          document.getElementById('btn-start-game').classList.remove('hidden');
                          document.getElementById('waiting-msg').classList.add('hidden');
@@ -595,13 +693,12 @@
                          document.getElementById('btn-start-game').classList.add('hidden');
                     }
                 } else {
-                    // Reset to Waiting if disconnected (optional safety)
                     document.getElementById('p2-dot').className = "status-dot dot-gray";
                     document.getElementById('p2-text').innerText = "WAITING...";
                     document.getElementById('p2-text').style.color = "white";
                     document.getElementById('btn-start-game').classList.add('hidden');
                     
-                    if(myRole === 2) { // Just joined
+                    if(myRole === 2) {
                        document.getElementById('waiting-msg').classList.remove('hidden');
                     }
                 }
@@ -689,10 +786,21 @@
                     color = "var(--danger)";
                     document.getElementById('sfx-bomb').play().catch(()=>{});
                 } else {
+                    // Check for Match Win
                     if (data.scores[data.winner] >= data.config.targetScore) {
-                         winnerText = (data.winner === myRole ? "MATCH WIN!" : "MATCH LOST!");
-                         color = "var(--accent-bread)";
-                         if(data.winner === myRole) document.getElementById('sfx-correct').play().catch(()=>{});
+                        winnerText = (data.winner === myRole ? "MATCH WIN!" : "MATCH LOST!");
+                        color = "var(--accent-bread)";
+                        
+                        // --- SHOW VICTORY SCREEN LOGIC ---
+                        document.getElementById('victory-screen').classList.remove('hidden');
+                        document.getElementById('winner-display').innerText = (data.winner === myRole ? "YOU WON!" : "PLAYER " + data.winner);
+                        
+                        // If Match Win, we DO NOT auto reset. We wait for button press.
+                        if(window.resetTimeout) {
+                            clearTimeout(window.resetTimeout);
+                            window.resetTimeout = null;
+                        }
+                        return; // Exit here so we don't trigger the auto-reset
                     } else {
                         winnerText = (data.winner === myRole ? "YOU WON!" : "LOST!");
                         color = data.winner === myRole ? "var(--accent-lettuce)" : "var(--danger)";
@@ -707,18 +815,16 @@
                 
                 document.getElementById('main-input').disabled = true;
 
+                // Standard Round Reset (Only if NOT a match win)
                 if (myRole === 1 && !window.resetTimeout) {
                     window.resetTimeout = setTimeout(() => {
-                        let nextScores = data.scores;
-                        if (data.winner !== 0 && data.scores[data.winner] >= data.config.targetScore) {
-                             nextScores = { 1: 0, 2: 0 };
-                        }
                         update(ref(db, 'sandwich/' + currentRoom), {
                             phase: 'input',
                             inputs: { p1: '', p2: '' },
                             winner: null,
                             winningWord: null,
-                            scores: nextScores
+                            // Scores are NOT reset here anymore for match wins, handled by button
+                            scores: data.scores 
                         });
                         window.resetTimeout = null;
                     }, 1500); 
