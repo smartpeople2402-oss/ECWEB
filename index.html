@@ -29,22 +29,30 @@
         @keyframes loading { 0% { left: -40%; } 100% { left: 100%; } }
         .fade-out { opacity: 0; visibility: hidden; }
 
-        /* LOGIN */
-        #login-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, var(--bg-dark), var(--bg-darker)); display: none; flex-direction: column; justify-content: center; align-items: center; z-index: 9999; padding: 30px; }
+        /* LOGIN & ROLE SELECTION */
+        #login-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, var(--bg-dark), var(--bg-darker)); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 9999; padding: 30px; }
         .login-card { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); padding: 30px 25px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.2); width: 100%; max-width: 350px; text-align: center; animation: fadeInUp 0.5s ease-out; position: relative; }
         @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         .login-title { color: var(--accent-lime); font-size: 1.5rem; font-weight: 700; margin-bottom: 5px; }
         .login-subtitle { color: #e0f2f1; font-size: 0.85rem; margin-bottom: 25px; opacity: 0.8; }
+        
+        /* ROLE CARDS */
         .role-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; width: 100%; margin-bottom: 20px; }
         .role-card { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 15px; padding: 20px 10px; cursor: pointer; transition: 0.3s; display: flex; flex-direction: column; align-items: center; gap: 10px; }
-        .role-card:hover, .role-card.active { background: var(--accent-lime); border-color: var(--accent-lime); }
+        .role-card:hover, .role-card:active { background: var(--accent-lime); border-color: var(--accent-lime); }
         .role-card i { font-size: 2rem; color: white; transition: 0.3s; }
         .role-card span { font-size: 0.9rem; font-weight: 600; color: white; transition: 0.3s; }
-        .role-card:hover i, .role-card.active i, .role-card:hover span, .role-card.active span { color: var(--bg-dark); }
-        .input-group input { width: 100%; padding: 15px 20px; border-radius: 50px; border: none; outline: none; background: rgba(255,255,255,0.9); font-family: 'Poppins'; font-size: 1rem; color: var(--bg-dark); text-align: center; font-weight: 600; margin-bottom: 20px; }
-        .btn-start { background: var(--accent-lime); color: var(--bg-dark); border: none; padding: 12px 40px; border-radius: 50px; font-size: 1rem; font-weight: 700; cursor: pointer; width: 100%; transition: transform 0.2s; }
+        .role-card:hover i, .role-card:active i, .role-card:hover span, .role-card:active span { color: var(--bg-dark); }
+
+        /* AUTH FORM */
+        .input-group input { width: 100%; padding: 15px 20px; border-radius: 50px; border: none; outline: none; background: rgba(255,255,255,0.9); font-family: 'Poppins'; font-size: 1rem; color: var(--bg-dark); text-align: center; font-weight: 600; margin-bottom: 15px; }
+        .btn-start { background: var(--accent-lime); color: var(--bg-dark); border: none; padding: 12px 40px; border-radius: 50px; font-size: 1rem; font-weight: 700; cursor: pointer; width: 100%; transition: transform 0.2s; margin-top: 10px; }
         .btn-start:active { transform: scale(0.95); }
+        .auth-toggle-text { margin-top: 20px; color: white; font-size: 0.85rem; cursor: pointer; text-decoration: underline; opacity: 0.9; }
         .back-login { position: absolute; top: 15px; left: 15px; color: rgba(255,255,255,0.6); cursor: pointer; font-size: 1.2rem; display: none; }
+        
+        /* EMAIL HINT */
+        .email-hint { font-size: 0.7rem; color: #a5d6a7; margin-top: -10px; margin-bottom: 15px; display: none; }
 
         /* DASHBOARD */
         #dashboard { display: none; flex-direction: column; min-height: 100vh; }
@@ -248,19 +256,37 @@
 
     <div id="login-screen">
         <div class="login-card">
-            <i class="fas fa-arrow-left back-login" id="backBtn" onclick="resetLogin()"></i>
-            <div style="font-size: 3rem; margin-bottom: 15px;">🎓</div>
-            <h2 class="login-title" id="loginTitle">Choose Role</h2>
-            <p class="login-subtitle" id="loginSub">Masuk sebagai Student atau Tutor?</p>
+            <i class="fas fa-arrow-left back-login" id="backBtn" onclick="resetSelection()"></i>
+            
+            <div style="font-size: 3rem; margin-bottom: 15px;">雌</div>
+            <h2 class="login-title" id="authTitle">Welcome</h2>
+            <p class="login-subtitle" id="authSub">Silakan pilih akses anda.</p>
+
             <div class="role-grid" id="roleSelection">
                 <div class="role-card" onclick="selectRole('student')"><i class="fas fa-user-graduate"></i><span>Student</span></div>
                 <div class="role-card" onclick="selectRole('tutor')"><i class="fas fa-chalkboard-teacher"></i><span>Tutor</span></div>
             </div>
-            <div id="loginInputs" style="display: none; width: 100%;">
-                <div class="input-group">
-                    <input type="text" id="loginInput" placeholder="..." autocomplete="off">
+
+            <div id="authForm" style="width: 100%; display: none;">
+                <div class="input-group" id="nameGroup" style="display:none;">
+                    <input type="text" id="regName" placeholder="Nama Lengkap" autocomplete="off">
                 </div>
-                <button class="btn-start" onclick="processLogin()">Masuk</button>
+                
+                <div class="input-group">
+                    <input type="email" id="regEmail" placeholder="Email" autocomplete="off">
+                </div>
+                
+                <p id="emailHelp" class="email-hint">Contoh: nama@ecstudent.com</p>
+
+                <div class="input-group">
+                    <input type="password" id="regPassword" placeholder="Password (Min. 6 huruf)" autocomplete="off">
+                </div>
+
+                <button class="btn-start" onclick="handleAuthAction()" id="btnAuth">Masuk</button>
+                
+                <p class="auth-toggle-text" onclick="toggleAuthMode()" id="toggleText">
+                   Belum punya akun? Daftar
+                </p>
             </div>
         </div>
     </div>
@@ -391,7 +417,7 @@
                 <h3 class="profile-title">English Check Community</h3>
                 <p class="profile-desc">
                     Komunitas yang berdedikasi menyediakan <span class="highlight">Kelas Bahasa Inggris GRATIS</span> bagi mahasiswa. 
-                    🎓 Kami menggunakan <span class="highlight">metode & kurikulum khusus</span> yang disusun mandiri untuk memastikan pembelajaran yang efektif dan menyenangkan.
+                    雌 Kami menggunakan <span class="highlight">metode & kurikulum khusus</span> yang disusun mandiri untuk memastikan pembelajaran yang efektif dan menyenangkan.
                 </p>
             </div>
 
@@ -520,20 +546,212 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.1.3/firebase-app.js";
         import { getDatabase, ref, push, onValue, query, limitToLast, remove, off, set, update, get } from "https://www.gstatic.com/firebasejs/9.1.3/firebase-database.js";
         import { getStorage, ref as sRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.1.3/firebase-storage.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.1.3/firebase-auth.js";
 
-       const firebaseConfig = {
-  apiKey: "AIzaSyAgYCaaoGMzZWVT2dRov7ALUnnMhHoqXmE",
-  authDomain: "english-check-db.firebaseapp.com",
-  databaseURL: "https://english-check-db-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId: "english-check-db",
-  storageBucket: "english-check-db.firebasestorage.app",
-  messagingSenderId: "136352630898",
-  appId: "1:136352630898:web:dcaa103fa848ca38de9aeb"
-};
+        const firebaseConfig = {
+          apiKey: "AIzaSyAgYCaaoGMzZWVT2dRov7ALUnnMhHoqXmE",
+          authDomain: "english-check-db.firebaseapp.com",
+          databaseURL: "https://english-check-db-default-rtdb.asia-southeast1.firebasedatabase.app",
+          projectId: "english-check-db",
+          storageBucket: "english-check-db.firebasestorage.app",
+          messagingSenderId: "136352630898",
+          appId: "1:136352630898:web:dcaa103fa848ca38de9aeb"
+        };
 
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
         const storage = getStorage(app);
+        const auth = getAuth(app);
+
+        // --- AUTH LOGIC START ---
+        let isRegisterMode = false;
+        let selectedRole = '';
+
+        // Select Role Function
+        window.selectRole = function(role) {
+            selectedRole = role;
+            document.getElementById('roleSelection').style.display = 'none';
+            document.getElementById('authForm').style.display = 'block';
+            document.getElementById('backBtn').style.display = 'block';
+            const emailInput = document.getElementById('regEmail');
+            const emailHint = document.getElementById('emailHelp');
+
+            const title = document.getElementById('authTitle');
+            const sub = document.getElementById('authSub');
+            const toggleText = document.getElementById('toggleText');
+            
+            // Reset state
+            isRegisterMode = false;
+            document.getElementById('nameGroup').style.display = 'none';
+            document.getElementById('btnAuth').innerText = "Masuk";
+
+            if (role === 'student') {
+                title.innerText = "Student Login";
+                sub.innerText = "Masuk untuk mulai belajar.";
+                toggleText.style.display = 'block'; 
+                toggleText.innerText = "Belum punya akun? Daftar";
+                
+                // Show hint specifically for students
+                emailInput.placeholder = "Email (nama@ecstudent.com)";
+                emailHint.style.display = "block";
+            } else {
+                title.innerText = "Tutor Login";
+                sub.innerText = "Masuk ke panel Tutor.";
+                toggleText.style.display = 'none';
+                
+                // Reset placeholder for tutors
+                emailInput.placeholder = "Email Tutor";
+                emailHint.style.display = "none";
+            }
+        };
+
+        // Reset Selection (Back Button)
+        window.resetSelection = function() {
+            selectedRole = '';
+            document.getElementById('authForm').style.display = 'none';
+            document.getElementById('roleSelection').style.display = 'grid';
+            document.getElementById('backBtn').style.display = 'none';
+            document.getElementById('authTitle').innerText = "Welcome";
+            document.getElementById('authSub').innerText = "Silakan pilih akses anda.";
+            document.getElementById('regEmail').value = "";
+            document.getElementById('regPassword').value = "";
+        };
+
+        // Toggle antara Login dan Register (Only for Student)
+        window.toggleAuthMode = function() {
+            if(selectedRole === 'tutor') return; 
+
+            isRegisterMode = !isRegisterMode;
+            const nameGroup = document.getElementById('nameGroup');
+            const btn = document.getElementById('btnAuth');
+            const toggleText = document.getElementById('toggleText');
+
+            if (isRegisterMode) {
+                nameGroup.style.display = 'block';
+                btn.innerText = "Daftar Sekarang";
+                toggleText.innerText = "Sudah punya akun? Login";
+            } else {
+                nameGroup.style.display = 'none';
+                btn.innerText = "Masuk";
+                toggleText.innerText = "Belum punya akun? Daftar";
+            }
+        };
+
+        // Handle Login/Register Button
+        window.handleAuthAction = function() {
+            const email = document.getElementById('regEmail').value.trim();
+            const password = document.getElementById('regPassword').value;
+            const name = document.getElementById('regName').value;
+
+            if (!email || !password) {
+                alert("Mohon isi Email dan Password!");
+                return;
+            }
+
+            // --- VALIDATION: STUDENT EMAIL MUST END WITH @ecstudent.com ---
+            if (isRegisterMode && selectedRole === 'student') {
+                if (!email.endsWith('@ecstudent.com')) {
+                    alert("Gagal Registrasi:\n\nEmail Student WAJIB menggunakan format: nama@ecstudent.com\n\nContoh yang benar: budi@ecstudent.com");
+                    return;
+                }
+
+                if (!name) { alert("Nama wajib diisi!"); return; }
+                
+                createUserWithEmailAndPassword(auth, email, password)
+                    .then((userCredential) => {
+                        const user = userCredential.user;
+                        updateProfile(user, { displayName: name }).then(() => {
+                            // Simpan data user ke DB (Student)
+                            set(ref(db, 'users/' + user.uid), {
+                                username: name,
+                                email: email,
+                                role: "student"
+                            });
+                            alert("Registrasi Berhasil! Anda akan masuk otomatis.");
+                        });
+                    })
+                    .catch((error) => { alert("Gagal Daftar: " + error.message); });
+            } else {
+                // LOGIN (Both Student & Tutor)
+                signInWithEmailAndPassword(auth, email, password)
+                    .then((userCredential) => {
+                        // Success handled by onAuthStateChanged
+                    })
+                    .catch((error) => { alert("Login Gagal: Password atau Email salah."); });
+            }
+        };
+
+        // Listen for Auth State Changes
+        onAuthStateChanged(auth, (user) => {
+            const splash = document.getElementById('splash-screen');
+            const login = document.getElementById('login-screen');
+            const dashboard = document.getElementById('dashboard');
+
+            if (user) {
+                // User is signed in
+                const email = user.email;
+                const isTutor = (email === "admin@tutor.com");
+
+                // ==========================================
+                // LOGIKA: KELUARKAN SEMUA USER LAMA (RESET PAKSA)
+                // ==========================================
+                // Jika user bukan Tutor DAN emailnya tidak berakhiran @ecstudent.com
+                if (!isTutor && !email.endsWith('@ecstudent.com')) {
+                    alert("⚠️ SISTEM DIPERBARUI ⚠️\n\nMohon maaf, semua akun lama (Gmail/Yahoo/dll) sudah tidak berlaku.\n\nSilakan DAFTAR KEMBALI menggunakan email khusus: @ecstudent.com");
+                    
+                    // Force Logout
+                    signOut(auth).then(() => {
+                        window.location.reload();
+                    });
+                    return; // Stop eksekusi agar tidak masuk dashboard
+                }
+                // ==========================================
+
+                const name = user.displayName || "User";
+                
+                localStorage.setItem('ec_username', name);
+                localStorage.setItem('ec_role', isTutor ? 'tutor' : 'student');
+
+                // UI Transitions
+                if(login.style.display !== 'none') {
+                    login.style.opacity = '0';
+                    setTimeout(() => {
+                        login.style.display = 'none';
+                        dashboard.style.display = 'flex';
+                        setupDashboard(name, isTutor);
+                        window.renderCalendar(new Date().getMonth(), new Date().getFullYear());
+                    }, 300);
+                } else {
+                    dashboard.style.display = 'flex';
+                    setupDashboard(name, isTutor);
+                    window.renderCalendar(new Date().getMonth(), new Date().getFullYear());
+                }
+                splash.classList.add('fade-out');
+                setTimeout(() => splash.style.display = 'none', 500);
+
+            } else {
+                // User is signed out
+                localStorage.removeItem('ec_username');
+                localStorage.removeItem('ec_role');
+                
+                dashboard.style.display = 'none';
+                login.style.display = 'flex';
+                login.style.opacity = '1';
+                
+                // Reset to role selection
+                resetSelection();
+
+                splash.classList.add('fade-out');
+                setTimeout(() => splash.style.display = 'none', 500);
+            }
+        });
+
+        window.confirmLogout = function() {
+            if (confirm("Apakah Anda yakin ingin keluar?")) {
+                signOut(auth).then(() => { location.reload(); }).catch((error) => { console.error(error); });
+            }
+        };
+        // --- AUTH LOGIC END ---
 
         // --- PRIVATE CHAT SYSTEM (UPDATED: Edit & Delete) ---
         let privateChatListener = null;
@@ -849,7 +1067,6 @@
         });
         function updateLockUI() {
             const isTutor = localStorage.getItem('ec_role') === 'tutor';
-            // Added 'intermediate' and 'wordbomb' to features
             const features = ['modul', 'structure', 'vocab', 'game', 'absensi', 'support', 'certif', 'intermediate', 'wordbomb', 'lainnya'];
             features.forEach(id => {
                 const isLocked = lockedFeatures[id] === true;
@@ -994,21 +1211,19 @@
             const isTutor = localStorage.getItem('ec_role') === 'tutor';
             const isLocked = lockedFeatures[featureId] === true;
             if (isTutor) { window.playClick(targetUrl); return; }
-            if (isLocked) { alert("🔒 Maaf, materi ini sedang dikunci oleh Tutor."); } else { window.playClick(targetUrl); }
+            if (isLocked) { alert("白 Maaf, materi ini sedang dikunci oleh Tutor."); } else { window.playClick(targetUrl); }
         };
         
-        // --- NEW FUNCTION FOR EXPANDABLE MENU ---
         window.toggleLainnya = function() {
             const menu = document.getElementById('gridMenu');
             menu.classList.toggle('show-all');
         };
         
-        // --- OPEN GAME GROUP MODAL ---
         window.openGameGroup = function() {
             const isTutor = localStorage.getItem('ec_role') === 'tutor';
-            const isLocked = lockedFeatures['game'] === true; // Check if "Game" group is locked
+            const isLocked = lockedFeatures['game'] === true; 
             if (!isTutor && isLocked) {
-                alert("🔒 Maaf, Menu Game sedang dikunci oleh Tutor.");
+                alert("白 Maaf, Menu Game sedang dikunci oleh Tutor.");
                 return;
             }
             toggleModal('game-selection-modal');
@@ -1021,93 +1236,11 @@
             { word: "Ephemeral", meaning: "Sesaat / Fana", sentence: "Fashion trends are often ephemeral." },
             { word: "Serendipity", meaning: "Kebetulan", sentence: "Meeting you here was pure serendipity." }
         ];
-        let selectedRole = '';
         let isMuted = false;
         const clickSfx = document.getElementById('clickSound');
 
-        window.addEventListener('load', () => {
-            const splash = document.getElementById('splash-screen');
-            const login = document.getElementById('login-screen');
-            const dashboard = document.getElementById('dashboard');
-            const storedName = localStorage.getItem('ec_username');
-            const storedRole = localStorage.getItem('ec_role');
-            setTimeout(() => {
-                splash.classList.add('fade-out');
-                setTimeout(() => { 
-                    splash.style.display = 'none';
-                    if(storedName && storedRole) {
-                        setupDashboard(storedName, storedRole === 'tutor');
-                        dashboard.style.display = 'flex';
-                        window.renderCalendar(new Date().getMonth(), new Date().getFullYear());
-                    } else {
-                        login.style.display = 'flex';
-                    }
-                }, 500);
-            }, 500);
-        });
-
-        window.confirmLogout = function() {
-            let text = "Apakah Anda yakin ingin keluar?";
-            if (confirm(text) == true) {
-                localStorage.removeItem('ec_username');
-                localStorage.removeItem('ec_role');
-                location.reload();
-            }
-        }
-
-        window.selectRole = function(role) {
-            selectedRole = role;
-            document.getElementById('roleSelection').style.display = 'none';
-            document.getElementById('loginInputs').style.display = 'block';
-            document.getElementById('backBtn').style.display = 'block';
-            if(role === 'student') {
-                document.getElementById('loginTitle').innerText = "Hello Student!";
-                document.getElementById('loginSub').innerText = "Masukkan namamu untuk mulai belajar.";
-                document.getElementById('loginInput').placeholder = "Ketik namamu...";
-                document.getElementById('loginInput').type = "text";
-            } else {
-                document.getElementById('loginTitle').innerText = "Tutor Login";
-                document.getElementById('loginSub').innerText = "Masukkan Kode Akses Tutor.";
-                document.getElementById('loginInput').placeholder = "Kode Akses";
-                document.getElementById('loginInput').type = "password";
-            }
-        }
-
-        window.resetLogin = function() {
-            selectedRole = '';
-            document.getElementById('roleSelection').style.display = 'grid';
-            document.getElementById('loginInputs').style.display = 'none';
-            document.getElementById('backBtn').style.display = 'none';
-            document.getElementById('loginTitle').innerText = "Choose Role";
-            document.getElementById('loginSub').innerText = "Masuk sebagai Student atau Tutor?";
-            document.getElementById('loginInput').value = '';
-        }
-
-        window.processLogin = function() {
-            const inputVal = document.getElementById('loginInput').value.trim();
-            if(inputVal === "") { alert("Mohon isi data terlebih dahulu."); return; }
-            let isTutor = false;
-            let displayName = inputVal;
-            if(selectedRole === 'tutor') {
-                if(inputVal === "admin123") {
-                    displayName = "Tutor Admin";
-                    isTutor = true;
-                } else {
-                    alert("Kode Akses Salah!"); return;
-                }
-            }
-            localStorage.setItem('ec_username', displayName);
-            localStorage.setItem('ec_role', isTutor ? 'tutor' : 'student');
-            setupDashboard(displayName, isTutor);
-            document.getElementById('login-screen').style.opacity = '0';
-            setTimeout(() => {
-                document.getElementById('login-screen').style.display = 'none';
-                document.getElementById('dashboard').style.display = 'flex';
-                playClick(null);
-                window.renderCalendar(new Date().getMonth(), new Date().getFullYear());
-            }, 300);
-        }
-
+        // Main setup handled by onAuthStateChanged now
+        
         function setupDashboard(name, isTutor) {
             document.getElementById('cardNameDisplay').innerText = name;
             const lockBtns = document.querySelectorAll('.tutor-lock-btn');
@@ -1149,7 +1282,7 @@
             if(!isMuted) { clickSfx.currentTime = 0; clickSfx.play().catch(e=>{}); }
             if(targetUrl && targetUrl !== '#') setTimeout(() => { window.location.href = targetUrl; }, 200);
         }
-        document.getElementById('loginInput').addEventListener('keypress', function (e) { if (e.key === 'Enter') processLogin(); });
+        document.getElementById('regPassword').addEventListener('keypress', function (e) { if (e.key === 'Enter') handleAuthAction(); });
     </script>
 </body>
 </html>
