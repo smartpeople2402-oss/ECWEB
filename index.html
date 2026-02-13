@@ -67,7 +67,11 @@
         .balance-card { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); border-radius: 18px; padding: 20px; margin-bottom: 25px; box-shadow: 0 8px 20px rgba(0,0,0,0.2); position: relative; overflow: hidden; }
         .balance-card::before { content: ''; position: absolute; top: -20px; right: -20px; width: 80px; height: 80px; background: var(--accent-lime); opacity: 0.2; border-radius: 50%; filter: blur(20px); }
         .balance-label { font-size: 0.8rem; opacity: 0.8; margin-bottom: 5px; color: var(--accent-lime); }
-        .student-name-display { font-size: 1.6rem; font-weight: 700; color: var(--white); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 8px; }
+        .student-name-display { font-size: 1.6rem; font-weight: 700; color: var(--white); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 2px; }
+        
+        /* NEW: Email Display */
+        .student-email-display { font-size: 0.75rem; color: #e0f2f1; margin-bottom: 12px; opacity: 0.8; }
+
         .daily-score-badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(0, 0, 0, 0.2); border: 1px solid rgba(255,255,255,0.1); padding: 6px 12px; border-radius: 12px; color: white; font-size: 0.85rem; }
         .score-val { color: var(--accent-lime); font-weight: 700; font-size: 1rem; }
         .balance-footer { margin-top: 15px; border-top: 1px solid rgba(255,255,255,0.15); padding-top: 12px; font-size: 0.85rem; display: flex; justify-content: space-between; align-items: center; cursor: pointer; color: var(--white); font-weight: 500; opacity: 0.9; }
@@ -298,11 +302,14 @@
                 <div class="top-icons">
                     <div class="icon-btn" onclick="toggleModal('notif-modal')"><i class="far fa-bell"></i><div class="badge" id="notif-count">!</div></div>
                     <div class="icon-btn" onclick="toggleSound(this)"><i class="fas fa-headset" id="soundIcon"></i></div>
+                    <div class="icon-btn" onclick="toggleModal('settings-modal')"><i class="fas fa-cog"></i></div>
                 </div>
             </div>
             <div class="balance-card">
                 <div class="balance-label">Active Session</div>
                 <div class="student-name-display" id="cardNameDisplay">User</div>
+                <div class="student-email-display" id="cardEmailDisplay">user@email.com</div>
+
                 <div class="daily-score-badge"><i class="fas fa-star" style="color: #f1c40f;"></i><span>Score Harian: <span class="score-val" id="dailyScoreDisplay">0</span></span></div>
                 <div class="balance-footer" onclick="handleMenuClick('Modul Check.html', 'modul')"><span>Cek Progress Belajar</span><i class="fas fa-chart-line"></i></div>
             </div>
@@ -466,6 +473,26 @@
         </div>
     </div>
 
+    <div id="settings-modal" class="modal-overlay" onclick="closeModalOnOutside(event, 'settings-modal')">
+        <div class="modal-content">
+            <div class="modal-header"><h3>Pengaturan Akun</h3><div class="close-btn" onclick="toggleModal('settings-modal')">&times;</div></div>
+            
+            <div style="margin-bottom: 20px;">
+                <h4 style="margin-bottom: 10px; font-size: 0.9rem;">Ganti User Name</h4>
+                <div class="form-group"><input type="text" id="set-new-name" placeholder="User Name Baru"></div>
+                <button class="btn-submit" onclick="changeUsername()">Simpan Nama</button>
+            </div>
+
+            <hr style="border: 0; border-top: 1px solid #ddd; margin: 20px 0;">
+
+            <div>
+                <h4 style="margin-bottom: 10px; font-size: 0.9rem;">Ganti Password</h4>
+                <div class="form-group"><input type="password" id="set-new-pass" placeholder="Password Baru (Min. 6 huruf)"></div>
+                <button class="btn-submit" style="background: #e57373;" onclick="changeUserPassword()">Ubah Password</button>
+            </div>
+        </div>
+    </div>
+
     <div id="game-selection-modal" class="modal-overlay" onclick="closeModalOnOutside(event, 'game-selection-modal')">
         <div class="modal-content">
             <div class="modal-header"><h3>Game Zone</h3><div class="close-btn" onclick="toggleModal('game-selection-modal')">&times;</div></div>
@@ -546,7 +573,7 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.1.3/firebase-app.js";
         import { getDatabase, ref, push, onValue, query, limitToLast, remove, off, set, update, get } from "https://www.gstatic.com/firebasejs/9.1.3/firebase-database.js";
         import { getStorage, ref as sRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.1.3/firebase-storage.js";
-        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.1.3/firebase-auth.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile, signOut, onAuthStateChanged, updatePassword } from "https://www.gstatic.com/firebasejs/9.1.3/firebase-auth.js";
 
         const firebaseConfig = {
           apiKey: "AIzaSyAgYCaaoGMzZWVT2dRov7ALUnnMhHoqXmE",
@@ -695,15 +722,10 @@
                 // ==========================================
                 // LOGIKA: KELUARKAN SEMUA USER LAMA (RESET PAKSA)
                 // ==========================================
-                // Jika user bukan Tutor DAN emailnya tidak berakhiran @ecstudent.com
                 if (!isTutor && !email.endsWith('@ecstudent.com')) {
                     alert("⚠️ SISTEM DIPERBARUI ⚠️\n\nMohon maaf, semua akun lama (Gmail/Yahoo/dll) sudah tidak berlaku.\n\nSilakan DAFTAR KEMBALI menggunakan email khusus: @ecstudent.com");
-                    
-                    // Force Logout
-                    signOut(auth).then(() => {
-                        window.location.reload();
-                    });
-                    return; // Stop eksekusi agar tidak masuk dashboard
+                    signOut(auth).then(() => { window.location.reload(); });
+                    return; 
                 }
                 // ==========================================
 
@@ -718,12 +740,12 @@
                     setTimeout(() => {
                         login.style.display = 'none';
                         dashboard.style.display = 'flex';
-                        setupDashboard(name, isTutor);
+                        setupDashboard(name, email, isTutor); // Pass Email here
                         window.renderCalendar(new Date().getMonth(), new Date().getFullYear());
                     }, 300);
                 } else {
                     dashboard.style.display = 'flex';
-                    setupDashboard(name, isTutor);
+                    setupDashboard(name, email, isTutor);
                     window.renderCalendar(new Date().getMonth(), new Date().getFullYear());
                 }
                 splash.classList.add('fade-out');
@@ -749,6 +771,41 @@
         window.confirmLogout = function() {
             if (confirm("Apakah Anda yakin ingin keluar?")) {
                 signOut(auth).then(() => { location.reload(); }).catch((error) => { console.error(error); });
+            }
+        };
+
+        // --- NEW: SETTINGS LOGIC ---
+        window.changeUsername = function() {
+            const newName = document.getElementById('set-new-name').value;
+            if (!newName) { alert("Nama tidak boleh kosong."); return; }
+            
+            const user = auth.currentUser;
+            if(user) {
+                updateProfile(user, { displayName: newName }).then(() => {
+                    update(ref(db, 'users/' + user.uid), { username: newName });
+                    document.getElementById('cardNameDisplay').innerText = newName;
+                    alert("Nama berhasil diubah!");
+                    document.getElementById('set-new-name').value = "";
+                }).catch((error) => { alert("Gagal: " + error.message); });
+            }
+        };
+
+        window.changeUserPassword = function() {
+            const newPass = document.getElementById('set-new-pass').value;
+            if (newPass.length < 6) { alert("Password minimal 6 karakter!"); return; }
+            
+            const user = auth.currentUser;
+            if(user) {
+                updatePassword(user, newPass).then(() => {
+                    alert("Password berhasil diubah!");
+                    document.getElementById('set-new-pass').value = "";
+                }).catch((error) => {
+                    if(error.code === 'auth/requires-recent-login') {
+                        alert("Demi keamanan, silakan Logout dan Login kembali sebelum mengganti password.");
+                    } else {
+                        alert("Gagal: " + error.message);
+                    }
+                });
             }
         };
         // --- AUTH LOGIC END ---
@@ -1241,8 +1298,15 @@
 
         // Main setup handled by onAuthStateChanged now
         
-        function setupDashboard(name, isTutor) {
+        function setupDashboard(name, email, isTutor) {
             document.getElementById('cardNameDisplay').innerText = name;
+            
+            // NEW: Set Email Display
+            const emailDisplay = document.getElementById('cardEmailDisplay');
+            if(emailDisplay) {
+                emailDisplay.innerText = email || "";
+            }
+
             const lockBtns = document.querySelectorAll('.tutor-lock-btn');
             lockBtns.forEach(btn => {
                 btn.style.display = isTutor ? 'flex' : 'none';
